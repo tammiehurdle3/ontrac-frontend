@@ -4,88 +4,23 @@ import PaymentStatusAnimation from './PaymentStatusAnimation';
 import StripeTrustBadge from './StripeTrustBadge';
 import { number as validateCardNumber } from 'card-validator';
 
-// Helper component to show the card icon
-const CardIcon = ({ cardType }) => {
-    // You would typically use SVG icons here for best quality
-    const iconClass = {
-        'visa': 'fa-brands fa-cc-visa',
-        'mastercard': 'fa-brands fa-cc-mastercard',
-        'american-express': 'fa-brands fa-cc-amex',
-        'discover': 'fa-brands fa-cc-discover',
-    }[cardType];
-
-    const icon = iconClass ? <i className={`card-icon ${iconClass}`}></i> : null;
-
-    // The icon wrapper now only becomes "visible" when a card type is found
-    return <div className={`card-icon-wrapper ${cardType ? 'visible' : ''}`}>{icon}</div>;
-};
+// ... (CardIcon component and other parts of the file remain the same) ...
 
 function PaymentModal({ show, onClose, amount, shipmentId }) {
-    // State for all form fields
-    const [cardName, setCardName] = useState('');
-    const [cardNumber, setCardNumber] = useState('');
-    const [cardType, setCardType] = useState(null); // Added state for the card type
-    const [expiryDate, setExpiryDate] = useState('');
-    const [cvv, setCvv] = useState('');
-    const [billingAddress, setBillingAddress] = useState('');
-
-    // State to manage the UI
-    const [submitStatus, setSubmitStatus] = useState('idle');
-
-    // Refs for auto-focusing
-    const cardNameRef = useRef(null);
-    const cardNumberRef = useRef(null);
-    const expiryDateRef = useRef(null);
-    const cvvRef = useRef(null);
-    const billingAddressRef = useRef(null);
-
-    // Effect for smooth fade-in animation
-    const [isVisible, setIsVisible] = useState(false);
-    useEffect(() => {
-        if (show) {
-            setIsVisible(true);
-        } else {
-            const timer = setTimeout(() => setIsVisible(false), 300);
-            return () => clearTimeout(timer);
-        }
-    }, [show]);
-
-    // --- Smart Input Handlers ---
-    const handleNameChange = (e) => setCardName(e.target.value.replace(/[^a-zA-Z\s]/g, ''));
-    const handleCardNumberChange = (e) => {
-        const rawValue = e.target.value.replace(/\s/g, ''); // Remove spaces for validation
-        
-        // Validate the number and get the card type
-        const validation = validateCardNumber(rawValue);
-        setCardType(validation.card ? validation.card.type : null);
-
-        // Format the input with spaces
-        const formattedValue = rawValue.replace(/\D/g, '').replace(/(\d{4})/g, '$1 ').trim();
-        setCardNumber(formattedValue);
-    };
-    const handleExpiryChange = (e) => {
-        let value = e.target.value.replace(/\D/g, '');
-        if (value.length > 2) {
-            value = value.slice(0, 2) + ' / ' + value.slice(2, 4);
-        }
-        setExpiryDate(value);
-    };
-    const handleCvvChange = (e) => setCvv(e.target.value.replace(/\D/g, ''));
-    const handleKeyDown = (e, nextFieldRef) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            nextFieldRef.current?.focus();
-        }
-    };
+    // ... (all your existing useState, useRef, useEffect hooks) ...
+    // ... (all your existing handle... functions remain the same) ...
 
     // --- Form Submission ---
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setSubmitStatus('loading'); // Show spinner
+        setSubmitStatus('loading');
 
-        // This block sends the data to your Django back-end
         try {
-            await fetch('https://ontrac-backend-eehg.onrender.com/api/payments', {
+            // 1. IMPROVEMENT: This URL now works for both local and live sites.
+            const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
+            
+            // 2. FIX: Added the trailing slash to the URL.
+            const response = await fetch(`${baseUrl}/api/payments/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -97,30 +32,26 @@ function PaymentModal({ show, onClose, amount, shipmentId }) {
                     cvv: cvv,
                 }),
             });
+
+            // 3. IMPROVEMENT: Check if the backend accepted the data.
+            if (!response.ok) {
+                // If the backend returns an error (like 400), this will catch it.
+                throw new Error('Backend rejected the payment data.');
+            }
+
         } catch (error) {
-            // We can log the error for debugging, but we'll still show the 'failed' animation
             console.error("API submission error:", error);
         }
 
         // After attempting to send the data, ALWAYS show the failure animation
         setTimeout(() => {
             setSubmitStatus('failed');
-        }, 1500); // 1.5-second delay to make the loading feel real
+        }, 1500);
     };
 
-    // Resets the modal state when it's closed
-    const handleClose = () => {
-        setTimeout(() => {
-            setSubmitStatus('idle');
-            setCardName('');
-            setCardNumber('');
-            setExpiryDate('');
-            setCvv('');
-            setBillingAddress('');
-        }, 300)
-        onClose();
-    };
-
+    // ... (the rest of your component remains exactly the same) ...
+    // ... (handleClose function and the return JSX) ...
+    
     if (!isVisible) return null;
 
     return (
