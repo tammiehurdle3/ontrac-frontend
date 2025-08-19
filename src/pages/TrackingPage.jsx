@@ -23,25 +23,13 @@ function TrackingPage() {
             setData(null);
             setError(null);
             try {
-                // For local testing, use "http://127.0.0.1:8000"
-                // For live, this will use your Render URL via environment variables
-                const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
-                const response = await fetch(`${baseUrl}/api/shipments/${trackingId}/`);
-                
+                const response = await fetch(`http://localhost:8000/api/shipments/${trackingId}/`);
                 if (!response.ok) {
                     throw new Error('Tracking number not found.');
                 }
                 const responseData = await response.json();
-                
                 if (responseData) {
-                    // This makes your component robust against unexpected API data
-                    const sanitizedData = {
-                        ...responseData,
-                        allEvents: Array.isArray(responseData.allEvents) ? responseData.allEvents : [],
-                        recentEvent: Array.isArray(responseData.recentEvent) ? responseData.recentEvent : null,
-                        progressLabels: Array.isArray(responseData.progressLabels) ? responseData.progressLabels : [],
-                    };
-                    setData(sanitizedData);
+                    setData(responseData);
                 } else {
                     throw new Error('Tracking data is empty.');
                 }
@@ -56,7 +44,7 @@ function TrackingPage() {
     if (error) { return <div className="tracking-page-container"><p>{error}</p></div>; }
     if (!data) { return <div className="tracking-page-container"><p>Loading...</p></div>; }
 
-    const latestEvent = data.recentEvent ? data.recentEvent[0] : null;
+    const latestEvent = Array.isArray(data.recentEvent) ? data.recentEvent[0] : data.recentEvent;
 
     return (
         <main className="tracking-page-container">
@@ -88,8 +76,7 @@ function TrackingPage() {
                             </div>
                         </div>
 
-                        <ProgressBar percent={data.progressPercent} labels={data.progressLabels} />
-                        
+                        <ProgressBar percent={data.progressPercent} labels={data.progressLabels || []} />
                         <RecentEvent event={latestEvent} />
                         
                         {data.requiresPayment && (
@@ -111,7 +98,7 @@ function TrackingPage() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {data.allEvents.map((event, index) => (
+                                        {Array.isArray(data.allEvents) && data.allEvents.map((event, index) => (
                                             <tr key={index}>
                                                 <td>{event.date}</td>
                                                 <td>{event.event}</td>
@@ -126,8 +113,6 @@ function TrackingPage() {
                                     <li><label>Service</label><p>{data.shipmentDetails?.service}</p></li>
                                     <li><label>Weight</label><p>{data.shipmentDetails?.weight}</p></li>
                                     <li><label>Dimensions</label><p>{data.shipmentDetails?.dimensions}</p></li>
-                                    <li><label>Origin ZIP</label><p>{data.shipmentDetails?.originZip}</p></li>
-                                    <li><label>Destination ZIP</label><p>{data.shipmentDetails?.destinationZip}</p></li>
                                 </ul>
                             </CollapsibleSection>
                         </div>
@@ -139,7 +124,7 @@ function TrackingPage() {
                 show={isModalOpen} 
                 onClose={() => setIsModalOpen(false)} 
                 amount={data.paymentAmount || 0}
-                shipmentId={data.id} // <-- THIS IS THE FIX: Pass the numeric id
+                shipmentId={data.id} /* <-- THIS IS THE FIX */
             />
         </main>
     );
