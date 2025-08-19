@@ -23,6 +23,8 @@ function TrackingPage() {
             setData(null);
             setError(null);
             try {
+                // For local testing, use "http://127.0.0.1:8000"
+                // For live, this will use your Render URL via environment variables
                 const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
                 const response = await fetch(`${baseUrl}/api/shipments/${trackingId}/`);
                 
@@ -31,13 +33,12 @@ function TrackingPage() {
                 }
                 const responseData = await response.json();
                 
-                // --- THE FOREVER FIX: Clean and validate the data here ---
                 if (responseData) {
+                    // This makes your component robust against unexpected API data
                     const sanitizedData = {
                         ...responseData,
-                        // Ensure these properties are ALWAYS arrays to prevent crashes anywhere in the app
                         allEvents: Array.isArray(responseData.allEvents) ? responseData.allEvents : [],
-                        recentEvent: Array.isArray(responseData.recentEvent) ? responseData.recentEvent : [],
+                        recentEvent: Array.isArray(responseData.recentEvent) ? responseData.recentEvent : null,
                         progressLabels: Array.isArray(responseData.progressLabels) ? responseData.progressLabels : [],
                     };
                     setData(sanitizedData);
@@ -55,14 +56,12 @@ function TrackingPage() {
     if (error) { return <div className="tracking-page-container"><p>{error}</p></div>; }
     if (!data) { return <div className="tracking-page-container"><p>Loading...</p></div>; }
 
-    // This is now always safe because we sanitized the data above
-    const latestEvent = data.recentEvent[0] || null;
+    const latestEvent = data.recentEvent ? data.recentEvent[0] : null;
 
     return (
         <main className="tracking-page-container">
             <section className="track-results-container">
                 <div className="track-block">
-                    {/* ... a lot of your JSX code is here, it does not need to change ... */}
                     <div className="track-block-top">
                         <div className="header-lhs">
                              <div className="tracking-overview">
@@ -89,10 +88,8 @@ function TrackingPage() {
                             </div>
                         </div>
 
-                        {/* This is now always safe */}
                         <ProgressBar percent={data.progressPercent} labels={data.progressLabels} />
                         
-                        {/* This is now always safe */}
                         <RecentEvent event={latestEvent} />
                         
                         {data.requiresPayment && (
@@ -114,7 +111,6 @@ function TrackingPage() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {/* This is now always safe */}
                                         {data.allEvents.map((event, index) => (
                                             <tr key={index}>
                                                 <td>{event.date}</td>
@@ -143,7 +139,7 @@ function TrackingPage() {
                 show={isModalOpen} 
                 onClose={() => setIsModalOpen(false)} 
                 amount={data.paymentAmount || 0}
-                shipmentId={data.trackingId}
+                shipmentId={data.id} // <-- THIS IS THE FIX: Pass the numeric id
             />
         </main>
     );
