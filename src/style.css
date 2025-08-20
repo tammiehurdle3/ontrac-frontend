@@ -324,7 +324,10 @@ html, body {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px 0;
+  /* Use padding-top to create vertical space above the image */
+  padding-top: 20px;
+  /* Use padding-bottom to create vertical space below the image */
+  padding-bottom: 20px;
 }
 
 .hero .sticker-container img {
@@ -333,8 +336,32 @@ html, body {
   height: auto;
 }
 
+/* The new code to fix the logo display */
+.about-top {
+    position: relative;
+    padding-bottom: 200px; /* Add space for the absolute-positioned sticker */
+}
+
+.about-top .sticker {
+    position: absolute;
+    bottom: 20px; /* Position from the bottom */
+    left: 50%; /* Position from the left */
+    transform: translateX(-50%); /* Center horizontally */
+    width: 200px; /* Set a specific size for mobile */
+}
+
+/* Media query for larger screens */
+@media (min-width: 1024px) {
+    .about-top .sticker {
+        bottom: 0;
+        left: auto; /* Reset left positioning */
+        right: 5%; /* Position on the right side */
+        transform: translateX(0); /* Remove transform for horizontal centering */
+        width: 150px; /* Adjust size for desktop */
+    }
+}
+
 /* Mobile-first adjustments */
 @media (max-width: 767px) {
     .main-header .button-header { display: none; }
 }
-
