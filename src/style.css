@@ -445,6 +445,21 @@ body {
   margin-top: 20px;
   margin-bottom: 20px;
 }
+/* New rule to reduce the vertical whitespace around the heading text */
+.about-top h1 {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+/* New rule to position the sticker correctly to the right of the "98%+" text */
+.about-top .sticker {
+    position: absolute;
+    right: 5%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 60px;
+    height: 60px;
+
+}
 
 
 }
