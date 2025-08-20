@@ -427,9 +427,8 @@ body {
   right: auto;
   bottom: auto;
   margin: 40px auto 0;
-  width: 80%; /* Increased to 80% of the screen width for better visibility */
-  max-width: 300px; /* Added back a maximum width to keep it from getting too large on tablets or desktops */
+  width: 90%; /* Increased to 90% for maximum visibility on small screens */
+  max-width: 400px; /* Increased the maximum size to allow it to grow on tablets */
 }
-
 
 }
