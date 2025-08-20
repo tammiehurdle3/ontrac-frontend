@@ -423,15 +423,18 @@ body {
   .about-top .sticker {
   display: block;
   position: relative;
-  /* Removed the centering code (left: 50% and transform) to fix the shifting */
-  left: 0; /* Forces the element to align to the left edge */
-  right: auto;
-  bottom: auto;
-  margin: 40px auto 0 0; /* Ensures there is no auto margin on the right, which could cause a shift */
-  width: 95vw; /* Increased to 95% of the viewport width for maximum size */
-  max-width: 700px; /* Increased the maximum size */
+  /* Use this method for perfect horizontal centering, which will fix the right-shift */
+  left: 50%;
+  transform: translateX(-50%);
+  
+  /* Reduce top margin to decrease white space above the sticker */
+  margin-top: 20px;
+  margin-bottom: 20px; /* Add a small bottom margin to reduce white space below */
+  
+  /* Make the logo larger both horizontally and vertically */
+  width: 95vw; /* Keeps it very large on mobile screens */
+  max-width: 600px; /* Increased the max size to allow it to grow on tablets */
 }
-
 
 
 }
