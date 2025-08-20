@@ -385,3 +385,20 @@ body {
 .card-icon-wrapper svg {
     filter: none !important;
 }
+/* --- ADD TO THE END of src/style.css --- */
+
+/* --- Final Mobile Polish --- */
+@media (max-width: 768px) {
+
+  /* 1. Prevent zoom on the tracking input field */
+  .tracking-form input {
+    font-size: 16px;
+  }
+
+  /* 2. Center the logo in the hero section */
+  .hero .logo-line {
+    margin: 0 auto;
+    width: fit-content;
+  }
+
+}
