@@ -476,6 +476,20 @@ body {
   margin-bottom: 10px; /* Reduces white space below the element */
 }
 }
+/* Add this CSS to your main stylesheet */
 
+.mobile-only-logo {
+  display: none; /* The logo is hidden by default on computers */
+}
+
+/* This media query targets mobile screens */
+@media (max-width: 768px) {
+  .mobile-only-logo {
+    display: block;             /* Makes the logo visible on mobile */
+    width: 100%;                /* Makes the logo fit the screen width */
+    max-width: 350px;           /* Prevents it from getting too large on wide phones */
+    margin: 3rem auto 0;        /* Adds space above it and centers it */
+  }
+}
 
 
