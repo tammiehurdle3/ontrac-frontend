@@ -401,4 +401,33 @@ body {
     width: fit-content;
   }
 
+}/* --- ADD TO THE END of src/style.css --- */
+
+/* --- Final Mobile Polish for Sticker Logo --- */
+@media (max-width: 1023px) {
+
+  /* Show the sticker on tablets and mobile */
+  .about-top .sticker {
+    display: block;
+    position: relative; /* Remove absolute positioning on mobile */
+    margin: 40px auto 0; /* Add space above and center it */
+    width: 120px; /* Give it a reasonable size */
+  }
+
+}/* --- ADD TO THE END of src/style.css --- */
+
+/* --- Final Mobile Polish for Sticker Logo --- */
+@media (max-width: 1023px) {
+
+  /* Show the sticker on tablets and mobile */
+  .about-top .sticker {
+    display: block;
+    position: relative; /* Remove absolute positioning on mobile */
+    left: auto; /* Reset desktop positioning */
+    right: auto; /* Reset desktop positioning */
+    bottom: auto; /* Reset desktop positioning */
+    margin: 40px auto 0; /* Add space above and center it */
+    width: 120px; /* Give it a reasonable size */
+  }
+
 }
