@@ -124,7 +124,7 @@ body {
 }
 .tracking-form button:active {
     transform: translateY(1px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 2px 8px rgba(0, 0, 0, 0.2);
 }
 .error-message { color: var(--primary-red); margin-top: 15px; height: 1em; font-weight: bold; }
 
@@ -400,79 +400,34 @@ body {
     margin: 0 auto;
     width: fit-content;
   }
+}
 
-}/* --- ADD TO THE END of src/style.css --- */
-
-/* --- Final Mobile Polish for Sticker Logo --- */
+/* This is the new, correct fix for the sticker's size and position */
 @media (max-width: 1023px) {
-
-  /* Show the sticker on tablets and mobile */
+  /* Remove conflicting styles from previous attempts */
   .about-top .sticker {
-    display: block;
-    position: relative; /* Remove absolute positioning on mobile */
-    margin: 40px auto 0; /* Add space above and center it */
-    width: 120px; /* Give it a reasonable size */
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
   }
 
-}/* --- ADD TO THE END of src/style.css --- */
+  /* Style for the space between the button and the text */
+  .hero .sticker-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 0; /* Adjust this value to control the white space */
+  }
 
-/* --- Final Mobile Polish for Sticker Logo --- */
-@media (max-width: 1023px) {
+  .hero .sticker-container img {
+    width: 100%;
+    max-width: 250px;
+    height: auto;
+  }
 
-  /* Show the sticker on tablets and mobile */
+  /* Reduce margin on the text below the sticker to pull it closer */
   .about-top {
-  display: flex; /* Turn the container into a flexbox */
-  align-items: center; /* Vertically align all items in the center */
-  justify-content: space-between; /* Push the logo to the far right */
-}
-
-/* Now we can simplify the sticker's own CSS */
-.about-top .sticker {
-  display: block; /* Ensures it's a block-level element */
-  position: relative; /* Use relative positioning as the foundation */
-  
-  /* --- The Perfect Centering Fix --- */
-  /* This combination centers the logo horizontally regardless of screen size */
-  left: 50%;
-  transform: translateX(-50%);
-  
-  /* --- The Sizing Fix --- */
-  /* We'll use a maximum width to ensure it scales correctly on all devices */
-  width: 90%; /* Let it take up to 90% of the parent container's width */
-  max-width: 450px; /* But don't let it get wider than 450px on larger screens */
-
-  /* This margin helps reduce the white space above and below the logo */
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
-/* New rule to reduce the vertical whitespace around the heading text */
-.about-top {
-  display: flex;
-  flex-direction: column; /* Stacks children vertically */
-  align-items: center; /* Centers items horizontally */
-  justify-content: center; /* Centers items vertically */
-  text-align: center; /* Ensures text is centered */
-}
-
-/* This is the final and correct fix for the sticker's size and position */
-.about-top .sticker {
-  /* No need for relative or absolute positioning here, Flexbox handles it */
-  position: static;
-  
-  /* Set a small, consistent size for the circular logo */
-  width: 50px;
-  height: 50px;
-  
-  /* Add a little space between the logo and the text */
-  margin-top: 5px;
-  margin-bottom: 5px;
-}
-
-/* This is the section with the "98%+" text, we need to apply Flexbox to it */
-.about-top .content-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 10px; /* Reduces white space below the element */
-}
+    padding-top: 40px; /* Reduce top padding for less whitespace */
+  }
 }
