@@ -421,13 +421,14 @@ body {
 
   /* Show the sticker on tablets and mobile */
   .about-top .sticker {
-    display: block;
-    position: relative; /* Remove absolute positioning on mobile */
-    left: auto; /* Reset desktop positioning */
-    right: auto; /* Reset desktop positioning */
-    bottom: auto; /* Reset desktop positioning */
-    margin: 40px auto 0; /* Add space above and center it */
-    width: 120px; /* Give it a reasonable size */
-  }
+  display: block;
+  position: relative;
+  left: auto;
+  right: auto;
+  bottom: auto;
+  margin: 40px auto 0;
+  width: 40%; /* Make it 40% of the screen width */
+  max-width: 180px; /* But don't let it get bigger than 180px */
+}
 
 }
