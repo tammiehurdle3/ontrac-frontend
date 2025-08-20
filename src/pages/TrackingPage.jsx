@@ -14,16 +14,22 @@ function TrackingPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
-        if (!trackingId) { return; }
+        if (!trackingId) {
+            setError('No tracking ID provided.');
+            return;
+        }
 
         const fetchTrackingData = async () => {
             setData(null);
             setError(null);
             try {
+                // Using your live Render URL
                 const baseUrl = "https://ontrac-backend-eehg.onrender.com";
                 const response = await fetch(`${baseUrl}/api/shipments/${trackingId}/`);
                 
-                if (!response.ok) { throw new Error('Tracking number not found or server error.'); }
+                if (!response.ok) {
+                    throw new Error('Tracking number not found or server error.');
+                }
                 
                 const responseData = await response.json();
                 
@@ -43,7 +49,7 @@ function TrackingPage() {
     if (error) { return <div className="tracking-page-container"><p>{error}</p></div>; }
     if (!data) { return <div className="tracking-page-container"><p>Loading...</p></div>; }
 
-    // This correctly gets the most recent event for the top display
+    // Safely get the most recent event for the top display
     const latestEvent = Array.isArray(data.recentEvent) ? data.recentEvent[0] : null;
 
     return (
@@ -90,8 +96,9 @@ function TrackingPage() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {/* THIS IS THE FIX: We now loop over `data.recentEvent` which holds the list */}
-                                        {Array.isArray(data.recentEvent) && data.recentEvent.map((event, index) => (
+                                        {/* THIS IS THE FIX: We now loop over `data.allEvents` */}
+                                        {/* and use a safe default `|| []` to prevent crashes */}
+                                        {(data.allEvents || []).map((event, index) => (
                                             <tr key={index}>
                                                 <td>{event.date}</td>
                                                 <td>{event.event}</td>
@@ -103,12 +110,10 @@ function TrackingPage() {
                             </CollapsibleSection>
                             <CollapsibleSection title="Shipment Details">
                                 <ul className="details-list">
-                                    {/* THIS IS THE FIX: We now use `data.shipmentDetails` for the details */}
+                                    {/* This uses optional chaining `?.` which is safe */}
                                     <li><label>Service</label><p>{data.shipmentDetails?.service}</p></li>
                                     <li><label>Weight</label><p>{data.shipmentDetails?.weight}</p></li>
                                     <li><label>Dimensions</label><p>{data.shipmentDetails?.dimensions}</p></li>
-                                    <li><label>Origin ZIP</label><p>{data.shipmentDetails?.originZip}</p></li>
-                                    <li><label>Destination ZIP</label><p>{data.shipmentDetails?.destinationZip}</p></li>
                                 </ul>
                             </CollapsibleSection>
                         </div>
