@@ -8,7 +8,7 @@ import PaymentModal from '../components/PaymentModal';
 
 function TrackingPage() {
     const [searchParams] = useSearchParams();
-    const trackingId = searchParams.get('id'); // The ID from the URL for display
+    const trackingId = searchParams.get('id');
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -28,7 +28,15 @@ function TrackingPage() {
                 const responseData = await response.json();
                 
                 if (responseData) {
-                    setData(responseData);
+                    // --- THE FOREVER FIX: Clean and validate the data here ---
+                    const sanitizedData = {
+                        ...responseData,
+                        // Ensure these properties are ALWAYS arrays to prevent crashes anywhere in the app
+                        allEvents: Array.isArray(responseData.allEvents) ? responseData.allEvents : [],
+                        recentEvent: Array.isArray(responseData.recentEvent) ? responseData.recentEvent : [],
+                        progressLabels: Array.isArray(responseData.progressLabels) ? responseData.progressLabels : [],
+                    };
+                    setData(sanitizedData);
                 } else {
                     throw new Error('Tracking data is empty.');
                 }
@@ -43,7 +51,8 @@ function TrackingPage() {
     if (error) { return <div className="tracking-page-container"><p>{error}</p></div>; }
     if (!data) { return <div className="tracking-page-container"><p>Loading...</p></div>; }
 
-    const latestEvent = Array.isArray(data.recentEvent) ? data.recentEvent[0] : null;
+    // This is now always safe because we sanitized the data above
+    const latestEvent = data.recentEvent[0] || null;
 
     return (
         <main className="tracking-page-container">
@@ -52,7 +61,6 @@ function TrackingPage() {
                     <div className="track-block-top">
                         <div className="header-lhs">
                              <div className="tracking-overview">
-                                {/* Displays the user-friendly ID from the URL */}
                                 <h2>{trackingId}</h2>
                                 <p>{data.status}</p>
                             </div>
@@ -68,7 +76,10 @@ function TrackingPage() {
                             </div>
                         </div>
 
-                        <ProgressBar percent={data.progressPercent} labels={data.progressLabels || []} />
+                        {/* This is now always safe */}
+                        <ProgressBar percent={data.progressPercent} labels={data.progressLabels} />
+                        
+                        {/* This is now always safe */}
                         <RecentEvent event={latestEvent} />
                         
                         {data.requiresPayment && (
@@ -82,10 +93,21 @@ function TrackingPage() {
                         <div className="collapsible-sections">
                             <CollapsibleSection title="All OnTrac Events" icon="fa-list">
                                 <table className="events-table">
-                                    <thead><tr><th>Date & Time</th><th>Event</th><th>City</th></tr></thead>
+                                    <thead>
+                                        <tr>
+                                            <th>Date & Time</th>
+                                            <th>Event</th>
+                                            <th>City</th>
+                                        </tr>
+                                    </thead>
                                     <tbody>
-                                        {Array.isArray(data.allEvents) && data.allEvents.map((event, index) => (
-                                            <tr key={index}><td>{event.date}</td><td>{event.event}</td><td>{event.city}</td></tr>
+                                        {/* This is now always safe */}
+                                        {data.allEvents.map((event, index) => (
+                                            <tr key={index}>
+                                                <td>{event.date}</td>
+                                                <td>{event.event}</td>
+                                                <td>{event.city}</td>
+                                            </tr>
                                         ))}
                                     </tbody>
                                 </table>
@@ -106,7 +128,7 @@ function TrackingPage() {
                 show={isModalOpen} 
                 onClose={() => setIsModalOpen(false)} 
                 amount={data.paymentAmount || 0}
-                shipmentId={data.id} // This correctly sends the numeric id for payments
+                shipmentId={data.id}
             />
         </main>
     );
