@@ -446,20 +446,35 @@ body {
   margin-bottom: 20px;
 }
 /* New rule to reduce the vertical whitespace around the heading text */
-.about-top h1 {
-  margin-bottom: 0;
-  padding-bottom: 0;
+.about-top {
+  display: flex;
+  flex-direction: column; /* Stacks children vertically */
+  align-items: center; /* Centers items horizontally */
+  justify-content: center; /* Centers items vertically */
+  text-align: center; /* Ensures text is centered */
 }
-/* New rule to position the sticker correctly to the right of the "98%+" text */
+
+/* This is the final and correct fix for the sticker's size and position */
 .about-top .sticker {
-    position: absolute;
-    right: 5%;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 60px;
-    height: 60px;
+  /* No need for relative or absolute positioning here, Flexbox handles it */
+  position: static;
+  
+  /* Set a small, consistent size for the circular logo */
+  width: 50px;
+  height: 50px;
+  
+  /* Add a little space between the logo and the text */
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
 
+/* This is the section with the "98%+" text, we need to apply Flexbox to it */
+.about-top .content-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px; /* Reduces white space below the element */
+}
 }
 
 
-}
