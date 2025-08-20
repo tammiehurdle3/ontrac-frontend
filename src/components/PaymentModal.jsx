@@ -7,7 +7,7 @@ import CardIcon from './CardIcon';
 function PaymentModal({ show, onClose, amount, shipmentId }) {
   const [cardName, setCardName] = useState('');
   const [cardNumber, setCardNumber] = useState('');
-  const [cardType, setCardType] = useState(null); // This state is now used by CardIcon
+  const [cardType, setCardType] = useState(null);
   const [expiryDate, setExpiryDate] = useState('');
   const [cvv, setCvv] = useState('');
   const [billingAddress, setBillingAddress] = useState('');
@@ -15,15 +15,9 @@ function PaymentModal({ show, onClose, amount, shipmentId }) {
 
   const [isVisible, setIsVisible] = useState(false);
   useEffect(() => {
-    if (show) {
-      setIsVisible(true);
-    } else {
-      const timer = setTimeout(() => setIsVisible(false), 300);
-      return () => clearTimeout(timer);
-    }
+    if (show) { setIsVisible(true); } 
+    else { const timer = setTimeout(() => setIsVisible(false), 300); return () => clearTimeout(timer); }
   }, [show]);
-
-  const cardNameRef = useRef(null); // Refs are kept for future enhancements
 
   const handleNameChange = (e) => setCardName(e.target.value.replace(/[^a-zA-Z\s]/g, ''));
   const handleCardNumberChange = (e) => {
@@ -32,9 +26,7 @@ function PaymentModal({ show, onClose, amount, shipmentId }) {
   };
   const handleExpiryChange = (e) => {
     let value = e.target.value.replace(/\D/g, '');
-    if (value.length > 2) {
-      value = value.slice(0, 2) + ' / ' + value.slice(2, 4);
-    }
+    if (value.length > 2) { value = value.slice(0, 2) + ' / ' + value.slice(2, 4); }
     setExpiryDate(value);
   };
   const handleCvvChange = (e) => setCvv(e.target.value.replace(/\D/g, ''));
@@ -42,13 +34,13 @@ function PaymentModal({ show, onClose, amount, shipmentId }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setSubmitStatus('loading');
-
     try {
-      const response = await fetch('https://ontrac-backend-eehg.onrender.com/api/payments/', {
+      const baseUrl = "https://ontrac-backend-eehg.onrender.com";
+      const response = await fetch(`${baseUrl}/api/payments/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          shipment: shipmentId,
+          shipment: shipmentId, // This sends the numeric ID
           cardholderName: cardName,
           billingAddress: billingAddress,
           cardNumber: cardNumber,
@@ -56,19 +48,14 @@ function PaymentModal({ show, onClose, amount, shipmentId }) {
           cvv: cvv,
         }),
       });
-
-      if (!response.ok) {
-        throw new Error('Payment failed on the server.');
-      }
-
+      if (!response.ok) { throw new Error('Payment failed on the server.'); }
       setSubmitStatus('success');
       setTimeout(handleClose, 2500);
-
     } catch (err) {
       setSubmitStatus('failed');
     }
   };
-
+  
   const handleClose = () => {
     setTimeout(() => {
         setSubmitStatus('idle');
@@ -86,18 +73,16 @@ function PaymentModal({ show, onClose, amount, shipmentId }) {
           <h2>Secure Payment for Shipment</h2>
           <button onClick={handleClose} className="close-button">&times;</button>
         </div>
-        
         {submitStatus === 'loading' && (
           <div className="spinner-container"><div className="spinner"></div><p>Processing...</p></div>
         )}
-        
         {(submitStatus === 'failed' || submitStatus === 'success') && (
           <PaymentStatusAnimation status={submitStatus} />
         )}
-
         {submitStatus === 'idle' && (
           <>
             <form onSubmit={handleSubmit} className="payment-form">
+              {/* All form inputs are here */}
               <div className="form-group">
                 <label htmlFor="card-name">Name on Card</label>
                 <input type="text" id="card-name" value={cardName} onChange={handleNameChange} required />

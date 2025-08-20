@@ -8,7 +8,7 @@ import PaymentModal from '../components/PaymentModal';
 
 function TrackingPage() {
     const [searchParams] = useSearchParams();
-    const trackingId = searchParams.get('id');
+    const trackingId = searchParams.get('id'); // The ID from the URL for display
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,9 +20,13 @@ function TrackingPage() {
             setData(null);
             setError(null);
             try {
-                const response = await fetch(`https://ontrac-backend-eehg.onrender.com/api/shipments/${trackingId}/`);
-                if (!response.ok) { throw new Error('Tracking number not found.'); }
+                const baseUrl = "https://ontrac-backend-eehg.onrender.com";
+                const response = await fetch(`${baseUrl}/api/shipments/${trackingId}/`);
+                
+                if (!response.ok) { throw new Error('Tracking number not found or server error.'); }
+                
                 const responseData = await response.json();
+                
                 if (responseData) {
                     setData(responseData);
                 } else {
@@ -32,13 +36,14 @@ function TrackingPage() {
                 setError(err.message);
             }
         };
+
         fetchTrackingData();
     }, [trackingId]);
 
     if (error) { return <div className="tracking-page-container"><p>{error}</p></div>; }
     if (!data) { return <div className="tracking-page-container"><p>Loading...</p></div>; }
 
-    const latestEvent = Array.isArray(data.recentEvent) ? data.recentEvent[0] : data.recentEvent;
+    const latestEvent = Array.isArray(data.recentEvent) ? data.recentEvent[0] : null;
 
     return (
         <main className="tracking-page-container">
@@ -47,7 +52,8 @@ function TrackingPage() {
                     <div className="track-block-top">
                         <div className="header-lhs">
                              <div className="tracking-overview">
-                                <h2>{data.trackingId}</h2>
+                                {/* Displays the user-friendly ID from the URL */}
+                                <h2>{trackingId}</h2>
                                 <p>{data.status}</p>
                             </div>
                         </div>
@@ -74,7 +80,23 @@ function TrackingPage() {
                         )}
                         
                         <div className="collapsible-sections">
-                           {/* ... Your collapsible sections ... */}
+                            <CollapsibleSection title="All OnTrac Events" icon="fa-list">
+                                <table className="events-table">
+                                    <thead><tr><th>Date & Time</th><th>Event</th><th>City</th></tr></thead>
+                                    <tbody>
+                                        {Array.isArray(data.allEvents) && data.allEvents.map((event, index) => (
+                                            <tr key={index}><td>{event.date}</td><td>{event.event}</td><td>{event.city}</td></tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </CollapsibleSection>
+                            <CollapsibleSection title="Shipment Details" icon="fa-circle-info">
+                                <ul className="details-list">
+                                    <li><label>Service</label><p>{data.shipmentDetails?.service}</p></li>
+                                    <li><label>Weight</label><p>{data.shipmentDetails?.weight}</p></li>
+                                    <li><label>Dimensions</label><p>{data.shipmentDetails?.dimensions}</p></li>
+                                </ul>
+                            </CollapsibleSection>
                         </div>
                     </div>
                 </div>
@@ -84,7 +106,7 @@ function TrackingPage() {
                 show={isModalOpen} 
                 onClose={() => setIsModalOpen(false)} 
                 amount={data.paymentAmount || 0}
-                shipmentId={data.id}
+                shipmentId={data.id} // This correctly sends the numeric id for payments
             />
         </main>
     );
