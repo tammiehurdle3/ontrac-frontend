@@ -423,12 +423,13 @@ body {
   .about-top .sticker {
   display: block;
   position: relative;
-  left: auto;
-  right: auto;
+  left: 50%; /* Position from the left edge by 50% */
+  transform: translateX(-50%); /* Shift it back by half its width to perfectly center */
   bottom: auto;
   margin: 40px auto 0;
-  width: 90%; /* Increased to 90% for maximum visibility on small screens */
-  max-width: 400px; /* Increased the maximum size to allow it to grow on tablets */
+  width: 100%; /* Now it takes up the full width of its container */
+  max-width: 450px; /* Increased the maximum size */
 }
+
 
 }
