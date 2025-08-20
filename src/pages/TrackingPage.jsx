@@ -28,7 +28,15 @@ function TrackingPage() {
                 const responseData = await response.json();
                 
                 if (responseData) {
-                    setData(responseData);
+                    // --- THE FOREVER FIX: Clean and validate the data here ---
+                    const sanitizedData = {
+                        ...responseData,
+                        // Ensure these properties are ALWAYS arrays to prevent crashes
+                        allEvents: Array.isArray(responseData.allEvents) ? responseData.allEvents : [],
+                        recentEvent: Array.isArray(responseData.recentEvent) ? responseData.recentEvent : [],
+                        progressLabels: Array.isArray(responseData.progressLabels) ? responseData.progressLabels : [],
+                    };
+                    setData(sanitizedData);
                 } else {
                     throw new Error('Tracking data is empty.');
                 }
@@ -43,14 +51,8 @@ function TrackingPage() {
     if (error) { return <div className="tracking-page-container"><p>{error}</p></div>; }
     if (!data) { return <div className="tracking-page-container"><p>Loading...</p></div>; }
 
-    // --- THIS IS THE "FOREVER FIX" ---
-    // This code safely handles the data, preventing crashes.
-    // It checks if recentEvent is an array (like old data) or an object (like new data).
-    const latestEvent = Array.isArray(data.recentEvent) ? data.recentEvent[0] : data.recentEvent;
-    
-    // It ensures allEvents is always treated as an array.
-    const allEventsList = Array.isArray(data.allEvents) ? data.allEvents : [];
-    // ---------------------------------
+    // This is now always safe because we sanitized the data above
+    const latestEvent = data.recentEvent[0] || null;
 
     return (
         <main className="tracking-page-container">
@@ -74,7 +76,10 @@ function TrackingPage() {
                             </div>
                         </div>
 
-                        <ProgressBar percent={data.progressPercent} labels={data.progressLabels || []} />
+                        {/* This is now always safe */}
+                        <ProgressBar percent={data.progressPercent} labels={data.progressLabels} />
+                        
+                        {/* This is now always safe */}
                         <RecentEvent event={latestEvent} />
                         
                         {data.requiresPayment && (
@@ -86,7 +91,7 @@ function TrackingPage() {
                         )}
                         
                         <div className="collapsible-sections">
-                            <CollapsibleSection title="All OnTrac Events">
+                            <CollapsibleSection title="All OnTrac Events" icon="fa-list">
                                 <table className="events-table">
                                     <thead>
                                         <tr>
@@ -96,8 +101,8 @@ function TrackingPage() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {/* This now uses the safe allEventsList variable */}
-                                        {allEventsList.map((event, index) => (
+                                        {/* This is now always safe */}
+                                        {data.allEvents.map((event, index) => (
                                             <tr key={index}>
                                                 <td>{event.date}</td>
                                                 <td>{event.event}</td>
@@ -107,7 +112,7 @@ function TrackingPage() {
                                     </tbody>
                                 </table>
                             </CollapsibleSection>
-                            <CollapsibleSection title="Shipment Details">
+                            <CollapsibleSection title="Shipment Details" icon="fa-circle-info">
                                 <ul className="details-list">
                                     <li><label>Service</label><p>{data.shipmentDetails?.service}</p></li>
                                     <li><label>Weight</label><p>{data.shipmentDetails?.weight}</p></li>
