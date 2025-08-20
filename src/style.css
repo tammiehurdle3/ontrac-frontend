@@ -427,8 +427,9 @@ body {
   right: auto;
   bottom: auto;
   margin: 40px auto 0;
-  width: 60%; /* Make it 40% of the screen width */
-  width: 180px; /* But don't let it get bigger than 180px */
+  width: 80%; /* Increased to 80% of the screen width for better visibility */
+  max-width: 300px; /* Added back a maximum width to keep it from getting too large on tablets or desktops */
 }
+
 
 }
