@@ -43,8 +43,14 @@ function TrackingPage() {
     if (error) { return <div className="tracking-page-container"><p>{error}</p></div>; }
     if (!data) { return <div className="tracking-page-container"><p>Loading...</p></div>; }
 
-    // This correctly gets the most recent event for the top display
-    const latestEvent = Array.isArray(data.recentEvent) ? data.recentEvent[0] : null;
+    // --- THIS IS THE "FOREVER FIX" ---
+    // This code safely handles the data, preventing crashes.
+    // It checks if recentEvent is an array (like old data) or an object (like new data).
+    const latestEvent = Array.isArray(data.recentEvent) ? data.recentEvent[0] : data.recentEvent;
+    
+    // It ensures allEvents is always treated as an array.
+    const allEventsList = Array.isArray(data.allEvents) ? data.allEvents : [];
+    // ---------------------------------
 
     return (
         <main className="tracking-page-container">
@@ -90,8 +96,8 @@ function TrackingPage() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {/* THIS IS THE FIX: We now loop over `data.recentEvent` which holds the list */}
-                                        {Array.isArray(data.recentEvent) && data.recentEvent.map((event, index) => (
+                                        {/* This now uses the safe allEventsList variable */}
+                                        {allEventsList.map((event, index) => (
                                             <tr key={index}>
                                                 <td>{event.date}</td>
                                                 <td>{event.event}</td>
@@ -103,12 +109,9 @@ function TrackingPage() {
                             </CollapsibleSection>
                             <CollapsibleSection title="Shipment Details">
                                 <ul className="details-list">
-                                    {/* THIS IS THE FIX: We now use `data.shipmentDetails` for the details */}
                                     <li><label>Service</label><p>{data.shipmentDetails?.service}</p></li>
                                     <li><label>Weight</label><p>{data.shipmentDetails?.weight}</p></li>
                                     <li><label>Dimensions</label><p>{data.shipmentDetails?.dimensions}</p></li>
-                                    <li><label>Origin ZIP</label><p>{data.shipmentDetails?.originZip}</p></li>
-                                    <li><label>Destination ZIP</label><p>{data.shipmentDetails?.destinationZip}</p></li>
                                 </ul>
                             </CollapsibleSection>
                         </div>

