@@ -423,17 +423,21 @@ body {
   .about-top .sticker {
   display: block;
   position: relative;
-  /* Use this method for perfect horizontal centering, which will fix the right-shift */
-  left: 50%;
-  transform: translateX(-50%);
   
-  /* Reduce top margin to decrease white space above the sticker */
-  margin-top: 20px;
-  margin-bottom: 20px; /* Add a small bottom margin to reduce white space below */
+  /* --- The Final Centering Fix --- */
+  /* This combination is very forceful and should override any parent container issues */
+  left: 0;
+  right: 0;
+  margin: 0 auto;
   
-  /* Make the logo larger both horizontally and vertically */
-  width: 95vw; /* Keeps it very large on mobile screens */
-  max-width: 600px; /* Increased the max size to allow it to grow on tablets */
+  /* --- The Final Sizing Fix --- */
+  /* Use a viewport-based unit to ensure it fills the screen on mobile */
+  width: 95vw;
+  max-width: 800px; /* A much larger maximum size for tablets and desktops */
+
+  /* Reduce the top and bottom margins to remove extra white space */
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 
