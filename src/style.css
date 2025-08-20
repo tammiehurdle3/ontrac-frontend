@@ -423,12 +423,13 @@ body {
   .about-top .sticker {
   display: block;
   position: relative;
-  left: 50%; /* Positions the left edge at the horizontal center */
-  transform: translateX(-50%); /* Shifts the element left by half its width for perfect centering */
+  /* Removed the centering code (left: 50% and transform) to fix the shifting */
+  left: 0; /* Forces the element to align to the left edge */
+  right: auto;
   bottom: auto;
-  /* Removed the margin: 40px auto 0; to prevent conflicts with the centering technique */
-  width: 90vw; /* Now takes up 90% of the viewport (screen) width, making it very large */
-  max-width: 600px; /* Increased the maximum size to allow it to grow more on tablets */
+  margin: 40px auto 0 0; /* Ensures there is no auto margin on the right, which could cause a shift */
+  width: 95vw; /* Increased to 95% of the viewport width for maximum size */
+  max-width: 700px; /* Increased the maximum size */
 }
 
 
