@@ -428,15 +428,22 @@ body {
 
 /* Now we can simplify the sticker's own CSS */
 .about-top .sticker {
-  /* No need for complex positioning anymore! */
-  position: static;
+  display: block; /* Ensures it's a block-level element */
+  position: relative; /* Use relative positioning as the foundation */
   
-  /* Set a small, consistent size */
-  width: 50px;
-  height: 50px;
+  /* --- The Perfect Centering Fix --- */
+  /* This combination centers the logo horizontally regardless of screen size */
+  left: 50%;
+  transform: translateX(-50%);
   
-  /* Give it a little space to the left */
-  margin-left: 10px;
+  /* --- The Sizing Fix --- */
+  /* We'll use a maximum width to ensure it scales correctly on all devices */
+  width: 90%; /* Let it take up to 90% of the parent container's width */
+  max-width: 450px; /* But don't let it get wider than 450px on larger screens */
+
+  /* This margin helps reduce the white space above and below the logo */
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 
