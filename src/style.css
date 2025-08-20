@@ -420,24 +420,23 @@ body {
 @media (max-width: 1023px) {
 
   /* Show the sticker on tablets and mobile */
-  .about-top .sticker {
-  display: block;
-  position: relative;
-  
-  /* --- The Final Centering Fix --- */
-  /* This combination is very forceful and should override any parent container issues */
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-  
-  /* --- The Final Sizing Fix --- */
-  /* Use a viewport-based unit to ensure it fills the screen on mobile */
-  width: 95vw;
-  max-width: 800px; /* A much larger maximum size for tablets and desktops */
+  .about-top {
+  display: flex; /* Turn the container into a flexbox */
+  align-items: center; /* Vertically align all items in the center */
+  justify-content: space-between; /* Push the logo to the far right */
+}
 
-  /* Reduce the top and bottom margins to remove extra white space */
-  margin-top: 10px;
-  margin-bottom: 10px;
+/* Now we can simplify the sticker's own CSS */
+.about-top .sticker {
+  /* No need for complex positioning anymore! */
+  position: static;
+  
+  /* Set a small, consistent size */
+  width: 50px;
+  height: 50px;
+  
+  /* Give it a little space to the left */
+  margin-left: 10px;
 }
 
 
