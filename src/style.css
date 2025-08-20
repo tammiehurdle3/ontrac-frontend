@@ -404,6 +404,16 @@ body {
 
 /* This is the new, correct fix for the sticker's size and position */
 @media (max-width: 1023px) {
+  /* Reduce the padding on the hero section to decrease space from the header */
+  .hero {
+    padding: 40px 20px; /* Reduced from 80px */
+  }
+
+  /* Adjust the margin on the h1 to reduce space below it */
+  .hero h1 {
+    margin-bottom: 20px; /* Reduced from 50px */
+  }
+
   /* Remove conflicting styles from previous attempts */
   .about-top .sticker {
     position: static;
@@ -417,7 +427,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 30px 0; /* Adjust this value to control the white space */
+    padding: 20px 0; /* Reduced from 30px to decrease space */
   }
 
   .hero .sticker-container img {
@@ -428,6 +438,6 @@ body {
 
   /* Reduce margin on the text below the sticker to pull it closer */
   .about-top {
-    padding-top: 40px; /* Reduce top padding for less whitespace */
+    padding-top: 20px; /* Reduced from 40px for less whitespace */
   }
 }
