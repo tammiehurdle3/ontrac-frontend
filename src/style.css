@@ -428,7 +428,6 @@ body {
   .about-top .sticker {
     left: -15px; /* <-- SHIFTS LEFT */
     display: block;
-    height: -10;
     width: 70%;
     max-width: 260px;
     aspect-ratio: 1 / 1;
@@ -442,5 +441,17 @@ body {
   /* 5. Reduce space above the heading */
   .about-top h2 {
     margin-top: 0; /* Overrides the inline style on the h2 element */
+  }
+}
+@media (max-width: 767px) {
+  .tracking-form button {
+    /* 1. This removes the size limit, making the button's
+       width match the input field's width (100%). */
+    max-width: none;
+
+    /* 2. This adjusts the padding to make the button's
+       height match the input field's height. */
+    padding-top: 20px;
+    padding-bottom: 20px;
   }
 }
