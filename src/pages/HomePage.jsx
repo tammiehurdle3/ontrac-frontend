@@ -7,7 +7,7 @@ function HomePage() {
     <main>
       <section className="hero">
         <div className="container">
-          <h1>
+          <h1 style={{ marginTop: '0' }}>
             <span className="line">On Time.</span>
             <span className="line">On Point.</span>
             <span className="line logo-line">
@@ -20,7 +20,10 @@ function HomePage() {
 
       <section className="about-top">
         <div className="container">
-          <h2>Connecting Leading Retailers and Shippers to Their Customers. Faster.</h2>
+          
+          <img className="sticker" src="https://www.ontrac.com/wp-content/themes/ontrac/assets/images/sticker.png" alt="Sticker" />
+          
+          <h2 style={{ marginTop: '20px' }}>Connecting Leading Retailers and Shippers to Their Customers. Faster.</h2>
           <p>We provide last-mile e-commerce delivery services that hit the mark for you and your customers.</p>
           <a href="#" className="button">LEARN MORE</a>
           <ul className="stats-list">
@@ -28,7 +31,7 @@ function HomePage() {
             <li><h3>10-35%</h3><p>Cost savings</p></li>
             <li><h3>98%+</h3><p>On-time delivery performance</p></li>
           </ul>
-          <img className="sticker" src="https://www.ontrac.com/wp-content/themes/ontrac/assets/images/sticker.png" alt="Sticker" />
+          
         </div>
       </section>
 

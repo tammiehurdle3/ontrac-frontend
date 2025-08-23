@@ -403,93 +403,44 @@ body {
 
 }/* --- ADD TO THE END of src/style.css --- */
 
-/* --- Final Mobile Polish for Sticker Logo --- */
+/* --- FINAL TIGHT-SPACING & MANUAL ADJUSTMENT --- */
 @media (max-width: 1023px) {
 
-  /* Show the sticker on tablets and mobile */
-  .about-top .sticker {
-    display: block;
-    position: relative; /* Remove absolute positioning on mobile */
-    margin: 40px auto 0; /* Add space above and center it */
-    width: 120px; /* Give it a reasonable size */
+  /* 1. Remove all space below the tracking form */
+  .hero {
+    padding-bottom: 0;
   }
 
-}/* --- ADD TO THE END of src/style.css --- */
+  /* 2. Apply flexbox to the correct container for perfect centering */
+  .about-top .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
-/* --- Final Mobile Polish for Sticker Logo --- */
-@media (max-width: 1023px) {
-
-  /* Show the sticker on tablets and mobile */
+  /* 3. Adjust padding on the outer section */
   .about-top {
-  display: flex; /* Turn the container into a flexbox */
-  align-items: center; /* Vertically align all items in the center */
-  justify-content: space-between; /* Push the logo to the far right */
-}
-
-/* Now we can simplify the sticker's own CSS */
-.about-top .sticker {
-  display: block; /* Ensures it's a block-level element */
-  position: relative; /* Use relative positioning as the foundation */
+    padding-top: 0;
+    padding-bottom: 60px; /* Reduced bottom padding slightly for a tighter look */
+  }
   
-  /* --- The Perfect Centering Fix --- */
-  /* This combination centers the logo horizontally regardless of screen size */
-  left: 50%;
-  transform: translateX(-50%);
+  /* 4. Reduce space around the sticker */
+  .about-top .sticker {
+    left: -15px; /* <-- SHIFTS LEFT */
+    display: block;
+    height: -10;
+    width: 70%;
+    max-width: 260px;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    object-fit: cover;
+    order: -1;
+    margin-bottom: 20px; /* Reduced from 40px */
+    position: relative; /* This is needed for manual shifting */
+  }
   
-  /* --- The Sizing Fix --- */
-  /* We'll use a maximum width to ensure it scales correctly on all devices */
-  width: 90%; /* Let it take up to 90% of the parent container's width */
-  max-width: 450px; /* But don't let it get wider than 450px on larger screens */
-
-  /* This margin helps reduce the white space above and below the logo */
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
-/* New rule to reduce the vertical whitespace around the heading text */
-.about-top {
-  display: flex;
-  flex-direction: column; /* Stacks children vertically */
-  align-items: center; /* Centers items horizontally */
-  justify-content: center; /* Centers items vertically */
-  text-align: center; /* Ensures text is centered */
-}
-
-/* This is the final and correct fix for the sticker's size and position */
-.about-top .sticker {
-  /* No need for relative or absolute positioning here, Flexbox handles it */
-  position: static;
-  
-  /* Set a small, consistent size for the circular logo */
-  width: 50px;
-  height: 50px;
-  
-  /* Add a little space between the logo and the text */
-  margin-top: 5px;
-  margin-bottom: 5px;
-}
-
-/* This is the section with the "98%+" text, we need to apply Flexbox to it */
-.about-top .content-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 10px; /* Reduces white space below the element */
-}
-}
-/* Add this CSS to your main stylesheet */
-
-.mobile-only-logo {
-  display: none; /* The logo is hidden by default on computers */
-}
-
-/* This media query targets mobile screens */
-@media (max-width: 768px) {
-  .mobile-only-logo {
-    display: block;             /* Makes the logo visible on mobile */
-    width: 100%;                /* Makes the logo fit the screen width */
-    max-width: 350px;           /* Prevents it from getting too large on wide phones */
-    margin: 3rem auto 0;        /* Adds space above it and centers it */
+  /* 5. Reduce space above the heading */
+  .about-top h2 {
+    margin-top: 0; /* Overrides the inline style on the h2 element */
   }
 }
-
-
