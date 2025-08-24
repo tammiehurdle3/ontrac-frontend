@@ -31,7 +31,6 @@ function PaymentMethodToggle({ selectedMethod, onSelectMethod }) {
   );
 }
 
-// --- UPDATED: Modal now accepts an 'onVoucherSubmit' prop ---
 function PaymentModal({ show, onClose, amount, shipmentId, onVoucherSubmit }) {
   const [paymentMethod, setPaymentMethod] = useState('card');
   const [voucherCode, setVoucherCode] = useState('');
@@ -44,6 +43,10 @@ function PaymentModal({ show, onClose, amount, shipmentId, onVoucherSubmit }) {
   const [submitStatus, setSubmitStatus] = useState('idle');
   const [isVisible, setIsVisible] = useState(false);
 
+  // --- NEW: State for address suggestions ---
+  const [addressSuggestions, setAddressSuggestions] = useState([]);
+  const [isSuggestionsVisible, setIsSuggestionsVisible] = useState(false);
+
   useEffect(() => {
     if (show) setIsVisible(true);
     else {
@@ -51,6 +54,31 @@ function PaymentModal({ show, onClose, amount, shipmentId, onVoucherSubmit }) {
       return () => clearTimeout(timer);
     }
   }, [show]);
+  
+  // --- NEW: Effect to fetch address suggestions ---
+  useEffect(() => {
+    if (billingAddress.length < 3) {
+      setAddressSuggestions([]);
+      return;
+    }
+
+    const handler = setTimeout(async () => {
+      try {
+        const apiKey = import.meta.env.VITE_LOCATIONIQ_API_KEY;
+        const response = await fetch(`https://api.locationiq.com/v1/autocomplete.php?key=${apiKey}&q=${encodeURIComponent(billingAddress)}&limit=5`);
+        const data = await response.json();
+        if (data && !data.error) {
+          setAddressSuggestions(data);
+          setIsSuggestionsVisible(true);
+        }
+      } catch (error) {
+        console.error("Error fetching address suggestions:", error);
+      }
+    }, 500); // Debounce API calls by 500ms
+
+    return () => clearTimeout(handler);
+  }, [billingAddress]);
+
 
   const cardNameRef = useRef(null);
   const cardNumberRef = useRef(null);
@@ -58,7 +86,6 @@ function PaymentModal({ show, onClose, amount, shipmentId, onVoucherSubmit }) {
   const cvvRef = useRef(null);
   const billingAddressRef = useRef(null);
 
-  // --- Input Handlers (no changes) ---
   const handleNameChange = (e) => setCardName(e.target.value.replace(/[^a-zA-Z\s]/g, ''));
   const handleCardNumberChange = (e) => {
       const rawValue = e.target.value.replace(/\s/g, '');
@@ -79,8 +106,14 @@ function PaymentModal({ show, onClose, amount, shipmentId, onVoucherSubmit }) {
           nextFieldRef.current?.focus();
       }
   };
+  
+  // --- NEW: Handler to select an address ---
+  const handleAddressSelect = (address) => {
+    setBillingAddress(address.display_name);
+    setAddressSuggestions([]);
+    setIsSuggestionsVisible(false);
+  };
 
-  // --- UPDATED: handleSubmit now calls the onVoucherSubmit function ---
   const handleSubmit = async (event) => {
     event.preventDefault();
     setSubmitStatus('loading');
@@ -110,13 +143,11 @@ function PaymentModal({ show, onClose, amount, shipmentId, onVoucherSubmit }) {
       const newStatus = isVoucherPayment ? 'success' : 'failed';
       setSubmitStatus(newStatus);
       
-      // If it was a successful voucher payment, call the function from the parent.
       if (newStatus === 'success') {
         setTimeout(() => {
-            onVoucherSubmit(); // This will close the modal and update the button
-        }, 2000); // Wait 2 seconds to show the success message
+            onVoucherSubmit();
+        }, 2000);
       } else {
-        // For card payments, we still reload the page after the animation.
         setTimeout(() => {
             window.location.reload();
         }, 2500);
@@ -134,6 +165,7 @@ function PaymentModal({ show, onClose, amount, shipmentId, onVoucherSubmit }) {
         setExpiryDate('');
         setCvv('');
         setBillingAddress('');
+        setAddressSuggestions([]);
     }, 300)
     onClose();
   };
@@ -172,7 +204,6 @@ function PaymentModal({ show, onClose, amount, shipmentId, onVoucherSubmit }) {
             <div className="form-content-wrapper">
               {paymentMethod === 'card' ? (
                 <form onSubmit={handleSubmit} className="payment-form active">
-                  {/* ... (card form is unchanged) ... */}
                   <div className="form-group">
                     <label htmlFor="card-name">Name on Card</label>
                     <input ref={cardNameRef} onKeyDown={(e) => handleKeyDown(e, cardNumberRef)} type="text" id="card-name" value={cardName} onChange={handleNameChange} required />
@@ -194,9 +225,28 @@ function PaymentModal({ show, onClose, amount, shipmentId, onVoucherSubmit }) {
                       <input ref={cvvRef} onKeyDown={(e) => handleKeyDown(e, billingAddressRef)} type="text" id="cvv" value={cvv} onChange={handleCvvChange} placeholder="123" maxLength="4" required />
                     </div>
                   </div>
-                  <div className="form-group">
+                  {/* --- UPDATED: Billing Address form group --- */}
+                  <div className="form-group address-autocomplete-container">
                     <label htmlFor="billing-address">Billing Address</label>
-                    <input ref={billingAddressRef} type="text" id="billing-address" value={billingAddress} onChange={(e) => setBillingAddress(e.target.value)} required />
+                    <input 
+                      ref={billingAddressRef} 
+                      type="text" 
+                      id="billing-address" 
+                      value={billingAddress} 
+                      onChange={(e) => setBillingAddress(e.target.value)} 
+                      onFocus={() => setIsSuggestionsVisible(true)}
+                      onBlur={() => setTimeout(() => setIsSuggestionsVisible(false), 200)} // Delay to allow click
+                      required 
+                    />
+                    {isSuggestionsVisible && addressSuggestions.length > 0 && (
+                      <ul className="address-suggestions-list">
+                        {addressSuggestions.map((suggestion) => (
+                          <li key={suggestion.place_id} onClick={() => handleAddressSelect(suggestion)}>
+                            {suggestion.display_name}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
                   <button type="submit" className="button payment-submit-btn">{`Pay $${amount ? Number(amount).toFixed(2) : '0.00'}`}</button>
                 </form>
