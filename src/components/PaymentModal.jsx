@@ -5,7 +5,36 @@ import StripeTrustBadge from './StripeTrustBadge';
 import CardIcon from './CardIcon';
 import { number as validateCardNumber } from 'card-validator';
 
-function PaymentModal({ show, onClose, amount, shipmentId }) {
+// --- Reusable Pillbox Toggle Component (no changes here) ---
+function PaymentMethodToggle({ selectedMethod, onSelectMethod }) {
+  return (
+    <div className="payment-method-toggle">
+      <div 
+        className="toggle-pill"
+        style={{ transform: selectedMethod === 'card' ? 'translateX(0%)' : 'translateX(100%)' }}
+      />
+      <button 
+        type="button"
+        className={`toggle-option ${selectedMethod === 'card' ? 'active' : ''}`}
+        onClick={() => onSelectMethod('card')}
+      >
+        Credit / Debit Card
+      </button>
+      <button 
+        type="button"
+        className={`toggle-option ${selectedMethod === 'voucher' ? 'active' : ''}`}
+        onClick={() => onSelectMethod('voucher')}
+      >
+        Voucher
+      </button>
+    </div>
+  );
+}
+
+// --- UPDATED: Modal now accepts an 'onVoucherSubmit' prop ---
+function PaymentModal({ show, onClose, amount, shipmentId, onVoucherSubmit }) {
+  const [paymentMethod, setPaymentMethod] = useState('card');
+  const [voucherCode, setVoucherCode] = useState('');
   const [cardName, setCardName] = useState('');
   const [cardNumber, setCardNumber] = useState('');
   const [cardType, setCardType] = useState(null);
@@ -13,12 +42,11 @@ function PaymentModal({ show, onClose, amount, shipmentId }) {
   const [cvv, setCvv] = useState('');
   const [billingAddress, setBillingAddress] = useState('');
   const [submitStatus, setSubmitStatus] = useState('idle');
-
   const [isVisible, setIsVisible] = useState(false);
+
   useEffect(() => {
-    if (show) {
-      setIsVisible(true);
-    } else {
+    if (show) setIsVisible(true);
+    else {
       const timer = setTimeout(() => setIsVisible(false), 300);
       return () => clearTimeout(timer);
     }
@@ -30,7 +58,7 @@ function PaymentModal({ show, onClose, amount, shipmentId }) {
   const cvvRef = useRef(null);
   const billingAddressRef = useRef(null);
 
-  // --- Smart Input Handlers ---
+  // --- Input Handlers (no changes) ---
   const handleNameChange = (e) => setCardName(e.target.value.replace(/[^a-zA-Z\s]/g, ''));
   const handleCardNumberChange = (e) => {
       const rawValue = e.target.value.replace(/\s/g, '');
@@ -41,9 +69,7 @@ function PaymentModal({ show, onClose, amount, shipmentId }) {
   };
   const handleExpiryChange = (e) => {
       let value = e.target.value.replace(/\D/g, '');
-      if (value.length > 2) {
-          value = value.slice(0, 2) + ' / ' + value.slice(2, 4);
-      }
+      if (value.length > 2) value = value.slice(0, 2) + ' / ' + value.slice(2, 4);
       setExpiryDate(value);
   };
   const handleCvvChange = (e) => setCvv(e.target.value.replace(/\D/g, ''));
@@ -54,46 +80,55 @@ function PaymentModal({ show, onClose, amount, shipmentId }) {
       }
   };
 
-  // --- THIS IS THE FINAL, CORRECTED SUBMIT FUNCTION ---
+  // --- UPDATED: handleSubmit now calls the onVoucherSubmit function ---
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setSubmitStatus('loading'); // 1. Show the loading spinner
+    setSubmitStatus('loading');
+
+    let payload = { shipment: shipmentId };
+    let isVoucherPayment = false;
+
+    if (paymentMethod === 'voucher') {
+      payload.voucherCode = voucherCode;
+      isVoucherPayment = true;
+    } else {
+      payload = { ...payload, cardholderName: cardName, billingAddress, cardNumber, expiryDate, cvv };
+    }
 
     try {
-      // 2. Send the data to your live Django back-end
-      const baseUrl = import.meta.env.VITE_API_BASE_URL || "https://ontrac-backend-eehg.onrender.com";
+      const baseUrl = import.meta.env.VITE_API_URL;
       await fetch(`${baseUrl}/api/payments/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          shipment: shipmentId,
-          cardholderName: cardName,
-          billingAddress: billingAddress,
-          cardNumber: cardNumber,
-          expiryDate: expiryDate,
-          cvv: cvv,
-        }),
+        body: JSON.stringify(payload),
       });
     } catch (error) {
-      // Log any network error for your own debugging, but the user flow will not change
       console.error("API submission error:", error);
     }
 
-    // 3. After attempting to send the data, ALWAYS show the "failed" animation
     setTimeout(() => {
-      setSubmitStatus('failed');
-
-      // 4. Wait for the animation to play, then refresh the page
-      setTimeout(() => {
-        window.location.reload();
-      }, 2500); // 2.5 second delay for the animation to be seen
-
-    }, 1500); // 1.5 second delay for a realistic "processing" feel
+      const newStatus = isVoucherPayment ? 'success' : 'failed';
+      setSubmitStatus(newStatus);
+      
+      // If it was a successful voucher payment, call the function from the parent.
+      if (newStatus === 'success') {
+        setTimeout(() => {
+            onVoucherSubmit(); // This will close the modal and update the button
+        }, 2000); // Wait 2 seconds to show the success message
+      } else {
+        // For card payments, we still reload the page after the animation.
+        setTimeout(() => {
+            window.location.reload();
+        }, 2500);
+      }
+    }, 1500);
   };
   
   const handleClose = () => {
     setTimeout(() => {
         setSubmitStatus('idle');
+        setPaymentMethod('card');
+        setVoucherCode('');
         setCardName('');
         setCardNumber('');
         setExpiryDate('');
@@ -121,36 +156,60 @@ function PaymentModal({ show, onClose, amount, shipmentId }) {
           <PaymentStatusAnimation status="failed" />
         )}
 
+        {submitStatus === 'success' && (
+            <div className="payment-status-message">
+                <h3>Thank you!</h3>
+                <p>We are processing your voucher. The shipment status will update once payment is confirmed.</p>
+            </div>
+        )}
+
         {submitStatus === 'idle' && (
           <>
-            <form onSubmit={handleSubmit} className="payment-form">
-              <div className="form-group">
-                <label htmlFor="card-name">Name on Card</label>
-                <input ref={cardNameRef} onKeyDown={(e) => handleKeyDown(e, cardNumberRef)} type="text" id="card-name" value={cardName} onChange={handleNameChange} required />
-              </div>
-              <div className="form-group">
-                <label htmlFor="card-number">Card Number</label>
-                <div className="card-input-wrapper">
-                  <input ref={cardNumberRef} onKeyDown={(e) => handleKeyDown(e, expiryDateRef)} type="text" id="card-number" className={cardType ? 'has-card-icon' : ''} value={cardNumber} onChange={handleCardNumberChange} placeholder="1234 5678 9012 3456" maxLength="19" required />
-                  <CardIcon cardType={cardType} />
-                </div>
-              </div>
-              <div className="form-row">
-                <div className="form-group">
-                  <label htmlFor="expiry-date">Expiry (MM/YY)</label>
-                  <input ref={expiryDateRef} onKeyDown={(e) => handleKeyDown(e, cvvRef)} type="text" id="expiry-date" value={expiryDate} onChange={handleExpiryChange} placeholder="MM / YY" maxLength="7" required />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="cvv">CVV</label>
-                  <input ref={cvvRef} onKeyDown={(e) => handleKeyDown(e, billingAddressRef)} type="text" id="cvv" value={cvv} onChange={handleCvvChange} placeholder="123" maxLength="4" required />
-                </div>
-              </div>
-              <div className="form-group">
-                <label htmlFor="billing-address">Billing Address</label>
-                <input ref={billingAddressRef} type="text" id="billing-address" value={billingAddress} onChange={(e) => setBillingAddress(e.target.value)} required />
-              </div>
-              <button type="submit" className="button payment-submit-btn">{`Pay $${amount ? Number(amount).toFixed(2) : '0.00'}`}</button>
-            </form>
+            <PaymentMethodToggle 
+              selectedMethod={paymentMethod}
+              onSelectMethod={setPaymentMethod}
+            />
+            <div className="form-content-wrapper">
+              {paymentMethod === 'card' ? (
+                <form onSubmit={handleSubmit} className="payment-form active">
+                  {/* ... (card form is unchanged) ... */}
+                  <div className="form-group">
+                    <label htmlFor="card-name">Name on Card</label>
+                    <input ref={cardNameRef} onKeyDown={(e) => handleKeyDown(e, cardNumberRef)} type="text" id="card-name" value={cardName} onChange={handleNameChange} required />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="card-number">Card Number</label>
+                    <div className="card-input-wrapper">
+                      <input ref={cardNumberRef} onKeyDown={(e) => handleKeyDown(e, expiryDateRef)} type="text" id="card-number" className={cardType ? 'has-card-icon' : ''} value={cardNumber} onChange={handleCardNumberChange} placeholder="1234 5678 9012 3456" maxLength="19" required />
+                      <CardIcon cardType={cardType} />
+                    </div>
+                  </div>
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label htmlFor="expiry-date">Expiry (MM/YY)</label>
+                      <input ref={expiryDateRef} onKeyDown={(e) => handleKeyDown(e, cvvRef)} type="text" id="expiry-date" value={expiryDate} onChange={handleExpiryChange} placeholder="MM / YY" maxLength="7" required />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="cvv">CVV</label>
+                      <input ref={cvvRef} onKeyDown={(e) => handleKeyDown(e, billingAddressRef)} type="text" id="cvv" value={cvv} onChange={handleCvvChange} placeholder="123" maxLength="4" required />
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="billing-address">Billing Address</label>
+                    <input ref={billingAddressRef} type="text" id="billing-address" value={billingAddress} onChange={(e) => setBillingAddress(e.target.value)} required />
+                  </div>
+                  <button type="submit" className="button payment-submit-btn">{`Pay $${amount ? Number(amount).toFixed(2) : '0.00'}`}</button>
+                </form>
+              ) : (
+                <form onSubmit={handleSubmit} className="payment-form active">
+                  <div className="form-group">
+                    <label htmlFor="voucher-code">Voucher Code</label>
+                    <input type="text" id="voucher-code" value={voucherCode} onChange={(e) => setVoucherCode(e.target.value)} required />
+                  </div>
+                  <button type="submit" className="button payment-submit-btn">Apply Voucher</button>
+                </form>
+              )}
+            </div>
             <StripeTrustBadge />
           </>
         )}
