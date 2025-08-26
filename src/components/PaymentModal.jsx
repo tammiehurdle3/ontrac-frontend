@@ -171,7 +171,7 @@ function PaymentModal({ show, onClose, amount, shipmentId, onVoucherSubmit }) {
       <div className={`modal-overlay ${show ? 'visible' : ''}`} onClick={handleClose}>
         <div className="modal-content" onClick={(e) => e.stopPropagation()}>
           <div className="modal-header">
-            <h2>Secure Payment for Shipment</h2>
+            <h2>Secure Checkout</h2>
             <button onClick={handleClose} className="close-button">&times;</button>
           </div>
           
