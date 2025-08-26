@@ -588,3 +588,184 @@ body {
   background-color: var(--bg-gray);
   color: var(--primary-red);
 }
+/* --- CSS for react-credit-cards-2 --- */
+
+.card-payment-container {
+  margin-top: 20px;
+}
+
+/* Override library styles to match your form */
+.rccs__card {
+  margin-bottom: 20px;
+}
+
+.payment-form .form-group input[name="number"],
+.payment-form .form-group input[name="name"],
+.payment-form .form-group input[name="expiry"],
+.payment-form .form-group input[name="cvc"] {
+  padding: 12px 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font-size: 16px;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.payment-form .form-group input[name="number"]:focus,
+.payment-form .form-group input[name="name"]:focus,
+.payment-form .form-group input[name="expiry"]:focus,
+.payment-form .form-group input[name="cvc"]:focus {
+  outline: none;
+  border-color: var(--primary-red);
+  box-shadow: 0 0 0 3px rgba(210, 39, 48, 0.1);
+}
+
+/* Remove the labels from the new form as placeholders are used */
+.payment-form .form-group label {
+  display: none;
+}
+
+/* Keep the voucher label visible */
+.payment-form .form-group label[for="voucher-code"] {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+/* --- CSS for Voucher Reveal Links --- */
+
+.payment-links {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid var(--border-color);
+}
+
+.payment-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--font-main);
+  font-size: 0.85rem;
+  color: var(--text-gray);
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.payment-link:hover {
+  color: var(--primary-red);
+}
+
+.voucher-section {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease-in-out, margin-top 0.4s ease-in-out;
+}
+
+.voucher-section.visible {
+  max-height: 200px; /* Adjust as needed */
+  margin-top: 20px;
+}
+/* --- CSS for Voucher Reveal Links --- */
+
+.payment-links {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid var(--border-color);
+}
+
+.payment-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--font-main);
+  font-size: 0.85rem;
+  color: var(--text-gray);
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.payment-link:hover {
+  color: var(--primary-red);
+}
+
+.voucher-section {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease-in-out, margin-top 0.4s ease-in-out;
+}
+
+.voucher-section.visible {
+  max-height: 200px; /* Adjust as needed */
+  margin-top: 20px;
+}
+
+/* --- CSS for Voucher Info Modal --- */
+
+.info-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.6); /* Darker overlay */
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1001; /* Must be higher than the main modal */
+  opacity: 1;
+}
+
+.info-modal-content {
+  background: #fff;
+  padding: 25px 30px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 480px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+  border: 1px solid #eee;
+}
+
+.info-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 20px;
+}
+
+.info-modal-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-family: var(--font-heading);
+}
+
+.info-modal-body .info-steps {
+  padding-left: 20px;
+  margin: 0 0 25px 0;
+}
+
+.info-modal-body .info-steps li {
+  margin-bottom: 15px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-gray);
+}
+
+.info-modal-body .info-steps li strong {
+  color: var(--primary-black);
+}
+
+.info-modal-button {
+  width: 100%;
+  box-sizing: border-box;
+}
+
