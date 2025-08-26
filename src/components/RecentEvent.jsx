@@ -5,6 +5,14 @@ import React from 'react';
 function RecentEvent({ event }) {
   if (!event) return null;
 
+  // --- NEW: Function to open the Tawk.to chat widget ---
+  const handleChatClick = () => {
+    // This checks if the Tawk.to API is available on the page
+    if (window.Tawk_API && window.Tawk_API.maximize) {
+      window.Tawk_API.maximize();
+    }
+  };
+
   return (
     <div className="most-recent-event">
       <h3>Most Recent Tracking Event</h3>
@@ -27,7 +35,10 @@ function RecentEvent({ event }) {
         <p>{event.description}</p>
       </div>
       <div className="event-actions">
-        <button className="button button-white"><i className="fa-solid fa-user-headset"></i> Chat now</button>
+        {/* --- UPDATED: The button is now clickable --- */}
+        <button className="button button-white" onClick={handleChatClick}>
+          <i className="fa-solid fa-user-headset"></i> Chat now
+        </button>
       </div>
     </div>
   );
