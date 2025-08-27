@@ -29,17 +29,22 @@ function VoucherInfoModal({ show, onClose }) {
                             <strong>Receive Your Code:</strong> After your purchase is complete, a unique voucher code will be sent to your email instantly.
                         </li>
                         <li>
-                            <strong>Complete Your Payment:</strong> Return to this screen, reveal the voucher field, and enter the code to finalize your shipment payment.
+                            <strong>Complete Your Payment:</strong> Return to this screen, reveal the voucher field, and enter the code to finalize your payment.
                         </li>
                     </ol>
-                    <a 
-                        href="https://mygiftcardsupply.com" 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
-                        className="button info-modal-button"
-                    >
-                        Go to MyGiftCardSupply.com
-                    </a>
+                    <div>
+                        <a 
+                            href="https://mygiftcardsupply.com" 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="button info-modal-button"
+                        >
+                            Purchase Voucher
+                        </a>
+                        <p style={{textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-gray)', marginTop: '10px'}}>
+                            Continuing securely to our trusted partner site.
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
