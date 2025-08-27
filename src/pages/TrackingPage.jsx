@@ -6,15 +6,32 @@ import RecentEvent from '../components/RecentEvent';
 import CollapsibleSection from '../components/CollapsibleSection';
 import PaymentModal from '../components/PaymentModal';
 
+// --- NEW: Helper function to format the date ---
+// This function checks if the text is a valid date and formats it nicely.
+// If it's not a date (e.g., "Not yet scheduled"), it returns the text as is.
+const formatExpectedDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    // Check if the date is valid and the string contains a hyphen (to avoid formatting plain text)
+    if (!isNaN(date.getTime()) && dateString.includes('-')) {
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            timeZone: 'UTC' // Important to prevent off-by-one day errors
+        });
+    }
+    return dateString; // Return the original text if it's not a date
+};
+
+
 function TrackingPage() {
     const [searchParams] = useSearchParams();
     const trackingId = searchParams.get('id');
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    
     const [isLoading, setIsLoading] = useState(true);
-    
     const [isPaymentProcessing, setIsPaymentProcessing] = useState(false);
     const [processingDots, setProcessingDots] = useState(1);
 
@@ -31,7 +48,7 @@ function TrackingPage() {
 
     useEffect(() => {
         if (!trackingId) {
-            setIsLoading(false); // Stop loading if there's no ID
+            setIsLoading(false);
             return;
         }
 
@@ -43,7 +60,7 @@ function TrackingPage() {
             }
             const responseData = await response.json();
             if (responseData) {
-                return { // Sanitize the data
+                return {
                     ...responseData,
                     allEvents: Array.isArray(responseData.allEvents) ? responseData.allEvents : [],
                     recentEvent: Array.isArray(responseData.recentEvent) ? responseData.recentEvent : [],
@@ -63,7 +80,7 @@ function TrackingPage() {
             try {
                 const [responseData] = await Promise.all([
                     fetchTrackingData(),
-                    artificialDelay(1500) // Set a 1.5 second minimum load time
+                    artificialDelay(1500)
                 ]);
                 setData(responseData);
             } catch (err) {
@@ -84,7 +101,6 @@ function TrackingPage() {
     if (isLoading) {
         return (
             <div className="loading-spinner-overlay">
-                {/* --- UPDATED: Simpler HTML for the new circular spinner --- */}
                 <div className="loading-spinner"></div>
             </div>
         );
@@ -99,7 +115,6 @@ function TrackingPage() {
         <main className="tracking-page-container">
             <section className="track-results-container">
                 <div className="track-block">
-                    {/* ... (rest of the tracking block is unchanged) ... */}
                     <div className="track-block-top">
                         <div className="header-lhs">
                              <div className="tracking-overview">
@@ -113,7 +128,8 @@ function TrackingPage() {
                             <div className="status-lhs"><h2>{data.status}</h2></div>
                             <div className="status-rhs">
                                 <div className="destination-info"><label>Going To</label><p>{data.destination}</p></div>
-                                <div className="destination-info"><label>Expected</label><p>{data.expectedDate}</p></div>
+                                {/* --- UPDATED: Using the new formatting function --- */}
+                                <div className="destination-info"><label>Expected</label><p>{formatExpectedDate(data.expectedDate)}</p></div>
                             </div>
                         </div>
                         <ProgressBar percent={data.progressPercent} labels={data.progressLabels} />
@@ -134,7 +150,6 @@ function TrackingPage() {
                         </div>
                         
                         <div className="collapsible-sections">
-                            {/* ... (collapsible sections are unchanged) ... */}
                             <CollapsibleSection title="All OnTrac Events" icon="fa-list">
                                 <table className="events-table">
                                     <thead>
