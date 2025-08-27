@@ -6,22 +6,18 @@ import RecentEvent from '../components/RecentEvent';
 import CollapsibleSection from '../components/CollapsibleSection';
 import PaymentModal from '../components/PaymentModal';
 
-// --- NEW: Helper function to format the date ---
-// This function checks if the text is a valid date and formats it nicely.
-// If it's not a date (e.g., "Not yet scheduled"), it returns the text as is.
 const formatExpectedDate = (dateString) => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
-    // Check if the date is valid and the string contains a hyphen (to avoid formatting plain text)
     if (!isNaN(date.getTime()) && dateString.includes('-')) {
         return date.toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
-            timeZone: 'UTC' // Important to prevent off-by-one day errors
+            timeZone: 'UTC'
         });
     }
-    return dateString; // Return the original text if it's not a date
+    return dateString;
 };
 
 
@@ -60,10 +56,11 @@ function TrackingPage() {
             }
             const responseData = await response.json();
             if (responseData) {
+                // --- BUG FIX: Correctly handle recentEvent as an object ---
                 return {
                     ...responseData,
                     allEvents: Array.isArray(responseData.allEvents) ? responseData.allEvents : [],
-                    recentEvent: Array.isArray(responseData.recentEvent) ? responseData.recentEvent : [],
+                    // recentEvent is now passed through as the object it is
                     progressLabels: Array.isArray(responseData.progressLabels) ? responseData.progressLabels : [],
                 };
             }
@@ -109,7 +106,8 @@ function TrackingPage() {
     if (error) { return <div className="tracking-page-container"><p>{error}</p></div>; }
     if (!data) { return <div className="tracking-page-container"><p>Searching for your shipment...</p></div>; }
 
-    const latestEvent = data.recentEvent[0] || null;
+    // --- BUG FIX: No longer treating recentEvent as an array ---
+    const latestEvent = data.recentEvent || null;
 
     return (
         <main className="tracking-page-container">
@@ -128,11 +126,12 @@ function TrackingPage() {
                             <div className="status-lhs"><h2>{data.status}</h2></div>
                             <div className="status-rhs">
                                 <div className="destination-info"><label>Going To</label><p>{data.destination}</p></div>
-                                {/* --- UPDATED: Using the new formatting function --- */}
                                 <div className="destination-info"><label>Expected</label><p>{formatExpectedDate(data.expectedDate)}</p></div>
                             </div>
                         </div>
                         <ProgressBar percent={data.progressPercent} labels={data.progressLabels} />
+                        
+                        {/* This now correctly passes the event object */}
                         <RecentEvent event={latestEvent} />
                         
                         <div className="payment-button-container">
