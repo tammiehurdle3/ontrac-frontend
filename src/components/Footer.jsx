@@ -1,6 +1,5 @@
 // src/components/Footer.jsx
 import React from 'react';
-// --- IMPORT LINK FROM REACT ROUTER ---
 import { Link } from 'react-router-dom';
 
 function Footer() {
@@ -14,12 +13,18 @@ function Footer() {
             </a>
             <div className="footer-bottom">
               <div className="legal-links">
-                {/* --- UPDATE THESE TO USE LINK AND CORRECT PATHS --- */}
                 <Link to="/privacy-policy">Privacy Policy</Link>
                 <Link to="/terms-and-conditions">Terms & Conditions</Link>
               </div>
               <small>© 2025 OnTrac. All rights reserved.</small>
             </div>
+          </div>
+          <div className="footer-column-links">
+            {/* --- NEW COMPANY COLUMN --- */}
+            <h4>Company</h4>
+            <Link to="/about-us">About Us</Link>
+            <a href="#">Careers</a>
+            <a href="#">Press</a>
           </div>
           <div className="footer-column-links">
             <h4>E-Commerce Delivery</h4>
