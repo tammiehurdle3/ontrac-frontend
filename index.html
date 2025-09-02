@@ -6,24 +6,47 @@
     <link rel="icon" href="/ontrac_favicon.png" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-    <title>OnTrac Courier - Secure Shipment Services for Brand Partners</title>
+    <title>OnTrac Courier - Secure Shipment Services</title>
     
     <meta name="description" content="OnTrac provides professional, trackable shipping notifications and logistics for brand and creator partnerships. Check your shipment status securely." />
 
   </head>
   <body>
     <div id="root"></div>
+
+    <!-- 
+      THIS IS THE NEW, HIDDEN FORM FOR NETLIFY.
+      It has the same fields as your React form. This allows Netlify's 
+      build robots to "see" your form and set everything up correctly.
+      It will not be visible to your users.
+    -->
+    <form name="contact" netlify netlify-honeypot="bot-field" hidden>
+      <input type="text" name="name" />
+      <input type="email" name="email" />
+      <input type="text" name="subject" />
+      <textarea name="message"></textarea>
+    </form>
+    
     <script type="module" src="/src/main.jsx"></script>
     <script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/68adada2e7c2cf192a46cede/1j3j6sh3e';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
-</script>
-</body>
+      var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+      (function(){
+      var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+      s1.async=true;
+      s1.src='https://embed.tawk.to/68adada2e7c2cf192a46cede/1j3j6sh3e';
+      s1.charset='UTF-8';
+      s1.setAttribute('crossorigin','*');
+      s0.parentNode.insertBefore(s1,s0);
+      })();
+    </script>
+  </body>
 </html>
+```
+
+After you replace the contents of your `index.html` file, run these commands in your **frontend (`ontrac-react`) terminal** to push the fix live:
+
+```bash
+git add index.html
+git commit -m "Add hidden form for Netlify detection"
+git push
+
