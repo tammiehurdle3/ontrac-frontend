@@ -20,9 +20,10 @@ function Footer() {
             </div>
           </div>
           <div className="footer-column-links">
-            {/* --- NEW COMPANY COLUMN --- */}
             <h4>Company</h4>
             <Link to="/about-us">About Us</Link>
+            {/* --- ADD THE NEW LINK HERE --- */}
+            <Link to="/knowledge-center">Knowledge Center</Link>
             <a href="#">Careers</a>
             <a href="#">Press</a>
           </div>

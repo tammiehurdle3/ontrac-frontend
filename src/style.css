@@ -768,4 +768,360 @@ body {
   width: 100%;
   box-sizing: border-box;
 }
+/* Add this new block of CSS to the end of your main style.css file */
+
+/* --- Knowledge Center Hub Page --- */
+.knowledge-center-container {
+  padding: 60px 20px;
+  text-align: center;
+  background-color: var(--bg-gray); /* Match your features section background */
+}
+
+.knowledge-center-title {
+  font-family: var(--font-heading);
+  font-size: 2.8rem;
+  margin-bottom: 15px;
+}
+
+.knowledge-center-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-gray);
+  max-width: 600px;
+  margin: 0 auto 50px;
+}
+
+.articles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 30px;
+  text-align: left;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.article-card {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.article-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.article-card .card-content {
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.article-card h3 {
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.article-card p {
+  color: var(--text-gray);
+  flex-grow: 1;
+  margin-bottom: 25px;
+}
+
+.article-card .card-button {
+  align-self: flex-start;
+  padding: 12px 30px;
+}
+
+
+/* --- Individual Article Page --- */
+.article-container {
+  padding: 60px 20px;
+  max-width: 800px;
+}
+
+.article-title {
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  line-height: 1.2;
+  margin-bottom: 30px;
+}
+
+.article-content {
+  line-height: 1.8;
+  font-size: 1.1rem;
+}
+
+.article-content p,
+.article-content ul,
+.article-content h3 {
+  margin-bottom: 25px;
+}
+
+.article-content h3 {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+}
+
+.article-content ul {
+  padding-left: 20px;
+}
+
+.article-content li {
+    margin-bottom: 10px;
+}
+
+.back-button {
+  margin-top: 40px;
+  display: inline-block;
+}
+/* --- ADD THIS NEW BLOCK to the end of your src/style.css file --- */
+
+/* --- Delivery Solutions Page --- */
+.delivery-solutions-page {
+  background-color: #fff;
+}
+
+/* --- Hero Section --- */
+.solutions-hero {
+  background-color: var(--primary-black);
+  color: #fff;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.solutions-hero-title {
+  font-family: var(--font-heading);
+  font-size: clamp(2.5rem, 6vw, 3.5rem);
+  line-height: 1.2;
+  margin: 0 0 20px 0;
+}
+
+.solutions-hero-subtitle {
+  font-size: 1.1rem;
+  max-width: 700px;
+  margin: 0 auto;
+  opacity: 0.9;
+}
+
+/* --- Services Section --- */
+.solutions-services {
+  padding: 80px 20px;
+}
+
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.service-card {
+  background-color: var(--bg-gray);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 40px;
+  text-align: center;
+}
+
+.service-card-icon {
+  font-size: 2.5rem;
+  color: var(--primary-red);
+  margin-bottom: 20px;
+}
+
+.service-card h3 {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  margin: 0 0 15px 0;
+}
+
+.service-card p {
+  color: var(--text-gray);
+  margin-bottom: 25px;
+}
+
+.service-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  color: var(--text-gray);
+}
+
+.service-card ul li {
+  position: relative;
+  padding-left: 25px;
+  margin-bottom: 10px;
+}
+
+.service-card ul li::before {
+  content: '\f00c'; /* Font Awesome checkmark */
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  position: absolute;
+  left: 0;
+  top: 2px;
+  color: #28a745; /* Green checkmark */
+}
+
+/* --- CTA Section --- */
+.solutions-cta {
+  background-color: var(--bg-gray);
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.solutions-cta h2 {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  margin: 0 0 15px 0;
+}
+
+.solutions-cta p {
+  max-width: 600px;
+  margin: 0 auto 30px;
+  color: var(--text-gray);
+}
+
+/* --- ADD THIS NEW BLOCK to the end of your src/style.css file --- */
+
+/* --- Contact Page --- */
+.contact-page {
+  padding: 80px 20px;
+  background-color: var(--bg-gray);
+}
+
+.contact-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.contact-title {
+  font-family: var(--font-heading);
+  font-size: 2.8rem;
+  margin-bottom: 15px;
+}
+
+.contact-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-gray);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 50px;
+  max-width: 1100px;
+  margin: 0 auto;
+  align-items: flex-start;
+}
+
+@media (min-width: 768px) {
+  .contact-grid {
+    grid-template-columns: 1fr 1.5fr;
+  }
+}
+
+.contact-details h3,
+.contact-form-container h3 {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.contact-details p {
+  color: var(--text-gray);
+  line-height: 1.7;
+}
+
+.contact-info-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 30px;
+}
+
+.contact-info-list li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  font-size: 1rem;
+}
+
+.contact-info-list i {
+  color: var(--primary-red);
+  font-size: 1.2rem;
+  margin-right: 15px;
+  width: 20px;
+  text-align: center;
+}
+
+.contact-info-list a {
+  color: var(--primary-black);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.contact-info-list a:hover {
+  color: var(--primary-red);
+}
+
+.contact-form-container {
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.contact-form .form-group {
+  margin-bottom: 20px;
+}
+
+.contact-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font-size: 16px;
+  font-family: var(--font-main);
+  transition: all 0.2s ease;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  outline: none;
+  border-color: var(--primary-red);
+  box-shadow: 0 0 0 3px rgba(210, 39, 48, 0.1);
+}
+
+.contact-form textarea {
+  resize: vertical;
+}
+
+.contact-form button {
+  width: 100%;
+  margin-top: 10px;
+}
+
 
