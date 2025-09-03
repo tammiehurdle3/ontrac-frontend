@@ -9,10 +9,10 @@ function Header() {
           <img src="https://www.ontrac.com/wp-content/themes/ontrac/assets/images/logo.svg" alt="OnTrac Logo" />
         </Link>
         <nav className="main-nav">
+          {/* --- THIS LINK IS NOW FUNCTIONAL --- */}
           <NavLink to="/delivery-solutions">Delivery Solutions</NavLink>
           <NavLink to="/about-us">About Us</NavLink>
           <NavLink to="/knowledge-center">Knowledge Center</NavLink>
-          {/* --- ADD THE NEW LINK --- */}
           <NavLink to="/contact">Contact</NavLink>
         </nav>
         <Link to="/" className="button button-header">

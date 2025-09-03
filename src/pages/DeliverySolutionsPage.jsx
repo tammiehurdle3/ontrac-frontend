@@ -1,8 +1,14 @@
-// src/pages/DeliverySolutionsPage.jsx
-import React from 'react';
-import { Link } from 'react-router-dom'; // Import Link
+import React, { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 function DeliverySolutionsPage() {
+  const location = useLocation();
+
+  // Scroll to top when the page loads
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location]);
+
   return (
     <div className="delivery-solutions-page">
       {/* --- 1. The Introduction (The "Why") --- */}
@@ -18,6 +24,7 @@ function DeliverySolutionsPage() {
       {/* --- 2. Our Core Services (The "What") --- */}
       <section className="solutions-services">
         <div className="container">
+          <h2 className="section-title">Our Core Services</h2>
           <div className="service-grid">
             {/* Service 1 */}
             <div className="service-card">
@@ -32,7 +39,7 @@ function DeliverySolutionsPage() {
                 <li>Dedicated support for business partners</li>
               </ul>
             </div>
-            {/* Service 2 */}
+            {/* Service 2 - UPDATED FOR GLOBAL SCOPE */}
             <div className="service-card">
               <div className="service-card-icon">
                 <i className="fa-solid fa-globe"></i>
@@ -45,10 +52,10 @@ function DeliverySolutionsPage() {
                 <li>Global network of carrier partners</li>
               </ul>
             </div>
-            {/* Service 3 - ICON ADDED */}
+            {/* Service 3 */}
             <div className="service-card">
               <div className="service-card-icon">
-                <i className="fa-solid fa-box"></i>
+                <i className="fa-solid fa-box-open"></i>
               </div>
               <h3>Direct-to-Consumer Delivery</h3>
               <p>Fast, reliable final-mile delivery directly to your customers' doorsteps. Our network is optimized for residential routes, ensuring a positive delivery experience that reflects the quality of your brand.</p>
@@ -62,13 +69,12 @@ function DeliverySolutionsPage() {
         </div>
       </section>
 
-      {/* --- 3. The Call to Action (The "How") - LINK UPDATED --- */}
+      {/* --- 3. The Call to Action (The "How") --- */}
       <section className="solutions-cta">
         <div className="container">
           <h2>Ready to Ship with Confidence?</h2>
           <p>Let's build a logistics solution that fits your business. Contact our team today to get a custom quote and learn more about partnering with OnTrac.</p>
-          {/* This is now a Link to a future /contact page */}
-          <Link to="/contact" className="button">Partner With Us</Link>
+          <a href="mailto:support@ontracourier.us" className="button">Partner With Us</a>
         </div>
       </section>
     </div>
