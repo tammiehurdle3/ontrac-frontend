@@ -1306,3 +1306,34 @@ body {
   border-radius: 8px;
   font-weight: 500;
 }
+/* --- Advanced Mobile Fix: Vertical Progress Tracker --- */
+/* This media query targets smaller phone screens */
+@media (max-width: 480px) {
+  .progress-tracker {
+    flex-direction: column; /* Stack the milestones vertically */
+    align-items: flex-start;  /* Align items to the left */
+    margin-left: 15px; /* Add some space on the left */
+  }
+
+  .milestone {
+    flex-direction: row;    /* Icons and text go side-by-side */
+    text-align: left;
+    width: 100%;
+    padding: 15px 0; /* Add vertical spacing between steps */
+  }
+
+  .milestone-label {
+    margin-top: 0;
+    margin-left: 15px; /* Space between icon and text */
+    font-size: 0.9rem; /* We can use a slightly larger font now */
+  }
+
+  /* This is the key to the vertical line */
+  .milestone-line {
+    position: absolute;
+    top: 30px; /* Start the line below the icon */
+    left: 15px; /* Center the line with the icon */
+    width: 2px; /* Make it a vertical line */
+    height: 100%; /* Make it connect to the next step */
+  }
+}
