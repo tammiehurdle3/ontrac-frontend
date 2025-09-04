@@ -129,7 +129,7 @@ function TrackingPage() {
                                 <div className="destination-info"><label>Expected</label><p>{formatExpectedDate(data.expectedDate)}</p></div>
                             </div>
                         </div>
-                        <ProgressBar percent={data.progressPercent} labels={data.progressLabels} />
+                        <ProgressBar status={data.status} labels={data.progressLabels} allEvents={data.allEvents} />
                         
                         {/* This now correctly passes the event object */}
                         <RecentEvent event={latestEvent} />
