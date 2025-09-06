@@ -1337,3 +1337,44 @@ body {
     height: 100%; /* Make it connect to the next step */
   }
 }
+/* --- Payment Summary Styles --- */
+.payment-section {
+    margin-top: 30px;
+    padding-top: 30px;
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+}
+.payment-summary {
+    margin-bottom: 20px;
+}
+.payment-label {
+    font-size: 0.9rem;
+    color: var(--text-gray);
+}
+.primary-amount {
+    font-family: var(--font-heading);
+    font-size: 2.2rem;
+    font-weight: 900;
+    margin: 5px 0;
+    color: var(--primary-red);
+}
+.secondary-amount {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-gray);
+}
+
+/* --- Payment Breakdown Styles --- */
+.payment-breakdown {
+  width: 100%;
+  max-width: 300px;
+  margin: 10px auto;
+  border-top: 1px solid var(--border-color);
+  padding-top: 10px;
+}
+.breakdown-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  color: var(--text-gray);
+}

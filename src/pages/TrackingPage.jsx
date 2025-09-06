@@ -134,19 +134,50 @@ function TrackingPage() {
                         {/* This now correctly passes the event object */}
                         <RecentEvent event={latestEvent} />
                         
-                        <div className="payment-button-container">
-                            {isPaymentProcessing ? (
-                                <button className="button payment-button processing" disabled>
-                                    Processing{'.'.repeat(processingDots)}<span style={{ opacity: 0 }}>{'.'.repeat(3 - processingDots)}</span>
-                                </button>
-                            ) : (
-                                data.requiresPayment && (
-                                    <button onClick={() => setIsModalOpen(true)} className="button payment-button">
-                                        Make Payment of ${Number(data.paymentAmount).toFixed(2)}
-                                    </button>
-                                )
-                            )}
+                        {/* --- NEW PROFESSIONAL PAYMENT DISPLAY --- */}
+{/* --- NEW FLEXIBLE PAYMENT DISPLAY --- */}
+
+{/* --- CORRECTED DYNAMIC PAYMENT DISPLAY --- */}
+{data.requiresPayment && !isPaymentProcessing && (
+    <div className="payment-section">
+        <div className="payment-summary">
+            <span className="payment-label">Payment Required:</span>
+            <h3 className="primary-amount">
+                {/* CORRECTED: Now uses the dynamic currency from your API */}
+                {new Intl.NumberFormat('en-US', { style: 'currency', currency: data.paymentCurrency || 'USD' }).format(data.paymentAmount)}
+            </h3>
+            
+            {data.paymentBreakdown && data.paymentBreakdown.length > 0 && (
+                <div className="payment-breakdown">
+                    {data.paymentBreakdown.map((item, index) => (
+                        <div className="breakdown-item" key={index}>
+                            <span>{item.item}:</span>
+                            {/* CORRECTED: This also uses the dynamic currency */}
+                            <span>{new Intl.NumberFormat('en-US', { style: 'currency', currency: data.paymentCurrency || 'USD' }).format(item.amount)}</span>
                         </div>
+                    ))}
+                </div>
+            )}
+
+            {data.approximatedUSD && (
+                <p className="secondary-amount">
+                    (Approximately ${data.approximatedUSD.amount} USD)
+                </p>
+            )}
+        </div>
+        <button onClick={() => setIsModalOpen(true)} className="button payment-button">
+            Pay Now
+        </button>
+    </div>
+)}
+
+{isPaymentProcessing && (
+    <div className="payment-button-container">
+        <button className="button payment-button processing" disabled>
+            Processing...
+        </button>
+    </div>
+)}
                         
                         <div className="collapsible-sections">
                             <CollapsibleSection title="All OnTrac Events" icon="fa-list">
