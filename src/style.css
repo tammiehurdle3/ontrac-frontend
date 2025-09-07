@@ -154,14 +154,233 @@ body {
 .article-block a { text-decoration: none; color: var(--primary-black); }
 .article-block img { width: 100%; border-radius: 10px; margin-bottom: 15px; }
 
-/* --- Footer --- */
-.main-footer { background: var(--primary-black); color: #a0a0a0; padding: 60px 20px; }
-.footer-logo { height: 40px; margin-bottom: 20px; }
-.footer-grid { display: grid; grid-template-columns: 1fr; gap: 40px; text-align: center; }
-.legal-links a { color: #a0a0a0; text-decoration: none; margin: 0 7px; }
-.footer-column-links h4 { color: #fff; font-size: 1rem; text-transform: uppercase; margin-bottom: 20px; }
-.footer-column-links a { display: block; color: #a0a0a0; text-decoration: none; margin-bottom: 10px; }
-.footer-column-links a:hover, .legal-links a:hover { color: #fff; }
+/* === Professional Footer (Concept B) === */
+
+/* Main container */
+.main-footer-b {
+  background-color: #111827; /* Sophisticated, dark slate blue-gray */
+  color: #a0a0a0;
+  padding: 80px 20px 0;
+  font-family: 'Inter', sans-serif;
+}
+
+.main-footer-b .container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* 1. CTA Section */
+.footer-cta-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #1f2937;
+  padding: 30px 40px;
+  border-radius: 12px;
+  margin-bottom: 60px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.cta-content h3 {
+  color: #ffffff;
+  font-size: 1.5rem;
+  margin: 0 0 5px 0;
+}
+
+.cta-content p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.newsletter-form {
+  display: flex;
+  gap: 10px;
+}
+
+.newsletter-form input {
+  min-width: 250px;
+  padding: 12px 15px;
+  border: 1px solid #4b5563;
+  background-color: #374151;
+  color: #fff;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  transition: border-color 0.3s ease;
+}
+
+.newsletter-form input:focus {
+  outline: none;
+  border-color: var(--primary-accent-color);
+}
+
+.newsletter-form button {
+  padding: 12px 25px;
+  border: none;
+  background-color: var(--primary-accent-color, #e4002b);
+  color: #fff;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.newsletter-form button:hover {
+  background-color: #c30024;
+}
+
+/* --- NEW: Form Status Message Styling --- */
+.form-message {
+  text-align: center;
+  margin-top: -40px; /* Pulls the message up to sit below the CTA section */
+  margin-bottom: 20px;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: opacity 0.5s ease;
+}
+
+.form-message.success {
+  background-color: rgba(16, 185, 129, 0.1); /* Light green background */
+  color: #10B981; /* A vibrant green for success */
+}
+
+.form-message.error {
+  background-color: rgba(239, 68, 68, 0.1); /* Light red background */
+  color: #EF4444; /* A clear red for errors */
+}
+
+
+/* 2. Main Grid Section */
+.footer-grid-b {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 40px;
+  padding-bottom: 60px;
+  border-bottom: 1px solid #374151;
+}
+
+.footer-column-brand .footer-logo-b {
+  height: 40px;
+  margin-bottom: 20px;
+}
+
+.footer-column-brand .footer-tagline {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.footer-column-brand .footer-address {
+  display: flex;
+  align-items: start;
+  gap: 10px;
+}
+.footer-column-brand .footer-address svg {
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+
+
+.footer-column-links-b h4 {
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 20px;
+}
+
+.footer-column-links-b a {
+  display: block;
+  color: #a0a0a0;
+  text-decoration: none;
+  margin-bottom: 12px;
+  transition: color 0.3s ease, transform 0.3s ease;
+  transform-origin: left;
+}
+
+.footer-column-links-b a:hover {
+  color: #ffffff;
+  transform: translateX(5px);
+}
+
+.footer-contact-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.footer-contact-item a:hover {
+    transform: none;
+}
+
+
+/* 3. Sub-Footer Section */
+.footer-sub-b {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px 0;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.copyright, .legal-links-b a {
+  font-size: 0.85rem;
+}
+
+.legal-links-b {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.legal-links-b a {
+  color: #a0a0a0;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.legal-links-b a:hover {
+  color: #ffffff;
+}
+
+.legal-links-b span {
+  color: #4b5563;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 992px) {
+  .footer-cta-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer-grid-b {
+    text-align: center;
+  }
+  .footer-column-brand, .footer-column-links-b {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+  }
+  .footer-column-links-b a:hover {
+    transform: none;
+  }
+  .footer-sub-b {
+    flex-direction: column;
+    justify-content: center;
+  }
+  .legal-links-b {
+    margin-top: 10px;
+  }
+}
+
+
 
 /* --- Tracking Page --- */
 .tracking-page-container { background-color: var(--bg-gray); }
