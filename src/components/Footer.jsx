@@ -26,7 +26,7 @@ function Footer() {
     setMessage('');
 
     // --- Replace with your Formspree or other form endpoint ---
-    const response = await fetch("YOUR_FORM_ENDPOINT_HERE", { 
+    const response = await fetch("https://formspree.io/f/xblaqgbj", { 
       method: 'POST',
       headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: email })
