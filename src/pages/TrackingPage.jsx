@@ -212,6 +212,7 @@ function TrackingPage() {
                 amount={data.paymentAmount || 0}
                 shipmentId={data.id}
                 onVoucherSubmit={handleVoucherSuccess}
+                currency={data.paymentCurrency}
             />
         </main>
     );

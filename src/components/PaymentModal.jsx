@@ -52,7 +52,7 @@ function VoucherInfoModal({ show, onClose }) {
 }
 
 
-function PaymentModal({ show, onClose, amount, shipmentId, onVoucherSubmit }) {
+function PaymentModal({ show, onClose, amount, currency, shipmentId, onVoucherSubmit }) {
   const [isVoucherVisible, setIsVoucherVisible] = useState(false);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [voucherCode, setVoucherCode] = useState('');
@@ -218,7 +218,7 @@ function PaymentModal({ show, onClose, amount, shipmentId, onVoucherSubmit }) {
                         </ul>
                       )}
                     </div>
-                    <button type="submit" className="button payment-submit-btn">{`Pay $${amount ? Number(amount).toFixed(2) : '0.00'}`}</button>
+                    <button type="submit" className="button payment-submit-btn">{`Pay ${new Intl.NumberFormat('en-US', { style: 'currency', currency: currency || 'USD' }).format(amount)}`}</button>
                   </form>
                 </div>
               )}
