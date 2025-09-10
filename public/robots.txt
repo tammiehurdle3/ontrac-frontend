@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /tracking
+
+Sitemap: https://ontracourier.us/sitemap.xml
