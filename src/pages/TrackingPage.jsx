@@ -202,7 +202,6 @@ function TrackingPage() {
                                     <li><label>Dimensions</label><p>{data.shipmentDetails?.dimensions}</p></li>
                                     <li><label>Origin</label><p>{data.shipmentDetails?.originZip}</p></li>
                                     <li><label>Destination</label><p>{data.shipmentDetails?.destinationZip}</p></li>
-</ul>
                                 </ul>
                             </CollapsibleSection>
                         </div>
