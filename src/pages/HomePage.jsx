@@ -1,7 +1,6 @@
 // src/pages/HomePage.jsx
 import React from 'react';
 import TrackingForm from '../components/TrackingForm';
-import SubscriptionForm from '../components/SubscriptionForm';
 
 function HomePage() {
   return (
@@ -115,11 +114,6 @@ function HomePage() {
               </a>
             </div>
           </div>
-        </div>
-      </section>
-      <section className="newsletter-signup" style={{ backgroundColor: '#f7f7f7' }}>
-        <div className="container">
-          <SubscriptionForm />
         </div>
       </section>
     </main>
