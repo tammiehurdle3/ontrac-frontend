@@ -1718,3 +1718,570 @@ body {
   }
 }
 
+/* --- ADD THIS TO THE END OF YOUR style.css FILE --- */
+
+/* =================================================================== */
+/* --- STYLES FOR THE INDEPENDENT ABOUT US PAGE --- */
+/* =================================================================== */
+
+/* This applies the gray background to the entire page body when the about page is shown. 
+   You might need to apply this class to a wrapper div in your App.js for the About page route. */
+body.about-page-background {
+  background-color: var(--bg-gray);
+}
+
+/* This styles the white "card" that holds your About Us content */
+.about-us-container {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-color);
+  padding: 40px;
+  max-width: 800px; /* Ensures text is readable */
+  margin: 60px auto; /* Adds space from the top/bottom and centers it */
+}
+
+/* --- Typography for the About Page --- */
+.about-us-container h1 {
+  font-family: var(--font-heading);
+  font-size: 2.8rem;
+  margin-bottom: 30px;
+}
+
+.about-us-container h2 {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  margin-top: 40px; /* Adds space above the subheadings */
+  margin-bottom: 15px;
+}
+
+.about-us-container p {
+  line-height: 1.7;
+  color: var(--text-gray);
+  font-size: 1.1rem; /* A slightly larger font size for readability */
+}
+
+/* This adds a separator line between the sections */
+.about-us-container h2 + p {
+  margin-top: 0;
+}
+.about-us-container p + h2 {
+  padding-top: 35px;
+  border-top: 1px solid var(--border-color);
+}
+
+/* --- Receipt Section Styles --- */
+.receipt-section {
+  margin-top: 30px;
+  padding: 25px;
+  background-color: var(--bg-gray);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+.receipt-details p {
+  margin: 8px 0;
+  font-size: 0.95rem;
+  color: var(--text-gray);
+}
+.receipt-section button {
+  margin-top: 15px;
+  width: 100%;
+}
+@media print {
+  body * { visibility: hidden; }
+  #printable-receipt, #printable-receipt * { visibility: visible; }
+  #printable-receipt { position: absolute; left: 0; top: 0; width: 100%; text-align: center; color: black; background: white; font-size: 12pt; }
+  .receipt-section button { display: none; } /* Hide button in print */
+}
+
+/* --- Receipt Modal Styles --- */
+.receipt-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1001;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.receipt-modal-overlay.show {
+    opacity: 1;
+}
+
+.receipt-modal-content {
+    background: #fff;
+    padding: 0;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    border: 1px solid #eee;
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+
+.receipt-modal-overlay.show .receipt-modal-content {
+    transform: scale(1);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    border-bottom: 1px solid #eee;
+    background: #f8f9fa;
+    border-radius: 12px 12px 0 0;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--primary-black);
+    font-weight: 600;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #999;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.close-button:hover {
+    background: #f0f0f0;
+    color: var(--primary-red);
+}
+
+/* Receipt Content */
+.receipt-printable {
+    padding: 30px;
+    background: white;
+}
+
+.receipt-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #eee;
+}
+
+.company-info {
+    flex: 1;
+}
+
+.company-info h3 {
+    margin: 0 0 5px 0;
+    font-size: 1.8rem;
+    color: var(--primary-red);
+    font-weight: 700;
+}
+
+.company-info p {
+    margin: 0 0 5px 0;
+    color: var(--text-gray);
+    font-size: 0.9rem;
+}
+
+.receipt-title h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--primary-black);
+    text-align: right;
+    font-weight: 600;
+}
+
+/* Tables */
+.receipt-table, .payment-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 25px;
+    font-size: 0.95rem;
+}
+
+.receipt-table td, .payment-table th, .payment-table td {
+    padding: 12px 8px;
+    border-bottom: 1px solid #eee;
+    vertical-align: top;
+}
+
+.receipt-table td:first-child, .payment-table th:first-child, .payment-table td:first-child {
+    padding-left: 0;
+    width: 35%;
+    font-weight: 600;
+    color: var(--primary-black);
+}
+
+.payment-table th {
+    background: #f8f9fa;
+    font-weight: 600;
+    text-align: left;
+    padding: 12px 8px;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.total-row {
+    background: #f8f9fa;
+    border-top: 2px solid #dee2e6;
+}
+
+.total-row td {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--primary-red);
+}
+
+/* Footer */
+.receipt-footer {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    text-align: center;
+    color: var(--text-gray);
+}
+
+.receipt-footer p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+}
+
+.receipt-footer em {
+    font-style: italic;
+    color: var(--primary-black);
+}
+
+/* Action Buttons */
+.receipt-actions {
+    padding: 25px 30px;
+    border-top: 1px solid #eee;
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+    background: #f8f9fa;
+    border-radius: 0 0 12px 12px;
+}
+
+.receipt-actions .button {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 140px;
+}
+
+.print-btn {
+    background: var(--primary-red);
+    color: white;
+}
+
+.print-btn:hover {
+    background: #b91c24;
+    transform: translateY(-1px);
+}
+
+.download-btn {
+    background: #28a745;
+    color: white;
+}
+
+.download-btn:hover {
+    background: #218838;
+    transform: translateY(-1px);
+}
+
+.close-btn {
+    background: #6c757d;
+    color: white;
+}
+
+.close-btn:hover {
+    background: #5a6268;
+    transform: translateY(-1px);
+}
+
+/* Proof of Payment Link */
+.receipt-link-container {
+    margin: 25px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-red);
+}
+
+.proof-of-payment-link {
+    color: #007bff !important;
+    text-decoration: none !important;
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.proof-of-payment-link:hover {
+    color: var(--primary-red) !important;
+    text-decoration: underline !important;
+}
+
+.link-icon {
+    font-size: 0.9rem;
+}
+
+/* Print Styles */
+@media print {
+    .receipt-modal-overlay,
+    .receipt-actions,
+    .modal-header,
+    .close-button {
+        display: none !important;
+    }
+    
+    .receipt-modal-content {
+        box-shadow: none !important;
+        border: none !important;
+        max-width: none !important;
+        width: 100% !important;
+        height: 100% !important;
+        border-radius: 0 !important;
+    }
+    
+    .receipt-printable {
+        padding: 20px !important;
+        font-size: 12pt !important;
+    }
+    
+    .receipt-header {
+        page-break-inside: avoid;
+    }
+    
+    .payment-breakdown-section {
+        page-break-inside: avoid;
+    }
+    
+    body {
+        background: white !important;
+        color: black !important;
+    }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .receipt-modal-content {
+        width: 95%;
+        margin: 10px;
+        max-height: 95vh;
+    }
+    
+    .receipt-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .receipt-actions .button {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .receipt-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .receipt-title h1 {
+        text-align: center;
+    }
+}
+
+/* --- Fix Print & PDF Issues --- */
+.receipt-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1001;
+    opacity: 1; /* Ensure visible */
+}
+
+.receipt-modal-overlay:not(.show) {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.receipt-modal-content {
+    background: #fff;
+    padding: 0;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    border: 1px solid #eee;
+    transform: scale(1); /* Ensure visible */
+    visibility: visible; /* Force visibility */
+}
+
+#receipt-modal-overlay.show {
+    opacity: 1;
+}
+
+.receipt-printable {
+    padding: 30px;
+    background: white;
+    color: black; /* Ensure text visible in print */
+    visibility: visible !important; /* Force for PDF/print */
+}
+
+.receipt-printable * {
+    visibility: visible !important;
+    color: black !important;
+}
+
+/* Print Styles - Hide everything except receipt */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    
+    #printable-receipt,
+    #printable-receipt * {
+        visibility: visible !important;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: white !important;
+        color: black !important;
+        box-shadow: none !important;
+        border: none !important;
+    }
+    
+    .receipt-modal-overlay,
+    .receipt-actions,
+    .modal-header,
+    .close-button,
+    .receipt-actions button {
+        display: none !important;
+    }
+    
+    body {
+        background: white !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    .receipt-modal-content {
+        box-shadow: none !important;
+        border: none !important;
+        width: 100% !important;
+        height: 100% !important;
+        border-radius: 0 !important;
+        max-width: none !important;
+    }
+}
+
+/* PDF Generation Fix */
+@media screen and (max-width: 0px) {
+    .receipt-printable {
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+}
+
+/* --- Enhanced Print Styles --- */
+@media print {
+    body * {
+        visibility: hidden !important;
+        display: none !important;
+    }
+    
+    #printable-receipt,
+    #printable-receipt * {
+        visibility: visible !important;
+        display: block !important;
+        position: static !important;
+        transform: none !important;
+        background: white !important;
+        color: black !important;
+        font-family: Arial, sans-serif !important;
+        font-size: 12pt !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+    }
+    
+    #printable-receipt {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        page-break-after: avoid !important;
+    }
+    
+    .receipt-modal-overlay, .receipt-modal-content {
+        background: white !important;
+        position: static !important;
+        width: 100% !important;
+        height: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+    }
+    
+    .receipt-actions, .modal-header {
+        display: none !important;
+    }
+    
+    .receipt-table, .payment-table {
+        border-collapse: collapse !important;
+    }
+    
+    .receipt-table td, .payment-table th, .payment-table td {
+        border: 1px solid black !important;
+        padding: 8px !important;
+    }
+    
+    .total-row {
+        background: #f2f2f2 !important;
+    }
+    
+    @page {
+        margin: 0.5in !important;
+        size: letter portrait !important;
+    }
+}

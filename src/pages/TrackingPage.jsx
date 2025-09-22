@@ -7,6 +7,11 @@ import ProgressBar from '../components/ProgressBar';
 import RecentEvent from '../components/RecentEvent';
 import CollapsibleSection from '../components/CollapsibleSection';
 import PaymentModal from '../components/PaymentModal';
+import ReceiptModal from '../components/ReceiptModal'; // NEW: For the modal
+
+// NEW: Add FontAwesome imports (safe to have even if not used)
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
 // Your existing date formatting function (UNCHANGED)
 const formatExpectedDate = (dateString) => {
@@ -30,6 +35,9 @@ function TrackingPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [isPaymentProcessing, setIsPaymentProcessing] = useState(false);
     const [processingDots, setProcessingDots] = useState(1);
+
+    // NEW: Add this state for receipt modal
+    const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
 
     // Your existing useEffect for the processing dots animation (UNCHANGED)
     useEffect(() => {
@@ -124,6 +132,12 @@ function TrackingPage() {
         setIsPaymentProcessing(true);
     };
 
+    // NEW: Fixed function to open receipt modal
+    const openReceiptModal = () => {
+        console.log('🔵 Opening receipt modal'); // DEBUG
+        setIsReceiptModalOpen(true);
+    };
+
     // The entire JSX return block below is completely UNCHANGED.
     if (isLoading) {
         return <div className="loading-spinner-overlay"><div className="loading-spinner"></div></div>;
@@ -184,6 +198,23 @@ function TrackingPage() {
                                 <button className="button payment-button processing" disabled>Processing...</button>
                             </div>
                         )}
+                        {/* NEW: FIXED receipt link - Uses button instead of anchor */}
+                        {data.show_receipt && (
+                            <div className="receipt-link-container">
+                                <button
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        openReceiptModal();
+                                    }}
+                                    className="proof-of-payment-link"
+                                    type="button"
+                                >
+                                    <FontAwesomeIcon icon={faDownload} className="link-icon" />
+                                    Print proof of payment
+                                </button>
+                            </div>
+                        )}
                         <div className="collapsible-sections">
                             <CollapsibleSection title="All OnTrac Events" icon="fa-list">
                                 <table className="events-table">
@@ -216,9 +247,18 @@ function TrackingPage() {
                 onVoucherSubmit={handleVoucherSuccess}
                 currency={data.paymentCurrency}
             />
+            {/* NEW: Add the receipt modal */}
+            <ReceiptModal 
+                show={isReceiptModalOpen} 
+                onClose={() => setIsReceiptModalOpen(false)} 
+                receipt={data.receipt}
+                trackingId={trackingId}
+                recipientName={data.recipient_name}
+                paymentAmount={data.paymentAmount}
+                paymentCurrency={data.paymentCurrency}
+            />
         </main>
     );
 }
 
 export default TrackingPage;
-

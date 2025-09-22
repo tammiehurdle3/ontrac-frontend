@@ -1,21 +1,39 @@
-// src/components/CouponPayment.jsx
 import React, { useState } from 'react';
 
-function CouponPayment({ shipmentId }) {
+function CouponPayment({ shipmentId, onSuccess }) {
   const [couponCode, setCouponCode] = useState('');
-  const [validationStatus, setValidationStatus] = useState('idle'); // idle | loading | success
+  const [validationStatus, setValidationStatus] = useState('idle'); // idle | loading | success | error
   const [message, setMessage] = useState('');
 
-  const handleValidate = () => {
-    if (!couponCode) return;
+  const handleValidate = async () => {
+    if (!couponCode) {
+      setValidationStatus('error');
+      setMessage('Please enter a coupon code.');
+      return;
+    }
     setValidationStatus('loading');
     setMessage('Verifying your coupon code, please wait...');
 
-    // Simulate a network call for 2.5 seconds
-    setTimeout(() => {
-      setValidationStatus('success');
-      setMessage('Coupon applied! Your payment has been confirmed.');
-    }, 2500);
+    try {
+      const baseUrl = import.meta.env.VITE_API_URL;
+      const response = await fetch(`${baseUrl}/api/submit-voucher/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: couponCode, shipment_id: shipmentId }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setValidationStatus('success');
+        setMessage(data.message || 'Voucher submitted! Awaiting admin approval.');
+        if (onSuccess) onSuccess(); // Trigger your existing success handler
+      } else {
+        setValidationStatus('error');
+        setMessage(data.error || 'Invalid code. Try again.');
+      }
+    } catch (error) {
+      setValidationStatus('error');
+      setMessage('Network error. Please try again.');
+    }
   };
 
   return (
@@ -44,12 +62,14 @@ function CouponPayment({ shipmentId }) {
         </>
       )}
 
-      {(validationStatus === 'loading' || validationStatus === 'success') && (
+      {(validationStatus === 'loading' || validationStatus === 'success' || validationStatus === 'error') && (
         <div className={`validation-message ${validationStatus}`}>
           {validationStatus === 'loading' ? (
             <div className="mini-spinner"></div>
-          ) : (
+          ) : validationStatus === 'success' ? (
             <i className="fa-solid fa-check-circle success-icon"></i>
+          ) : (
+            <i className="fa-solid fa-exclamation-circle error-icon"></i>
           )}
           <p>{message}</p>
         </div>

