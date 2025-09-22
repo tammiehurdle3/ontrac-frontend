@@ -217,14 +217,24 @@ function TrackingPage() {
                         )}
                         <div className="collapsible-sections">
                             <CollapsibleSection title="All OnTrac Events" icon="fa-list">
-                                <table className="events-table">
-                                    <thead><tr><th>Date & Time</th><th>Event</th><th>City</th></tr></thead>
-                                    <tbody>
-                                        {data.allEvents.map((event, index) => (
-                                            <tr key={index}><td>{event.date}</td><td>{event.event}</td><td>{event.city}</td></tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                        <div className="events-table-container">
+                            <table className="events-table">
+                                <thead>
+                                    <tr><th>Date & Time</th><th>Event</th><th>City</th></tr>
+                                </thead>
+                                <tbody>
+                                    {data.allEvents.map((event, index) => (
+                                        <tr key={index}>
+                                            <td data-label="Date & Time">{event.date}</td>
+                                            <td data-label="Event">{event.event}</td>
+                                            <td data-label="City">{event.city}</td>
+                                            </tr>
+                                     ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+
                             </CollapsibleSection>
                             <CollapsibleSection title="Shipment Details" icon="fa-circle-info">
                                 <ul className="details-list">

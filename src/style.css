@@ -450,6 +450,7 @@ body {
 
 /* Responsive Adjustments */
 @media(max-width: 600px) {
+   
     .track-block-main { padding: 20px; }
     .track-block-top { padding: 15px; }
     .track-block-top h2 { font-size: 1.2rem; }
@@ -461,6 +462,15 @@ body {
     }
     .progress-labels { font-size: 0.65rem; }
 }
+    /* --- ADD THE NEW VERTICAL SCROLL CSS HERE --- */
+    .collapsible-content-inner {
+      max-height: 300px;
+      overflow-y: scroll;
+      -webkit-overflow-scrolling: touch;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      padding: 10px;
+    }
 
 /* --- DESKTOP STYLES (min-width: 768px) --- */
 @media (min-width: 768px) {
