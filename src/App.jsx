@@ -1,5 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import FeedbackPage from './pages/FeedbackPage.jsx'; // <-- ADD THIS IMPORT
+
 
 // Your existing components and pages
 // FIX: Removed the .jsx file extensions from the component and page imports, as the build tool is configured to resolve these automatically.
@@ -55,6 +57,8 @@ function App() {
           <Route path="/d2c-delivery" element={<D2CDeliveryPage />} />
           <Route path="/customs-info" element={<CustomsInfoPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/feedback" element={<FeedbackPage />} />
+
 
         </Routes>
       </main>
