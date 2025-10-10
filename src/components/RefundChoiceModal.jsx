@@ -122,7 +122,7 @@ function RefundChoiceModal({ show, onClose, balanceData }) {
                             <input type="radio" name="refund-choice" value="MANUAL" onChange={() => { setChoice('MANUAL'); setPayoutMethod(null); }} className="sr-only"/>
                             <FontAwesomeIcon icon={faCreditCard} className="card-icon" />
                             <h3 className="card-title">Manual Payout (Refund)</h3>
-                            <p className="card-description">Request a direct refund to PayPal or a prepaid card (3-5 business days).</p>
+                            <p className="card-description">Request a direct refund to PayPal or a prepaid card (3-7 business days).</p>
                         </label>
                     </div>
 
