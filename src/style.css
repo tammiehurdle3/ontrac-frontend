@@ -2719,3 +2719,43 @@ body.about-page-background {
 .input-group .input-field {
     padding-left: 40px;
 }
+/* =================================================================== */
+/* --- Maintenance Page Styles --- */
+/* =================================================================== */
+
+.maintenance-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  text-align: center;
+  padding: 20px;
+  font-family: var(--font-main);
+}
+
+.maintenance-box {
+  max-width: 550px;
+  margin: 0 auto;
+}
+
+.maintenance-icon {
+  font-size: 3rem;
+  color: var(--primary-red);
+  margin-bottom: 25px;
+}
+
+.maintenance-title {
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary-black);
+  margin: 0 0 15px 0;
+}
+
+.maintenance-text {
+  font-size: 1.1rem;
+  color: var(--text-gray);
+  line-height: 1.7;
+  margin: 0;
+}

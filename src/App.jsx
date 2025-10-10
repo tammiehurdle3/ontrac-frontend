@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import FeedbackPage from './pages/FeedbackPage.jsx'; // <-- ADD THIS IMPORT
-
+import MaintenancePage from './pages/MaintenancePage'; 
 
 // Your existing components and pages
 // FIX: Removed the .jsx file extensions from the component and page imports, as the build tool is configured to resolve these automatically.
@@ -33,6 +33,12 @@ import './InfoPages.css';
 
 
 function App() {
+  const isMaintenanceMode = import.meta.env.VITE_MAINTENANCE_MODE === 'true';
+
+  if (isMaintenanceMode) {
+    return <MaintenancePage />;
+  }
+  
   return (
     <Router>
       <Header />
