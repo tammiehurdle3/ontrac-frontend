@@ -7,7 +7,8 @@ function ReceiptModal({
     trackingId, 
     recipientName, 
     paymentAmount, 
-    paymentCurrency 
+    paymentCurrency,
+    paymentDescription
 }) {
     if (!show) return null;
 
@@ -29,6 +30,7 @@ function ReceiptModal({
             currency: paymentCurrency || 'USD' 
         }).format(paymentAmount || 0);
         const formattedGeneratedDate = new Date().toLocaleString();
+        const description = paymentDescription || 'Shipping Fee';
 
         return `
             <!DOCTYPE html>
@@ -75,7 +77,7 @@ function ReceiptModal({
                         <table class="payment-table">
                             <thead><tr><th>Description</th><th>Amount</th></tr></thead>
                             <tbody>
-                                <tr><td>Shipping Fee</td><td>${formattedAmount}</td></tr>
+                                <tr><td>${description}</td><td>${formattedAmount}</td></tr>
                                 <tr class="total-row"><td><strong>Total Amount Paid</strong></td><td><strong>${formattedAmount}</strong></td></tr>
                             </tbody>
                         </table>
@@ -141,7 +143,7 @@ function ReceiptModal({
                             <thead><tr><th>Description</th><th>Amount</th></tr></thead>
                             <tbody>
                                 <tr>
-                                    <td>Shipping Fee</td>
+                                    <td>{paymentDescription || 'Shipping Fee'}</td> 
                                     <td>{new Intl.NumberFormat('en-US', { style: 'currency', currency: paymentCurrency || 'USD' }).format(paymentAmount || 0)}</td>
                                 </tr>
                                 <tr className="total-row">
@@ -168,4 +170,3 @@ function ReceiptModal({
 }
 
 export default ReceiptModal;
-

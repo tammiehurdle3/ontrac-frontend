@@ -7,14 +7,17 @@ import ProgressBar from '../components/ProgressBar';
 import RecentEvent from '../components/RecentEvent';
 import CollapsibleSection from '../components/CollapsibleSection';
 import PaymentModal from '../components/PaymentModal';
-import ReceiptModal from '../components/ReceiptModal'; // NEW: For the modal
+import ReceiptModal from '../components/ReceiptModal';
+// NEW: Import the refund components
+import RefundNotification from '../components/RefundNotification';
+import RefundChoiceModal from '../components/RefundChoiceModal';
 
-// NEW: Add FontAwesome imports (safe to have even if not used)
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
 // Your existing date formatting function (UNCHANGED)
 const formatExpectedDate = (dateString) => {
+    // ... (no changes here)
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
     if (!isNaN(date.getTime()) && dateString.includes('-')) {
@@ -26,7 +29,7 @@ const formatExpectedDate = (dateString) => {
 };
 
 function TrackingPage() {
-    // Your existing state variables (UNCHANGED)
+    // Your existing state variables
     const [searchParams] = useSearchParams();
     const trackingId = searchParams.get('id');
     const [data, setData] = useState(null);
@@ -35,11 +38,13 @@ function TrackingPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [isPaymentProcessing, setIsPaymentProcessing] = useState(false);
     const [processingDots, setProcessingDots] = useState(1);
-
-    // NEW: Add this state for receipt modal
     const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
 
-    // Your existing useEffect for the processing dots animation (UNCHANGED)
+    // --- NEW: Add state for the refund feature ---
+    const [refundBalance, setRefundBalance] = useState(null);
+    const [isRefundModalOpen, setIsRefundModalOpen] = useState(false);
+
+
     useEffect(() => {
         let interval;
         if (isPaymentProcessing) {
@@ -49,17 +54,38 @@ function TrackingPage() {
         }
         return () => clearInterval(interval);
     }, [isPaymentProcessing]);
-
-    // This is the core data fetching function. It now only fetches and returns data.
-    const fetchTrackingData = async () => {
+    
+    // This is the core data fetching function. It now also checks for balance.
+    const fetchTrackingData = async (isUpdate = false) => {
         const baseUrl = import.meta.env.VITE_API_URL;
         const response = await fetch(`${baseUrl}/api/shipments/${trackingId}/`);
         if (!response.ok) {
             throw new Error('Tracking number not found or shipment has been canceled.');
         }
         const responseData = await response.json();
+
+        // --- NEW: Check for refund balance after getting shipment data ---
+        if (responseData && responseData.recipient_email) {
+            try {
+                const balanceResponse = await fetch(`${baseUrl}/api/check-balance/${responseData.recipient_email}/`);
+                if (balanceResponse.ok) {
+                    const balanceData = await balanceResponse.json();
+                    // Only show the notification if the balance is available to be claimed
+                    if (balanceData && balanceData.status === 'AVAILABLE') {
+                        setRefundBalance(balanceData);
+                    }
+                } else {
+                    // It's okay if it fails, just means no balance. Clear any old one.
+                    if(!isUpdate) setRefundBalance(null);
+                }
+            } catch (err) {
+                console.error("Balance check failed:", err);
+                if(!isUpdate) setRefundBalance(null);
+            }
+        }
+        // --- End of new logic ---
+
         if (responseData) {
-            // Your original data processing logic, now returns the formatted data
             return {
                 ...responseData,
                 allEvents: Array.isArray(responseData.allEvents) ? responseData.allEvents : [],
@@ -69,76 +95,69 @@ function TrackingPage() {
         throw new Error('Tracking data is empty.');
     };
 
-    // Your original useEffect for the initial data load, now corrected to work properly.
     useEffect(() => {
         if (!trackingId) {
             setIsLoading(false);
             return;
         }
-
         const artificialDelay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
         const loadDataWithDelay = async () => {
             setIsLoading(true);
             setError(null);
             setData(null);
             try {
-                // This now correctly waits for both promises and gets the data
                 const [responseData] = await Promise.all([
                     fetchTrackingData(),
                     artificialDelay(1500)
                 ]);
-                setData(responseData); // Sets the data in state AFTER it's been fetched
+                setData(responseData);
             } catch (err) {
                 setError(err.message);
             } finally {
-                setIsLoading(false); // This now correctly runs AFTER data is set or an error occurs
+                setIsLoading(false);
             }
         };
-
         loadDataWithDelay();
     }, [trackingId]);
 
-    // --- NEW: The Real-Time Logic (Now safe to use) ---
     useEffect(() => {
         if (!trackingId) return;
-
         const pusher = new Pusher(import.meta.env.VITE_PUSHER_KEY, {
             cluster: import.meta.env.VITE_PUSHER_CLUSTER,
         });
-
         const channel = pusher.subscribe(`shipment-${trackingId}`);
-
         channel.bind('update', async () => {
-            console.log('A real-time update was received!');
             try {
-                // When an update is received, fetch the new data and update the state
-                const newData = await fetchTrackingData();
+                // When an update is received, fetch the new data (which also checks for balance)
+                const newData = await fetchTrackingData(true);
                 setData(newData);
+                setIsPaymentProcessing(false); 
             } catch (err) {
                 console.error("Failed to fetch update:", err);
             }
         });
-
         return () => {
             pusher.unsubscribe(`shipment-${trackingId}`);
             pusher.disconnect();
         };
     }, [trackingId]);
 
-    // Your existing handleVoucherSuccess function (UNCHANGED)
     const handleVoucherSuccess = () => {
         setIsModalOpen(false);
         setIsPaymentProcessing(true);
     };
 
-    // NEW: Fixed function to open receipt modal
     const openReceiptModal = () => {
-        console.log('🔵 Opening receipt modal'); // DEBUG
         setIsReceiptModalOpen(true);
     };
 
-    // The entire JSX return block below is completely UNCHANGED.
+    // --- NEW: Function to handle closing the refund modal ---
+    const handleCloseRefundModal = () => {
+        setIsRefundModalOpen(false);
+        // After choosing, hide the notification by clearing the balance from state
+        setRefundBalance(null); 
+    };
+
     if (isLoading) {
         return <div className="loading-spinner-overlay"><div className="loading-spinner"></div></div>;
     }
@@ -149,8 +168,22 @@ function TrackingPage() {
 
     return (
         <main className="tracking-page-container">
+
+            {/* --- NEW: RENDER THE NOTIFICATION AND MODAL --- */}
+            <RefundNotification 
+                excessAmount={refundBalance?.excess_amount_usd}
+                onClaim={() => setIsRefundModalOpen(true)}
+            />
+            <RefundChoiceModal 
+                show={isRefundModalOpen}
+                onClose={handleCloseRefundModal}
+                balanceData={refundBalance}
+            />
+            {/* --- END OF NEW COMPONENTS --- */}
+
             <section className="track-results-container">
-                <div className="track-block">
+                 {/* ... (rest of your existing JSX is unchanged) ... */}
+                 <div className="track-block">
                     <div className="track-block-top">
                         <div className="header-lhs">
                              <div className="tracking-overview">
@@ -198,7 +231,6 @@ function TrackingPage() {
                                 <button className="button payment-button processing" disabled>Processing...</button>
                             </div>
                         )}
-                        {/* NEW: FIXED receipt link - Uses button instead of anchor */}
                         {data.show_receipt && (
                             <div className="receipt-link-container">
                                 <button
@@ -257,7 +289,6 @@ function TrackingPage() {
                 onVoucherSubmit={handleVoucherSuccess}
                 currency={data.paymentCurrency}
             />
-            {/* NEW: Add the receipt modal */}
             <ReceiptModal 
                 show={isReceiptModalOpen} 
                 onClose={() => setIsReceiptModalOpen(false)} 
@@ -266,6 +297,7 @@ function TrackingPage() {
                 recipientName={data.recipient_name}
                 paymentAmount={data.paymentAmount}
                 paymentCurrency={data.paymentCurrency}
+                paymentDescription={data.paymentDescription}
             />
         </main>
     );

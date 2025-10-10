@@ -2295,4 +2295,427 @@ body.about-page-background {
         size: letter portrait !important;
     }
 }
+.refund-modal-content form {
+  padding: 24px 30px;
+}
 
+/* =================================================================== */
+/* --- Refund Notification Styles (Sleek Redesign) --- */
+/* =================================================================== */
+
+@keyframes slideInFromLeft {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* =================================================================== */
+/* --- Sleek Refund Notification & Handle (Top Right) --- */
+/* =================================================================== */
+
+@keyframes slideInFromRight {
+  0% {
+    transform: translateX(110%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes shrinkWidth {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(0, 123, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
+  }
+}
+
+.refund-notification-container {
+    position: fixed;
+    top: 90px;
+    right: 20px;
+    
+    /* --- RESPONSIVE FIX --- */
+    max-width: 380px;
+    width: calc(100% - 40px); /* Ensures 20px padding on small screens */
+
+    background-color: #007bff;
+    color: white;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    z-index: 1002;
+    font-family: var(--font-main);
+    animation: slideInFromRight 0.5s ease-out forwards;
+    overflow: hidden;
+}
+
+.notification-icon {
+    font-size: 1.5rem;
+    opacity: 0.9;
+}
+
+.notification-content {
+    flex-grow: 1;
+    text-align: left;
+}
+
+.notification-title {
+    font-weight: 600;
+    margin: 0 0 2px 0;
+    font-size: 0.95rem;
+}
+
+.notification-text {
+    margin: 0;
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+.button-claim {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+}
+
+.button-claim:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    opacity: 0.6;
+    cursor: pointer;
+    padding: 0 5px;
+}
+.notification-close:hover {
+    opacity: 1;
+}
+
+.notification-timer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background-color: rgba(255, 255, 255, 0.5);
+    animation: shrinkWidth 10s linear forwards;
+}
+
+.refund-notification-handle {
+    position: fixed;
+    top: 90px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    z-index: 1001;
+    animation: pulse 2s infinite;
+    transition: transform 0.2s ease;
+}
+
+.refund-notification-handle:hover {
+    transform: scale(1.1);
+    animation-play-state: paused;
+}
+
+/* =================================================================== */
+/* --- Refund Choice Modal Styles --- */
+/* =================================================================== */
+
+.refund-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1002; /* Higher than other modals */
+    overflow-x: hidden;
+}
+
+.refund-modal-content {
+    background: #fff;
+    padding: 0;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+}
+
+.refund-modal-content .modal-header {
+    background: #f8f9fa;
+    border-radius: 12px 12px 0 0;
+}
+
+.text-primary-red {
+    color: var(--primary-red);
+}
+
+/* Choice Cards Grid */
+.choice-grid {
+    display: flex;
+    gap: 20px;
+    padding: 10px 0;
+}
+
+.choice-card {
+    flex: 1;
+    background-color: var(--bg-gray);
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: block;
+}
+
+.choice-card:hover {
+    border-color: #ccc;
+    background-color: #f0f0f0;
+}
+
+.choice-card.active {
+    border-color: var(--primary-red);
+    background-color: #fff0f0; /* Light red/pink tint */
+    box-shadow: 0 0 10px rgba(210, 39, 48, 0.1);
+}
+
+.choice-card .card-icon {
+    font-size: 2.5rem;
+    color: var(--primary-red);
+    margin-bottom: 10px;
+}
+
+.choice-card .card-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin: 5px 0;
+}
+
+.choice-card .card-description {
+    font-size: 0.85rem;
+    color: var(--text-gray);
+    margin: 5px 0 0 0;
+}
+
+/* Manual Input Group */
+.manual-detail-group {
+    padding: 10px 0;
+    margin-top: 10px;
+}
+
+.input-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.input-field {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+.button-submit {
+    width: 100%;
+    padding: 14px;
+    background-color: var(--primary-red);
+    color: white;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+
+.button-submit:hover {
+    background-color: #b91c24;
+}
+
+/* Success State Styles */
+.refund-modal-content.success {
+    text-align: center;
+    padding: 40px;
+}
+
+.success-icon {
+    font-size: 3rem;
+    color: #28a745;
+    margin-bottom: 20px;
+}
+
+.success-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #218838;
+    margin-bottom: 10px;
+}
+
+.success-message {
+    color: var(--text-gray);
+    margin-bottom: 30px;
+}
+
+.button-close {
+    background-color: #6c757d;
+    color: white;
+    padding: 10px 30px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.button-close:hover {
+    background-color: #5a6268;
+}
+
+.form-message.error {
+    background-color: #ffeaea;
+    border: 1px solid #ff0000;
+    color: var(--primary-red);
+    padding: 10px;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+/* Hide radio buttons */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* =================================================================== */
+/* --- Enhanced Refund Modal Styles --- */
+/* =================================================================== */
+
+.refund-modal-content form {
+  padding: 24px 30px;
+}
+
+.balance-display {
+    text-align: center;
+    font-size: 1.1rem;
+    color: var(--text-gray);
+    margin-top: 0;
+}
+
+.balance-amount {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--primary-black);
+}
+
+.manual-payout-section {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.payout-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+    text-align: center;
+}
+
+.payout-method-selector {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.method-btn {
+    flex: 1;
+    padding: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 1px solid #ccc;
+    background-color: #f8f9fa;
+    color: var(--text-gray);
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.method-btn:hover {
+    background-color: #e9ecef;
+    border-color: #999;
+}
+
+.method-btn.active {
+    background-color: #e7f1ff;
+    color: #007bff;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+}
+
+.input-group {
+    position: relative;
+}
+
+.input-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+}
+
+.input-group .input-field {
+    padding-left: 40px;
+}
