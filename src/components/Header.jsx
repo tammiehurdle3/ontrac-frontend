@@ -53,6 +53,10 @@ function Header() {
               Track <span>your package</span>
             </Link>
 
+            {/* --- THIS IS THE NEW LINE YOU NEED TO ADD --- */}
+            {/* The Google script will find this div and place the dropdown here */}
+            <div id="google_translate_element"></div>
+
             {/* HAMBURGER MENU TOGGLE (Hidden on desktop) */}
             <button className="mobile-nav-toggle" onClick={toggleMobileMenu} aria-label="Toggle navigation">
               {isMobileMenuOpen ? <CloseIcon /> : <MenuIcon />}
@@ -79,4 +83,3 @@ function Header() {
 }
 
 export default Header;
-

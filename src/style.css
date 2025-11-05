@@ -2759,3 +2759,61 @@ body.about-page-background {
   line-height: 1.7;
   margin: 0;
 }
+
+/* --- Google Translate Widget (Desktop Only) --- */
+/* Add this new block to the END of your style.css file */
+
+/* 1. HIDE the widget by default on all mobile screens */
+#google_translate_element {
+  display: none;
+}
+
+/* 2. SHOW and STYLE the widget ONLY on desktop (768px and wider) */
+@media (min-width: 768px) {
+  /* Show the widget */
+  #google_translate_element {
+    display: flex;
+    align-items: center;
+    padding: 0 10px; /* Add a little space */
+  }
+
+  /* Style the dropdown itself */
+  .goog-te-gadget-simple {
+    background-color: var(--bg-gray);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-family: var(--font-main);
+    cursor: pointer;
+    height: 40px; /* Match your "Track" button height */
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Hides the "Powered by Google" text and icon */
+  .goog-te-gadget-icon,
+  .VIpgJd-ZVi9od-ORhb-fNGE8ac {
+    display: none !important;
+  }
+
+  /* Styles the text inside the dropdown */
+  .goog-te-gadget-simple .goog-te-menu-value span {
+    color: var(--primary-black) !important;
+    font-weight: 600;
+    text-decoration: none !important;
+    font-size: 0.9rem !important;
+  }
+
+  /* Remove the arrow from the text span */
+  .goog-te-gadget-simple .goog-te-menu-value span:last-child {
+    display: none;
+  }
+
+  /* Style Google's pop-up frame */
+  .goog-te-menu-frame {
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
+    border-radius: 8px !important;
+    border: 1px solid var(--border-color) !important;
+  }
+}
