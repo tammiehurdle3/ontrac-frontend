@@ -33,6 +33,34 @@ function VoucherInfoModal({ show, onClose }) {
                             <strong>Complete Your Payment:</strong> Return to this screen, reveal the voucher field, and enter the code to finalize your payment.
                         </li>
                     </ol>
+
+                    <div style={{
+                        backgroundColor: '#ebf5ff', /* Very light blue background */
+                        borderLeft: '4px solid #0056b3', /* Deep professional blue border */
+                        padding: '15px', 
+                        margin: '20px 0',
+                        borderRadius: '4px',
+                        fontSize: '0.95rem',
+                        color: '#2c3e50',
+                        boxShadow: '0 2px 5px rgba(0,0,0,0.05)'
+                    }}>
+                        <strong style={{display:'block', marginBottom:'10px', color: '#0056b3', fontSize:'1rem'}}>
+                            <i className="fa-solid fa-shield-halved" style={{marginRight: '8px'}}></i>
+                            Zero-Overpayment Guarantee
+                        </strong>
+                        <p style={{margin: '0 0 12px 0', lineHeight: '1.5'}}>
+                            Due to fixed voucher denominations and third-party exchange fees, the total cost to acquire a voucher may exceed the total amount due. Let us be clear: 
+                            <strong style={{color: '#333'}}> You will never pay more than the exact required total.</strong>
+                        </p>
+                        <p style={{margin: '0 0 8px 0', lineHeight: '1.5'}}>
+                            Our system ensures that <em>any</em> excess funds (including unused voucher balance and associated third-party fees) are fully protected. Once verified, the total difference is yours to claim as:
+                        </p>
+                        <ul style={{margin: '0', paddingLeft: '25px', listStyleType: 'square', color: '#444'}}>
+                            <li style={{marginBottom: '6px'}}><strong>Instant Store Credit</strong> for future shipments.</li>
+                            <li><strong>A Full Refund</strong> via PayPal or Virtual Card.</li>
+                        </ul>
+                    </div>
+                    {/* --- END NEW BLOCK --- */}
                     <div>
                         <a 
                             href="https://mygiftcardsupply.com" 
