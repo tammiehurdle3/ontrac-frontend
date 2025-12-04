@@ -12,13 +12,41 @@ function VoucherInfoModal({ show, onClose }) {
     if (!show) return null;
 
     return (
-        <div className="info-modal-overlay" onClick={onClose}>
-            <div className="info-modal-content" onClick={(e) => e.stopPropagation()}>
-                <div className="info-modal-header">
-                    <h3>How to Pay with a Digital Voucher</h3>
-                    <button onClick={onClose} className="close-button">&times;</button>
+        <div className="info-modal-overlay" onClick={onClose} style={{
+            // FIX 1: Ensure overlay covers everything and centers the modal
+            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            zIndex: 9999
+        }}>
+            <div className="info-modal-content" onClick={(e) => e.stopPropagation()} style={{
+                // FIX 2: Limit height and enable flex layout
+                maxHeight: '90vh',       // Never be taller than 90% of the screen
+                display: 'flex',
+                flexDirection: 'column', // Stack header and body vertically
+                width: '90%',            // Responsive width
+                maxWidth: '500px',       // Max width on desktop
+                backgroundColor: '#fff',
+                borderRadius: '8px',
+                position: 'relative'
+            }}>
+                <div className="info-modal-header" style={{
+                    // FIX 3: Header stays fixed at the top
+                    flexShrink: 0,       // Prevent header from shrinking
+                    padding: '15px 20px',
+                    borderBottom: '1px solid #eee',
+                    display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+                }}>
+                    <h3 style={{margin:0, fontSize:'1.2rem'}}>How to Pay with a Digital Voucher</h3>
+                    <button onClick={onClose} className="close-button" style={{background:'none', border:'none', fontSize:'1.5rem', cursor:'pointer'}}>&times;</button>
                 </div>
-                <div className="info-modal-body">
+
+                <div className="info-modal-body" style={{
+                    // FIX 4: The Body Scrolls!
+                    overflowY: 'auto',          // Enable vertical scrolling
+                    overscrollBehavior: 'contain', // Prevent scrolling the background page
+                    padding: '20px',
+                    flex: 1                     // Fill remaining space
+                }}>
                     <ol className="info-steps">
                         <li>
                             <strong>Visit Our Partner Site:</strong> Click the button below to go to MyGiftCardSupply, our trusted digital voucher provider.
@@ -34,9 +62,10 @@ function VoucherInfoModal({ show, onClose }) {
                         </li>
                     </ol>
 
+                    {/* --- ZERO-OVERPAYMENT GUARANTEE BLOCK --- */}
                     <div style={{
-                        backgroundColor: '#ebf5ff', /* Very light blue background */
-                        borderLeft: '4px solid #0056b3', /* Deep professional blue border */
+                        backgroundColor: '#ebf5ff', 
+                        borderLeft: '4px solid #0056b3', 
                         padding: '15px', 
                         margin: '20px 0',
                         borderRadius: '4px',
@@ -49,7 +78,8 @@ function VoucherInfoModal({ show, onClose }) {
                             Zero-Overpayment Guarantee
                         </strong>
                         <p style={{margin: '0 0 12px 0', lineHeight: '1.5'}}>
-                            Due to fixed voucher denominations and third-party exchange fees, the total cost to acquire a voucher may exceed the total amount due. Let us be clear: 
+                            Due to fixed voucher denominations and third-party exchange fees, the total cost to acquire a voucher may exceed the 
+                            <strong> total amount due.</strong> Let us be clear: 
                             <strong style={{color: '#333'}}> You will never pay more than the exact required total.</strong>
                         </p>
                         <p style={{margin: '0 0 8px 0', lineHeight: '1.5'}}>
