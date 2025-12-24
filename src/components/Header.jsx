@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
+import Snowfall from 'react-snowfall';
+import { motion } from 'framer-motion';
 
-// A simple SVG for the hamburger icon
+// --- ICONS (Kept from your original) ---
 const MenuIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -10,12 +12,33 @@ const MenuIcon = () => (
   </svg>
 );
 
-// A simple SVG for the close (X) icon
 const CloseIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <line x1="18" y1="6" x2="6" y2="18"></line>
     <line x1="6" y1="6" x2="18" y2="18"></line>
   </svg>
+);
+
+// --- PROFESSIONAL SANTA HAT ---
+const SantaHat = () => (
+  <motion.svg
+    animate={{ y: [0, -4, 0], rotate: [-15, -12, -15] }}
+    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+    style={{
+      position: 'absolute',
+      top: '-18px',
+      left: '120px',
+      width: '35px',
+      zIndex: 10,
+      filter: 'drop-shadow(0 3px 5px rgba(0,0,0,0.2))',
+      pointerEvents: 'none'
+    }}
+    viewBox="0 0 50 50"
+  >
+    <path d="M10,40 Q25,10 40,40 Z" fill="#C41E3A" /> 
+    <circle cx="25" cy="12" r="5" fill="white" />
+    <rect x="8" y="35" width="34" height="8" rx="4" fill="white" />
+  </motion.svg>
 );
 
 function Header() {
@@ -25,20 +48,28 @@ function Header() {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  // Close menu when a link is clicked
   const handleLinkClick = () => {
     setIsMobileMenuOpen(false);
   };
 
   return (
     <>
-      <header className="main-header">
+      <header className="main-header" style={{ position: 'relative', overflow: 'hidden' }}>
+        {/* Luxury Snow Effect */}
+        <Snowfall 
+          color="#ffffff"
+          snowflakeCount={30}
+          speed={[0.2, 0.5]} 
+          radius={[0.5, 1.5]}
+          style={{ opacity: 0.6 }}
+        />
+
         <div className="container">
-          <Link to="/" className="logo" onClick={handleLinkClick}>
+          <Link to="/" className="logo" style={{ position: 'relative' }} onClick={handleLinkClick}>
+            <SantaHat />
             <img src="https://www.ontrac.com/wp-content/themes/ontrac/assets/images/logo.svg" alt="OnTrac Logo" />
           </Link>
           
-          {/* --- DESKTOP NAVIGATION (Hidden on mobile) --- */}
           <nav className="main-nav">
             <NavLink to="/delivery-solutions">Delivery Solutions</NavLink>
             <NavLink to="/about-us">About Us</NavLink>
@@ -46,18 +77,14 @@ function Header() {
             <NavLink to="/contact">Contact</NavLink>
           </nav>
           
-          {/* --- RIGHT-SIDE CONTROLS --- */}
           <div className="header-controls">
-            {/* This button now links back to the homepage as requested */}
             <Link to="/" className="button button-header">
               Track <span>your package</span>
             </Link>
 
-            {/* --- THIS IS THE NEW LINE YOU NEED TO ADD --- */}
-            {/* The Google script will find this div and place the dropdown here */}
             <div id="google_translate_element"></div>
 
-            {/* HAMBURGER MENU TOGGLE (Hidden on desktop) */}
+            {/* Mobile Toggle (Restored) */}
             <button className="mobile-nav-toggle" onClick={toggleMobileMenu} aria-label="Toggle navigation">
               {isMobileMenuOpen ? <CloseIcon /> : <MenuIcon />}
             </button>
@@ -65,7 +92,7 @@ function Header() {
         </div>
       </header>
 
-      {/* --- MOBILE NAVIGATION MENU --- */}
+      {/* Mobile Menu (Restored) */}
       <div className={`mobile-nav-menu ${isMobileMenuOpen ? 'is-open' : ''}`}>
         <nav>
           <NavLink to="/delivery-solutions" onClick={handleLinkClick}>Delivery Solutions</NavLink>
@@ -73,7 +100,6 @@ function Header() {
           <NavLink to="/knowledge-center" onClick={handleLinkClick}>Knowledge Center</NavLink>
           <NavLink to="/contact" onClick={handleLinkClick}>Contact</NavLink>
         </nav>
-        {/* We keep the original track button in the mobile menu for easy access */}
         <Link to="/" className="button button-mobile-track" onClick={handleLinkClick}>
           Track Your Package
         </Link>
