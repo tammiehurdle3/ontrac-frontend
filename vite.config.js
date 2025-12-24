@@ -8,7 +8,9 @@ export default defineConfig({
     react(),
     sitemap({ 
       hostname: 'https://ontracourier.us',
-      exclude: ['/tracking'] // This excludes the tracking page
+      exclude: ['/tracking'], // This excludes the tracking page
+      // Add the line below to fix the Netlify deploy error
+      outDir: 'dist' 
     }) 
   ],
 })
