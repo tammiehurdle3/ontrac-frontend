@@ -15,6 +15,7 @@ import AboutUsPage from './pages/AboutUsPage';
 import KnowledgeCenterPage from './pages/KnowledgeCenterPage';
 import ArticlePage from './pages/ArticlePage';
 import DeliverySolutionsPage from './pages/DeliverySolutionsPage';
+import RefundPolicy from './pages/RefundPolicy.jsx';
 
 // Import the newly created page components
 import { 
@@ -64,6 +65,7 @@ function App() {
           <Route path="/customs-info" element={<CustomsInfoPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/feedback" element={<FeedbackPage />} />
+          <Route path="/refund-policy" element={<RefundPolicy />} />
 
 
         </Routes>

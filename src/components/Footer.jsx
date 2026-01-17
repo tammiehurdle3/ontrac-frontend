@@ -119,6 +119,8 @@ function Footer() {
                 <Link to="/privacy-policy">Privacy Policy</Link>
                 <span>|</span>
                 <Link to="/terms-and-conditions">Terms & Conditions</Link>
+                <span>|</span>
+                <Link to="/refund-policy">Refund Policy</Link>
             </div>
         </div>
       </div>
