@@ -1,36 +1,79 @@
-// src/pages/TermsPage.jsx
 import React from 'react';
 
-function TermsPage() {
+const TermsPage = () => {
   return (
-    <div className="container" style={{ padding: '60px 20px', maxWidth: '800px' }}>
-      <h1 style={{ fontFamily: 'var(--font-heading)', marginBottom: '30px' }}>Terms and Conditions</h1>
-      <p style={{ color: 'var(--text-gray)' }}><strong>Last Updated: August 29, 2025</strong></p>
-      
-      <h2 style={{ fontFamily: 'var(--font-heading)', marginTop: '40px' }}>1. Agreement to Terms</h2>
-      <p>By accessing or using our website at https://ontracourier.us (the "Service"), you agree to be bound by these Terms and Conditions. If you disagree with any part of the terms, then you may not access the Service.</p>
+    <div className="refund-page-wrapper">
+      <div className="refund-container">
+        
+        {/* Design matched to Refund Policy */}
+        <header className="refund-header">
+          <div className="brand-accent-line"></div>
+          <span className="compliance-tag">OnTrac Logistics Group</span>
+          <h1 className="refund-main-title">Terms & <br /><span className="text-red">Conditions</span></h1>
+          <p className="last-updated">Last Updated: January, 2026</p>
+        </header>
 
-      <h2 style={{ fontFamily: 'var(--font-heading)', marginTop: '40px' }}>2. Service Description</h2>
-      <p>OnTrac Courier provides a platform for users to track shipments and process payments related to those shipments. The information provided is for tracking purposes only and is subject to change based on carrier updates.</p>
+        <div className="refund-content-grid">
+          
+          <section className="refund-section">
+            <h2 className="refund-sub-title">01. Agreement to Terms</h2>
+            <p>
+              By accessing the OnTrac Logistics Platform (the "SaaS Service"), you agree to be bound by these Terms. 
+              Our platform provides proprietary digital tools for shipment management and automated logistics documentation.
+            </p>
+          </section>
 
-      <h2 style={{ fontFamily: 'var(--font-heading)', marginTop: '40px' }}>3. User Responsibilities</h2>
-      <p>You are responsible for the accuracy of any information you provide to the Service, including tracking numbers and payment details. You agree not to use the Service for any unlawful purpose or to solicit others to perform or participate in any unlawful acts.</p>
+          <section className="refund-section">
+            <h2 className="refund-sub-title">02. Digital Service Credits</h2>
+            <p>
+              Access to the OnTrac suite is facilitated through the purchase of <strong>Digital Service Credits</strong>. 
+              These credits are used within the platform to execute automated tracking tasks, generate manifests, and 
+              utilize our logistics optimization software. Credits are consumed upon the execution of a service request.
+            </p>
+          </section>
 
-      <h2 style={{ fontFamily: 'var(--font-heading)', marginTop: '40px' }}>4. Disclaimer of Warranties; Limitation of Liability</h2>
-      <p>We do not guarantee, represent or warrant that your use of our service will be uninterrupted, timely, secure or error-free. The Service is provided on an 'as is' and 'as available' basis. In no case shall OnTrac Courier, our directors, employees, or partners be liable for any injury, loss, claim, or any direct, indirect, incidental, punitive, special, or consequential damages of any kind.</p>
+          <section className="refund-section">
+            <h2 className="refund-sub-title">03. User Responsibilities</h2>
+            <div className="eligibility-cards">
+              <div className="policy-card">
+                <h3>Accuracy</h3>
+                <p>Users must provide precise tracking and data inputs to ensure the software's algorithms function correctly.</p>
+              </div>
+              <div className="policy-card">
+                <h3>Compliance</h3>
+                <p>You agree not to use the digital platform for any unauthorized or unlawful activity across global jurisdictions.</p>
+              </div>
+            </div>
+          </section>
 
-      <h2 style={{ fontFamily: 'var(--font-heading)', marginTop: '40px' }}>5. Governing Law</h2>
-      <p>These Terms shall be governed and construed in accordance with the laws of the United States, without regard to its conflict of law provisions.</p>
-      
-      <h2 style={{ fontFamily: 'var(--font-heading)', marginTop: '40px' }}>6. Contact Information</h2>
-      <p>Questions about the Terms and Conditions should be sent to us at either of our support emails:</p>
-      <ul style={{ listStyle: 'none', paddingLeft: 0 }}>
-        <li><strong>support@ontracourier.us</strong></li>
-        <li><strong>support@ontracourier.co</strong></li>
-      </ul>
+          <section className="refund-section">
+            <h2 className="refund-sub-title">04. Limitation of Liability</h2>
+            <p>
+              The Service is provided on an 'as is' basis. OnTrac Courier and its partners shall not be liable for any 
+              direct or indirect damages resulting from the use of our digital tools or service interruptions.
+            </p>
+          </section>
+
+          <section className="refund-section">
+            <h2 className="refund-sub-title">05. Governing Law</h2>
+            <p>
+              These Terms shall be governed by the laws of the United States. Any disputes shall be resolved in 
+              the appropriate courts of jurisdiction.
+            </p>
+          </section>
+
+          <section className="refund-section">
+            <h2 className="refund-sub-title">06. Contact Support</h2>
+            <p>
+              For technical queries or billing inquiries regarding your digital credits, contact us at: <br />
+              <strong>support@ontracourier.us</strong>
+            </p>
+          </section>
+
+        </div>
+      </div>
     </div>
   );
-}
+};
 
 export default TermsPage;
-
