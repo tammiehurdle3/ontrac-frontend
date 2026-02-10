@@ -735,14 +735,18 @@
 .loadingContainer,
 .successContainer,
 .errorContainer {
-  min-height: 100vh;
+  position: fixed; /* CRITICAL FIX: Locks to viewport like the Tracking Page */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   background-color: #f5f5f7; /* Apple Off-White */
   padding: clamp(24px, 5vw, 40px);
-  width: 100%;
+  z-index: 9999; /* Ensures it floats above everything */
   text-align: center;
   animation: fadeIn 0.5s ease-out;
 }
