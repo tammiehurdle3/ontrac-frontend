@@ -209,21 +209,21 @@ function CheckoutPage() {
     return cleaned;
   };
 
-  // Loading State - Premium
+  // Loading State - Premium (Global Style)
   if (loading) {
     return (
-      <div className={styles.loadingContainer}>
-        <div className={styles.premiumLoader}>
-          <div className={styles.loaderLogo}>
-            <img src="/ontrac_favicon.png" alt="Secure" />
+      <div className="premium-loading-overlay">
+        <div className="premium-loader-wrapper">
+          <div className="loader-logo">
+            <img src="/ontrac_favicon.png" alt="Secure" className="loader-logo-img" />
           </div>
-          <svg className={styles.loaderRing} viewBox="25 25 50 50">
-            <circle cx="50" cy="50" r="20"></circle>
+          <svg className="loader-ring-svg" viewBox="25 25 50 50">
+            <circle className="loader-ring-circle" cx="50" cy="50" r="20"></circle>
           </svg>
         </div>
-        <div className={styles.loadingTextContainer}>
-          <h3 className={styles.loadingTitle}>Secure Checkout</h3>
-          <p className={styles.loadingSubtitle}>Establishing encrypted connection...</p>
+        <div className="loading-text-wrapper">
+          <h3 className="loading-title-main">Secure Checkout</h3>
+          <p className="loading-subtitle-sub">Establishing encrypted connection...</p>
         </div>
       </div>
     );
