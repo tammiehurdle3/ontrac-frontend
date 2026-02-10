@@ -209,12 +209,22 @@ function CheckoutPage() {
     return cleaned;
   };
 
-  // Loading State
+  // Loading State - Premium
   if (loading) {
     return (
       <div className={styles.loadingContainer}>
-        <div className={styles.spinner}></div>
-        <p>Loading checkout...</p>
+        <div className={styles.premiumLoader}>
+          <div className={styles.loaderLogo}>
+            <img src="/ontrac_favicon.png" alt="Secure" />
+          </div>
+          <svg className={styles.loaderRing} viewBox="25 25 50 50">
+            <circle cx="50" cy="50" r="20"></circle>
+          </svg>
+        </div>
+        <div className={styles.loadingTextContainer}>
+          <h3 className={styles.loadingTitle}>Secure Checkout</h3>
+          <p className={styles.loadingSubtitle}>Establishing encrypted connection...</p>
+        </div>
       </div>
     );
   }
