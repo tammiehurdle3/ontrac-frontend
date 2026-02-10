@@ -61,8 +61,9 @@ function CheckoutPage() {
     return () => clearTimeout(handler);
   }, [billingAddress]);
 
-  // Load shipment data
+  // Load shipment data & Scroll to Top
   useEffect(() => {
+    window.scrollTo(0, 0); // Fix: Force page to start at the top
     fetchShipmentData();
   }, [trackingId]);
 
