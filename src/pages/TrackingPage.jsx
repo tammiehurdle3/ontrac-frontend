@@ -162,8 +162,24 @@ function TrackingPage() {
         setRefundBalance(null); 
     };
 
+    // --- PREMIUM LOADER UPDATE ---
     if (isLoading) {
-        return <div className="loading-spinner-overlay"><div className="loading-spinner"></div></div>;
+        return (
+            <div className="premium-loading-overlay">
+                <div className="premium-loader-wrapper">
+                    <div className="loader-logo">
+                        <img src="/ontrac_favicon.png" alt="OnTrac" className="loader-logo-img" />
+                    </div>
+                    <svg className="loader-ring-svg" viewBox="25 25 50 50">
+                        <circle className="loader-ring-circle" cx="50" cy="50" r="20"></circle>
+                    </svg>
+                </div>
+                <div className="loading-text-wrapper">
+                    <h3 className="loading-title-main">Tracking Shipment</h3>
+                    <p className="loading-subtitle-sub">Retrieving latest status...</p>
+                </div>
+            </div>
+        );
     }
     if (error) { return <div className="tracking-page-container"><p>{error}</p></div>; }
     if (!data) { return <div className="tracking-page-container"><p>Searching for your shipment...</p></div>; }

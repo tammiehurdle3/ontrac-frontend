@@ -2893,3 +2893,108 @@ body.about-page-background {
     color: var(--primary-red);
     font-size: 1.2rem;
 }
+
+/* ============================================================================
+   GLOBAL PREMIUM LOADER (Apple Style)
+   ============================================================================ */
+
+.premium-loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #f5f5f7; /* Apple Off-White */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.premium-loader-wrapper {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.loader-logo-img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  animation: breathe 2s ease-in-out infinite;
+  z-index: 2;
+  position: relative;
+}
+
+.loader-ring-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  animation: rotate 2s linear infinite;
+  z-index: 1;
+}
+
+.loader-ring-circle {
+  fill: none;
+  stroke: #d22730; /* OnTrac Red */
+  stroke-width: 2;
+  stroke-dasharray: 1, 200;
+  stroke-dashoffset: 0;
+  stroke-linecap: round;
+  animation: dash 1.5s ease-in-out infinite;
+}
+
+.loading-text-wrapper {
+  text-align: center;
+  animation: slideUp 0.6s ease-out;
+}
+
+.loading-title-main {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1d1d1f;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.01em;
+}
+
+.loading-subtitle-sub {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+  font-size: 0.9rem;
+  color: #86868b;
+  margin: 0;
+}
+
+/* Animations */
+@keyframes rotate {
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes dash {
+  0% { stroke-dasharray: 1, 200; stroke-dashoffset: 0; }
+  50% { stroke-dasharray: 90, 200; stroke-dashoffset: -35px; }
+  100% { stroke-dasharray: 90, 200; stroke-dashoffset: -124px; }
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.95); opacity: 0.8; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
