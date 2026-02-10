@@ -1,0 +1,981 @@
+/* src/pages/CheckoutPage.module.css */
+
+/* ============================================================================
+   APPLE DESIGN SYSTEM - "CUPERTINO" THEME
+   Premium, Minimalist, High-Trust - Mobile-First Responsive
+   ============================================================================ */
+
+/* ============================================================================
+   GLOBAL RESETS & BOX MODEL
+   ============================================================================ */
+
+.checkoutWrapper *,
+.checkoutWrapper *::before,
+.checkoutWrapper *::after {
+  box-sizing: border-box;
+}
+
+/* ============================================================================
+   MAIN WRAPPER
+   ============================================================================ */
+
+.checkoutWrapper {
+  min-height: 100vh;
+  background-color: #f5f5f7; /* Apple's signature off-white */
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #1d1d1f;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+.checkoutContainer {
+  max-width: 980px; /* Standard Apple container width */
+  margin: 0 auto;
+  /* Reduced side padding on mobile to keep content inside the screen */
+  padding: clamp(24px, 5vw, 80px) clamp(12px, 3vw, 24px);
+  width: 100%;
+  flex: 1;
+  overflow: hidden; /* Force containment */
+}
+
+/* ============================================================================
+   THE "ISLAND" CARD - Fluid Responsive Padding
+   ============================================================================ */
+
+.checkoutCard {
+  background: #ffffff;
+  border-radius: clamp(18px, 3vw, 24px);
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.02),
+    0 4px 24px rgba(0, 0, 0, 0.04); /* Layered shadows for depth */
+  padding: clamp(32px, 6vw, 64px) clamp(20px, 5vw, 80px);
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: visible; /* CRITICAL: Allows dropdowns to overflow */
+  position: relative;
+  width: 100%;
+  max-width: 100%; /* Critical: prevent overflow */
+}
+
+/* ============================================================================
+   HEADER TYPOGRAPHY - Fluid Scaling
+   ============================================================================ */
+
+.checkoutHeader {
+  text-align: center;
+  margin-bottom: clamp(40px, 7vw, 56px);
+}
+
+.logoContainer {
+  margin-bottom: clamp(16px, 3vw, 24px);
+}
+
+.brandLogo {
+  width: clamp(44px, 8vw, 56px);
+  height: clamp(44px, 8vw, 56px);
+  object-fit: contain;
+}
+
+.checkoutTitle {
+  font-size: clamp(28px, 6vw, 40px);
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #1d1d1f;
+  margin: 0 0 clamp(12px, 2vw, 16px) 0;
+  word-wrap: break-word; /* Prevent text overflow */
+}
+
+.checkoutSubtitle {
+  font-size: clamp(15px, 3vw, 19px);
+  line-height: 1.47059; /* Apple's exact line-height */
+  font-weight: 400;
+  color: #86868b;
+  margin: 0 auto;
+  max-width: 600px;
+  padding: 0 clamp(8px, 2vw, 0px); /* Extra mobile padding */
+}
+
+.checkoutSubtitle strong {
+  color: #1d1d1f;
+  font-weight: 600;
+}
+
+/* ============================================================================
+   ORDER SUMMARY - "GROUPED LIST" STYLE
+   ============================================================================ */
+
+.orderSummary {
+  background: #f5f5f7;
+  border-radius: clamp(14px, 2.5vw, 18px);
+  padding: 0 clamp(16px, 3vw, 24px);
+  margin-bottom: clamp(32px, 5vw, 48px);
+  width: 100%;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: clamp(18px, 3vw, 24px) 0;
+  font-size: clamp(14px, 2.5vw, 15px);
+  color: #1d1d1f;
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.08); /* Hairline divider */
+  gap: 16px; /* Prevent text collision */
+}
+
+.summaryRow:last-child {
+  border-bottom: none;
+}
+
+.summaryRow strong {
+  font-weight: 500;
+  flex-shrink: 0; /* Prevent label from shrinking */
+}
+
+.amount {
+  font-size: clamp(20px, 4vw, 24px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #1d1d1f;
+  text-align: right;
+  white-space: nowrap; /* Keep amount on one line */
+}
+
+.description {
+  color: #86868b;
+  flex: 1;
+  min-width: 0;
+  text-align: right; /* CRITICAL FIX: Pushes text to the far right */
+  padding-left: 20px; /* Adds spacing so it doesn't touch the label */
+}
+
+/* ============================================================================
+   METHOD SELECTION GRID - Responsive Columns
+   ============================================================================ */
+
+.sectionTitle {
+  font-size: clamp(20px, 4vw, 24px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #1d1d1f;
+  margin-bottom: clamp(24px, 4vw, 32px);
+  text-align: center;
+}
+
+.methodGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: clamp(12px, 2.5vw, 20px);
+  margin-bottom: clamp(32px, 5vw, 48px);
+  width: 100%;
+}
+
+/* Force single column on very small screens */
+@media (max-width: 640px) {
+  .methodGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.methodCard {
+  background: #ffffff;
+  border: 1px solid #d2d2d7;
+  border-radius: clamp(14px, 2.5vw, 18px);
+  padding: clamp(24px, 4vw, 32px) clamp(16px, 3vw, 24px);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  position: relative;
+  height: 100%;
+  min-height: 140px; /* Ensure cards have substance */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent; /* Remove blue flash on mobile */
+  user-select: none;
+}
+
+.methodCard:hover {
+  border-color: #0071e3;
+  transform: scale(1.02);
+  box-shadow: 
+    0 4px 16px rgba(0, 0, 0, 0.04),
+    0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+/* Touch-friendly active state */
+.methodCard:active {
+  transform: scale(0.98);
+  transition-duration: 0.1s;
+}
+
+/* Featured Card (ShieldClimb) */
+.methodCard.featured {
+  background: linear-gradient(180deg, #fbfbfd 0%, #ffffff 100%);
+  border-color: #0071e3;
+  box-shadow: 
+    0 0 0 1px #0071e3,
+    0 4px 16px rgba(0, 113, 227, 0.08);
+}
+
+.methodIcon {
+  font-size: clamp(28px, 5vw, 32px);
+  margin-bottom: clamp(12px, 2vw, 16px);
+  color: #1d1d1f;
+  transition: color 0.3s ease;
+}
+
+.methodCard:hover .methodIcon,
+.methodCard.featured .methodIcon {
+  color: #0071e3;
+}
+
+.methodCard h3 {
+  font-size: clamp(15px, 3vw, 17px);
+  font-weight: 600;
+  margin: 0 0 clamp(6px, 1.5vw, 8px) 0;
+  color: #1d1d1f;
+}
+
+.methodCard p {
+  font-size: clamp(12px, 2.2vw, 13px);
+  line-height: 1.4;
+  color: #86868b;
+  margin: 0;
+}
+
+.methodBadge {
+  margin-top: clamp(8px, 2vw, 12px);
+  font-size: clamp(10px, 1.8vw, 11px);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #0071e3;
+  background: rgba(0, 113, 227, 0.1);
+  padding: clamp(3px, 0.7vw, 4px) clamp(8px, 1.5vw, 10px);
+  border-radius: 6px;
+}
+
+/* ============================================================================
+   PAYMENT LOGO WALL - Big Brand Trust Factor
+   ============================================================================ */
+
+.paymentLogoWall {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(8px, 1.5vw, 12px);
+  margin-top: clamp(12px, 2vw, 16px);
+  padding-top: clamp(12px, 2vw, 16px);
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.paymentLogoWall i {
+  font-size: clamp(20px, 3.5vw, 24px);
+  color: #86868b; /* Grayscale by default */
+  transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  opacity: 0.7;
+}
+
+/* Hover Effect - Color Pop */
+.methodCard:hover .paymentLogoWall i {
+  color: #1d1d1f;
+  opacity: 1;
+}
+
+/* Specific brand colors on featured card hover */
+.methodCard.featured:hover .paymentLogoWall i.fa-cc-visa {
+  color: #1a1f71; /* Visa blue */
+}
+
+.methodCard.featured:hover .paymentLogoWall i.fa-cc-mastercard {
+  color: #eb001b; /* Mastercard red */
+}
+
+.methodCard.featured:hover .paymentLogoWall i.fa-cc-amex {
+  color: #006fcf; /* Amex blue */
+}
+
+.methodCard.featured:hover .paymentLogoWall i.fa-apple-pay {
+  color: #000000; /* Apple black */
+}
+
+.methodCard.featured:hover .paymentLogoWall i.fa-google-pay {
+  color: #4285f4; /* Google blue */
+}
+
+.methodCard.featured:hover .paymentLogoWall i.fa-stripe {
+  color: #635bff; /* Stripe purple */
+}
+
+/* ============================================================================
+   FORMS & INPUTS - "JELLY" STYLE
+   ============================================================================ */
+
+.paymentForm {
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  width: 100%;
+}
+
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(10px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+.backToMethods {
+  background: none;
+  border: none;
+  color: #0071e3;
+  font-size: clamp(14px, 2.5vw, 15px);
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 0;
+  margin-bottom: clamp(24px, 4vw, 32px);
+  transition: opacity 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.backToMethods:hover {
+  opacity: 0.7;
+}
+
+.backToMethods:active {
+  opacity: 0.5;
+}
+
+.formTitle {
+  font-size: clamp(22px, 4.5vw, 28px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: clamp(24px, 4vw, 32px);
+  text-align: center;
+}
+
+.cardForm {
+  max-width: 460px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.formGroup {
+  margin-bottom: clamp(16px, 3vw, 20px);
+  width: 100%;
+  position: relative; /* CRITICAL: Fixes Address Dropdown visibility */
+  z-index: 10;        /* Ensures input stays above background */
+}
+
+.formGroup label {
+  display: block;
+  font-size: clamp(12px, 2.2vw, 13px);
+  font-weight: 500;
+  color: #1d1d1f;
+  margin-bottom: 8px;
+  margin-left: 4px;
+}
+
+.inputWithIcon {
+  position: relative;
+  width: 100%;
+}
+
+.inputWithIcon i {
+  position: absolute;
+  left: clamp(14px, 2.5vw, 16px);
+  top: 50%;
+  transform: translateY(-50%);
+  color: #86868b;
+  font-size: clamp(14px, 2.5vw, 16px);
+  transition: color 0.2s ease;
+  pointer-events: none; /* Prevent icon from blocking input */
+}
+
+.inputWithIcon input {
+  width: 100%;
+  padding: clamp(14px, 2.5vw, 16px) clamp(14px, 2.5vw, 16px) clamp(14px, 2.5vw, 16px) clamp(42px, 7vw, 48px);
+  font-size: clamp(15px, 3vw, 17px);
+  font-family: inherit;
+  color: #1d1d1f;
+  background: #f5f5f7;
+  border: 1px solid transparent;
+  border-radius: clamp(10px, 2vw, 12px);
+  transition: all 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+  -webkit-appearance: none; /* Remove iOS defaults */
+  appearance: none;
+  outline: none;
+}
+
+/* Placeholder styling */
+.inputWithIcon input::placeholder {
+  color: #86868b;
+  opacity: 1;
+}
+
+/* Focus State - The "Glow" */
+.inputWithIcon input:focus {
+  background: #ffffff;
+  border-color: #0071e3;
+  box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.15);
+  outline: none;
+}
+
+.inputWithIcon input:focus + i,
+.inputWithIcon:focus-within i {
+  color: #0071e3;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(12px, 2.5vw, 16px);
+  width: 100%;
+}
+
+/* Stack on very small screens */
+@media (max-width: 480px) {
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================================
+   THE "BUY" BUTTON - APPLE STYLE
+   ============================================================================ */
+
+.submitButton {
+  width: 100%;
+  padding: clamp(16px, 3vw, 18px);
+  background: #0071e3;
+  color: white;
+  border: none;
+  border-radius: clamp(10px, 2vw, 12px);
+  font-size: clamp(15px, 3vw, 17px);
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.2s ease;
+  margin-top: clamp(24px, 4vw, 32px);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  min-height: 48px; /* Touch-friendly minimum */
+}
+
+.submitButton:hover:not(:disabled) {
+  background: #0077ed;
+  transform: scale(1.02);
+}
+
+.submitButton:active:not(:disabled) {
+  transform: scale(0.98);
+  transition-duration: 0.1s;
+}
+
+.submitButton:disabled {
+  background: #f5f5f7;
+  color: #d2d2d7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.buttonSpinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================================================
+   SHIELDCLIMB CONTAINER
+   ============================================================================ */
+
+.shieldclimbContainer {
+  text-align: center;
+  max-width: 480px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.shieldclimbFeatures {
+  background: linear-gradient(180deg, #fbfbfd 0%, #f9f9fb 100%);
+  border: 1px solid #d2d2d7;
+  border-radius: clamp(14px, 2.5vw, 16px);
+  padding: clamp(20px, 3.5vw, 24px);
+  margin-bottom: clamp(24px, 4vw, 32px);
+  text-align: left;
+  width: 100%;
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 2vw, 12px);
+  padding: clamp(8px, 1.5vw, 10px) 0;
+  font-size: clamp(14px, 2.5vw, 15px);
+  color: #1d1d1f;
+}
+
+.feature i {
+  color: #0071e3;
+  font-size: clamp(14px, 2.5vw, 16px);
+  flex-shrink: 0; /* Keep icon size consistent */
+}
+
+.shieldclimbButton {
+  background: #1d1d1f;
+}
+
+.shieldclimbButton:hover:not(:disabled) {
+  background: #2d2d2f;
+}
+
+.shieldclimbButton:active:not(:disabled) {
+  background: #3d3d3f;
+}
+
+/* ShieldClimb Description Text */
+.shieldclimbDescription {
+  font-size: clamp(14px, 2.5vw, 15px);
+  line-height: 1.5;
+  color: #86868b;
+  text-align: center;
+  margin-bottom: clamp(20px, 3vw, 24px);
+  max-width: 420px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Powered By Footer */
+.poweredBy {
+  text-align: center;
+  font-size: clamp(11px, 2vw, 12px);
+  color: #86868b;
+  margin-top: clamp(16px, 3vw, 20px);
+  padding-top: clamp(16px, 3vw, 20px);
+  border-top: 0.5px solid rgba(0, 0, 0, 0.08);
+}
+
+.poweredBy strong {
+  color: #1d1d1f;
+  font-weight: 600;
+}
+
+/* ============================================================================
+   VOUCHER / PRO STATE
+   ============================================================================ */
+
+.proSuccessState {
+  text-align: center;
+  padding: clamp(32px, 5vw, 40px) 0;
+}
+
+/* ============================================================================
+   CARD VISUAL PREVIEW & VOUCHER CONTAINERS
+   ============================================================================ */
+
+.cardVisualContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: clamp(32px, 5vw, 40px);
+  width: 100%;
+}
+
+.voucherContainer {
+  max-width: 480px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.proForm {
+  width: 100%;
+}
+
+.formSubtitle {
+  font-size: clamp(14px, 2.5vw, 15px);
+  line-height: 1.5;
+  color: #86868b;
+  text-align: center;
+  margin-bottom: clamp(20px, 3vw, 24px);
+  max-width: 420px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.proDescription {
+  font-size: clamp(14px, 2.5vw, 15px);
+  line-height: 1.5;
+  color: #86868b;
+  text-align: center;
+  margin-bottom: clamp(16px, 3vw, 20px);
+  max-width: 420px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.proHint {
+  font-size: clamp(12px, 2.2vw, 13px);
+  color: #86868b;
+  font-style: italic;
+}
+
+.successIconWrapper {
+  font-size: clamp(48px, 8vw, 56px);
+  color: #34c759;
+  margin-bottom: clamp(20px, 3vw, 24px);
+}
+
+.proTitle {
+  font-size: clamp(22px, 4.5vw, 28px);
+  font-weight: 600;
+  color: #1d1d1f;
+  margin-bottom: clamp(12px, 2vw, 16px);
+}
+
+.proLoaderBar {
+  width: 100%;
+  max-width: 200px;
+  height: 4px;
+  background: #f5f5f7;
+  border-radius: 2px;
+  margin: 0 auto clamp(20px, 3vw, 24px);
+  overflow: hidden;
+}
+
+.proLoaderFill {
+  height: 100%;
+  background: linear-gradient(90deg, #0071e3 0%, #0077ed 100%);
+  width: 0%;
+  animation: fillProgress 5s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+@keyframes fillProgress {
+  to { width: 100%; }
+}
+
+/* ============================================================================
+   TRUST INDICATORS - Responsive
+   ============================================================================ */
+
+.trustIndicators {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(16px, 4vw, 32px);
+  margin-top: clamp(32px, 5vw, 48px);
+  padding-top: clamp(24px, 4vw, 32px);
+  border-top: 0.5px solid rgba(0, 0, 0, 0.08);
+}
+
+.trustBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: clamp(11px, 2vw, 12px);
+  font-weight: 500;
+  color: #86868b;
+  white-space: nowrap;
+}
+
+.trustBadge i {
+  font-size: clamp(12px, 2.2vw, 14px);
+  color: #86868b;
+}
+
+/* ============================================================================
+   ERROR & LOADING - Mobile-Safe
+   ============================================================================ */
+
+.errorBanner {
+  background: #fff2f4;
+  color: #ff3b30;
+  border: 1px solid rgba(255, 59, 48, 0.1);
+  padding: clamp(14px, 2.5vw, 16px) clamp(16px, 3vw, 20px);
+  border-radius: clamp(10px, 2vw, 12px);
+  margin-bottom: clamp(24px, 4vw, 32px);
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 2vw, 12px);
+  font-size: clamp(13px, 2.3vw, 14px);
+  font-weight: 500;
+  width: 100%;
+}
+
+.errorBanner i {
+  font-size: clamp(14px, 2.5vw, 16px);
+  flex-shrink: 0;
+}
+
+.loadingContainer,
+.successContainer,
+.errorContainer {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f7;
+  padding: clamp(24px, 5vw, 40px);
+  width: 100%;
+  text-align: center;
+}
+
+.successContainer h2 {
+  font-size: clamp(24px, 5vw, 32px);
+  font-weight: 600;
+  color: #1d1d1f;
+  margin-top: clamp(20px, 3vw, 24px);
+}
+
+/* ============================================================================
+   SECURITY BADGES - Centered (Fixes left alignment issue)
+   ============================================================================ */
+
+.securityBadges {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: clamp(16px, 3vw, 20px);
+  font-size: 12px;
+  color: #86868b;
+  font-weight: 500;
+  width: 100%;
+}
+
+.securityBadges i {
+  color: #34c759; /* Apple Green lock icon */
+  font-size: 13px;
+}
+
+/* ============================================================================
+   ADDRESS AUTOCOMPLETE - Mobile-Safe Dropdown
+   ============================================================================ */
+
+.addressSuggestions {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: clamp(10px, 2vw, 12px);
+  box-shadow: 
+    0 4px 16px rgba(0, 0, 0, 0.08),
+    0 12px 40px rgba(0, 0, 0, 0.12);
+  z-index: 100;
+  list-style: none;
+  padding: 8px;
+  margin: 0;
+  max-height: 280px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+.addressSuggestions li {
+  padding: clamp(10px, 2vw, 12px) clamp(14px, 2.5vw, 16px);
+  cursor: pointer;
+  font-size: clamp(13px, 2.3vw, 14px);
+  color: #1d1d1f;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.addressSuggestions li:hover {
+  background: #f5f5f7;
+  color: #0071e3;
+}
+
+.addressSuggestions li:active {
+  background: #e8e8ed;
+}
+
+/* ============================================================================
+   SAFE AREA SUPPORT (iPhone Notch, etc.)
+   ============================================================================ */
+
+@supports (padding: max(0px)) {
+  .checkoutContainer {
+    padding-left: max(clamp(16px, 4vw, 24px), env(safe-area-inset-left));
+    padding-right: max(clamp(16px, 4vw, 24px), env(safe-area-inset-right));
+    padding-bottom: max(clamp(32px, 5vw, 80px), env(safe-area-inset-bottom));
+  }
+}
+
+/* ============================================================================
+   LANDSCAPE MOBILE OPTIMIZATION
+   ============================================================================ */
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .checkoutContainer {
+    padding-top: 24px;
+    padding-bottom: 24px;
+  }
+  
+  .checkoutCard {
+    padding: 24px 20px;
+  }
+  
+  .checkoutHeader {
+    margin-bottom: 24px;
+  }
+}
+
+/* ============================================================================
+   HIGH DPI / RETINA DISPLAYS
+   ============================================================================ */
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .checkoutCard {
+    /* Sharper shadows on retina */
+    box-shadow: 
+      0 1px 3px rgba(0, 0, 0, 0.02),
+      0 2px 12px rgba(0, 0, 0, 0.04),
+      0 4px 24px rgba(0, 0, 0, 0.04);
+  }
+  
+  .summaryRow {
+    border-bottom: 0.33px solid rgba(0, 0, 0, 0.08); /* Hairline on retina */
+  }
+}
+
+/* ============================================================================
+   ACCESSIBILITY - REDUCED MOTION
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .methodCard:hover,
+  .submitButton:hover:not(:disabled) {
+    transform: none;
+  }
+}
+
+/* ============================================================================
+   DARK MODE SUPPORT (Future-Proofing)
+   ============================================================================ */
+
+@media (prefers-color-scheme: dark) {
+  /* Add dark mode styles here if needed in the future */
+  /* Apple's checkout doesn't use dark mode, so this is optional */
+}
+
+/* ============================================================================
+   VOUCHER INSTRUCTIONS - Integrated Guide
+   ============================================================================ */
+
+.voucherInstructions {
+  margin-top: clamp(24px, 4vw, 32px);
+  padding-top: clamp(24px, 4vw, 32px);
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.instructionTitle {
+  font-size: clamp(14px, 2.5vw, 15px);
+  font-weight: 600;
+  color: #1d1d1f;
+  margin: 0 0 16px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.instructionTitle i {
+  color: #86868b;
+}
+
+.instructionSteps {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 13px;
+  color: #424245;
+  line-height: 1.5;
+}
+
+.stepNum {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background-color: #f5f5f7;
+  color: #1d1d1f;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.partnerLink {
+  color: #0071e3;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.partnerLink:hover {
+  text-decoration: underline;
+}
+
+.guaranteeBlock {
+  background-color: #f5f9ff;
+  border-radius: 8px;
+  padding: 12px 16px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #1d1d1f;
+}
+
+.guaranteeBlock i {
+  color: #0071e3;
+  font-size: 14px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.guaranteeBlock strong {
+  font-weight: 600;
+  color: #0071e3;
+}

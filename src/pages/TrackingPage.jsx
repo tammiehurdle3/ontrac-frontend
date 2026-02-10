@@ -6,8 +6,8 @@ import Pusher from 'pusher-js';
 import ProgressBar from '../components/ProgressBar';
 import RecentEvent from '../components/RecentEvent';
 import CollapsibleSection from '../components/CollapsibleSection';
-import PaymentModal from '../components/PaymentModal';
 import ReceiptModal from '../components/ReceiptModal';
+import { useNavigate } from 'react-router-dom';
 // NEW: Import the refund components
 import RefundNotification from '../components/RefundNotification';
 import RefundChoiceModal from '../components/RefundChoiceModal';
@@ -29,6 +29,7 @@ const formatExpectedDate = (dateString) => {
 };
 
 function TrackingPage() {
+    const navigate = useNavigate();
     // Your existing state variables
     const [searchParams] = useSearchParams();
     const trackingId = searchParams.get('id');
@@ -142,8 +143,11 @@ function TrackingPage() {
         };
     }, [trackingId]);
 
+    const handlePaymentClick = () => {
+        navigate(`/checkout/${trackingId}`);
+    };
+
     const handleVoucherSuccess = () => {
-        setIsModalOpen(false);
         setIsPaymentProcessing(true);
     };
 
@@ -223,7 +227,7 @@ function TrackingPage() {
                                         <p className="secondary-amount">(Approximately ${data.approximatedUSD.amount} USD)</p>
                                     )}
                                 </div>
-                                <button onClick={() => setIsModalOpen(true)} className="button payment-button">Pay Now</button>
+                                <button onClick={handlePaymentClick} className="button payment-button">Pay Now</button>
                             </div>
                         )}
                         {isPaymentProcessing && (
@@ -281,14 +285,6 @@ function TrackingPage() {
                     </div>
                 </div>
             </section>
-            <PaymentModal 
-                show={isModalOpen} 
-                onClose={() => setIsModalOpen(false)} 
-                amount={data.paymentAmount || 0}
-                shipmentId={data.id}
-                onVoucherSubmit={handleVoucherSuccess}
-                currency={data.paymentCurrency}
-            />
             <ReceiptModal 
                 show={isReceiptModalOpen} 
                 onClose={() => setIsReceiptModalOpen(false)} 

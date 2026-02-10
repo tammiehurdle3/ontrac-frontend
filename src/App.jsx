@@ -16,6 +16,8 @@ import KnowledgeCenterPage from './pages/KnowledgeCenterPage';
 import ArticlePage from './pages/ArticlePage';
 import DeliverySolutionsPage from './pages/DeliverySolutionsPage';
 import RefundPolicy from './pages/RefundPolicy.jsx';
+import CheckoutPage from './pages/CheckoutPage';
+
 
 // Import the newly created page components
 import { 
@@ -66,6 +68,7 @@ function App() {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/feedback" element={<FeedbackPage />} />
           <Route path="/refund-policy" element={<RefundPolicy />} />
+          <Route path="/checkout/:trackingId" element={<CheckoutPage />} />
 
 
         </Routes>
