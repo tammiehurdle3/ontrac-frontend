@@ -45,13 +45,17 @@ function CheckoutPage() {
     }
     const handler = setTimeout(async () => {
       try {
-        const apiKey = import.meta.env.VITE_LOCATIONIQ_API_KEY;
+        const apiKey = import.meta.env.VITE_MAPBOX_API_KEY;
         const response = await fetch(
-          `https://api.locationiq.com/v1/autocomplete.php?key=${apiKey}&q=${encodeURIComponent(billingAddress)}&limit=5`
+          `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(billingAddress)}.json?access_token=${apiKey}&autocomplete=true&limit=5&types=address`
         );
         const data = await response.json();
-        if (data && !data.error) {
-          setAddressSuggestions(data);
+        if (data?.features) {
+          const normalized = data.features.map(f => ({
+            place_id: f.id,
+            display_name: f.place_name
+          }));
+          setAddressSuggestions(normalized);
           setIsSuggestionsVisible(true);
         }
       } catch (error) {
