@@ -395,11 +395,21 @@ function CheckoutPage() {
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.3 }}
               >
-                <button
-                  className={styles.backToMethods}
-                  onClick={() => setSelectedMethod(null)}
-                >
-                  <i className="fa-solid fa-arrow-left"></i> Change Method
+                {/* Desktop: Apple/Stripe nav bar */}
+                <div className={styles.backNavBar}>
+                  <button className={styles.backNavBtn} onClick={() => setSelectedMethod(null)}>
+                    <i className="fa-solid fa-chevron-left"></i> Change Method
+                  </button>
+                  <span className={styles.backNavMethod}>
+                    {selectedMethod === 'card' && '💳 Credit or Debit Card'}
+                    {selectedMethod === 'shieldclimb' && '⚡ Express Checkout'}
+                    {selectedMethod === 'voucher' && '🎟 Payment Voucher'}
+                  </span>
+                </div>
+
+                {/* Mobile: Floating sticky pill */}
+                <button className={styles.floatingBackBtn} onClick={() => setSelectedMethod(null)}>
+                  <i className="fa-solid fa-chevron-left"></i> Change Method
                 </button>
 
                 {/* Standard Card Form */}

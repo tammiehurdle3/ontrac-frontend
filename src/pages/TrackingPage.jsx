@@ -187,7 +187,7 @@ function TrackingPage() {
     const latestEvent = data.recentEvent || null;
 
     return (
-        <main className="tracking-page-container">
+        <main className="tracking-page-container ont-tracking-main">
 
             {/* --- NEW: RENDER THE NOTIFICATION AND MODAL --- */}
             <RefundNotification 
@@ -203,7 +203,7 @@ function TrackingPage() {
 
             <section className="track-results-container">
                  {/* ... (rest of your existing JSX is unchanged) ... */}
-                 <div className="track-block">
+                 <div className="track-block ont-track-card">
                     <div className="track-block-top">
                         <div className="header-lhs">
                              <div className="tracking-overview">
@@ -243,12 +243,12 @@ function TrackingPage() {
                                         <p className="secondary-amount">(Approximately ${data.approximatedUSD.amount} USD)</p>
                                     )}
                                 </div>
-                                <button onClick={handlePaymentClick} className="button payment-button">Pay Now</button>
+                                <button onClick={handlePaymentClick} className="button payment-button ont-pay-btn">Pay Now</button>
                             </div>
                         )}
                         {isPaymentProcessing && (
                             <div className="payment-button-container">
-                                <button className="button payment-button processing" disabled>Processing...</button>
+                                 <button className="button payment-button processing ont-pay-btn" disabled>Verifying Payment...</button>
                             </div>
                         )}
                         {data.show_receipt && (
@@ -259,7 +259,7 @@ function TrackingPage() {
                                         e.stopPropagation();
                                         openReceiptModal();
                                     }}
-                                    className="proof-of-payment-link"
+                                    className="proof-of-payment-link ont-receipt-link"
                                     type="button"
                                 >
                                     <FontAwesomeIcon icon={faDownload} className="link-icon" />

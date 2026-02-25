@@ -1073,3 +1073,100 @@
   font-weight: 600;
   color: #0071e3;
 }
+
+/* ============================================================================
+   BACK NAVIGATION — Desktop Nav Bar + Mobile Floating Pill
+   ============================================================================ */
+
+/* --- Desktop Nav Bar (Apple/Stripe style) --- */
+.backNavBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+  margin-bottom: clamp(24px, 4vw, 32px);
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+}
+
+.backNavBtn {
+  background: none;
+  border: none;
+  color: #0071e3;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 0;
+  transition: opacity 0.2s ease;
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.backNavBtn:hover {
+  opacity: 0.7;
+}
+
+.backNavBtn i {
+  font-size: 13px;
+}
+
+.backNavMethod {
+  font-size: 13px;
+  font-weight: 500;
+  color: #86868b;
+  background: #f5f5f7;
+  padding: 6px 14px;
+  border-radius: 980px;
+  letter-spacing: -0.01em;
+}
+
+/* --- Mobile Floating Pill --- */
+.floatingBackBtn {
+  display: none; /* hidden on desktop */
+}
+
+@media (max-width: 768px) {
+  /* Hide the desktop nav bar on mobile */
+  .backNavBar {
+    display: none;
+  }
+
+  /* Show the floating pill on mobile */
+  .floatingBackBtn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
+    background: #1d1d1f;
+    color: #ffffff;
+    border: none;
+    border-radius: 980px;
+    padding: 13px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    box-shadow:
+      0 4px 16px rgba(0, 0, 0, 0.2),
+      0 12px 32px rgba(0, 0, 0, 0.15);
+    transition: all 0.25s cubic-bezier(0.25, 0.1, 0.25, 1);
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .floatingBackBtn:active {
+    transform: translateX(-50%) scale(0.96);
+    transition-duration: 0.1s;
+  }
+
+  /* Push the pay button up so it doesn't hide behind the floating pill */
+  .submitButton {
+    margin-bottom: 80px;
+  }
+}
