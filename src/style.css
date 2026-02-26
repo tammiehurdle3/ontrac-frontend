@@ -3524,6 +3524,9 @@ body.about-page-background {
   justify-content: center;
   padding: 100px clamp(28px, 8vw, 64px) 48px;
   overflow: hidden;
+  /* 100vh fallback for older browsers, 100dvh respects mobile address bar */
+  height: 100vh;
+  height: 100dvh;
 }
 
 /* Decorative blob */

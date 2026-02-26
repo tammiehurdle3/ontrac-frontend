@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import Header from '../components/Header';
 import Footer from '../components/Footer';
 import PaymentStatusAnimation from '../components/PaymentStatusAnimation';
 import Cards from 'react-credit-cards-2';
@@ -718,8 +717,7 @@ function CheckoutPage() {
         </div>
       </div>
 
-      <Footer />
-    </div>
+      </div>
   );
 }
 

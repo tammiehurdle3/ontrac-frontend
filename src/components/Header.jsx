@@ -18,10 +18,25 @@ function Header() {
     setIsMobileMenuOpen(false);
   }, [location]);
 
-  // Lock body scroll when menu open
+  // Lock scroll when menu open — fixes desktop scrollbar jump + iOS Safari
   useEffect(() => {
-    document.body.style.overflow = isMobileMenuOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
+    if (isMobileMenuOpen) {
+      // Measure scrollbar width BEFORE hiding it to prevent layout shift
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      // Lock on <html> not <body> — iOS Safari ignores body overflow:hidden
+      document.documentElement.style.overflow = 'hidden';
+      // Compensate for the scrollbar disappearing so header doesn't jump right
+      if (scrollbarWidth > 0) {
+        document.body.style.paddingRight = scrollbarWidth + 'px';
+      }
+    } else {
+      document.documentElement.style.overflow = '';
+      document.body.style.paddingRight = '';
+    }
+    return () => {
+      document.documentElement.style.overflow = '';
+      document.body.style.paddingRight = '';
+    };
   }, [isMobileMenuOpen]);
 
   const navLinks = [
