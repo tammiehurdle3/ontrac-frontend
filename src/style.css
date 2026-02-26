@@ -13,11 +13,16 @@
 
 /* --- Base & Layout --- */
 body {
-    margin: 0;
-    font-family: var(--font-main);
-    color: var(--primary-black);
-    line-height: 1.6;
-    background-color: #fff;
+  margin: 0;
+  font-family: var(--font-main);
+  color: var(--primary-black);
+  line-height: 1.6;
+  background-color: #fff;
+  overflow-x: hidden;
+}
+
+html {
+  overflow-x: hidden;
 }
 
 .container {
@@ -56,12 +61,15 @@ body {
 
 /* --- Header --- */
 .main-header {
-    background: #fff;
-    padding: 15px 0;
-    border-bottom: 1px solid #eee;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+  background: #fff;
+  padding: 15px 0;
+  border-bottom: 1px solid #eee;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1000;
 }
 .main-header .container {
     display: flex;
@@ -79,8 +87,9 @@ body {
 
 /* --- Hero Section --- */
 .hero {
-    padding: 80px 20px;
-    text-align: center;
+  padding: 80px 20px;
+  text-align: center;
+  padding-top: calc(80px + 71px); /* 71px = header height */
 }
 .hero h1 {
     font-family: var(--font-heading);
