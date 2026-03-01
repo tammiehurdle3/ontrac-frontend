@@ -12,12 +12,17 @@
 }
 
 /* --- Base & Layout --- */
+html {
+  overflow-x: hidden;
+}
+
 body {
-    margin: 0;
-    font-family: var(--font-main);
-    color: var(--primary-black);
-    line-height: 1.6;
-    background-color: #fff;
+  margin: 0;
+  font-family: var(--font-main);
+  color: var(--primary-black);
+  line-height: 1.6;
+  background-color: #fff;
+  overflow-x: hidden;
 }
 
 .container {

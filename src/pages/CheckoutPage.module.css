@@ -1170,3 +1170,55 @@
     margin-bottom: 80px;
   }
 }
+/* ============================================================================
+   INLINE ERROR BANNER — Appears right above the Pay button, in context
+   ============================================================================ */
+
+   .inlineErrorBanner {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: #fff2f4;
+    border: 1px solid rgba(255, 59, 48, 0.18);
+    border-radius: clamp(10px, 2vw, 14px);
+    padding: clamp(14px, 2.5vw, 18px) clamp(14px, 2.5vw, 18px);
+    margin-top: clamp(20px, 3vw, 28px);
+    overflow: hidden;
+    width: 100%;
+  }
+  
+  .inlineErrorIcon {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 59, 48, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ff3b30;
+    font-size: 15px;
+    margin-top: 1px;
+  }
+  
+  .inlineErrorContent {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .inlineErrorTitle {
+    font-size: 13px;
+    font-weight: 700;
+    color: #cc0000;
+    letter-spacing: -0.01em;
+  }
+  
+  .inlineErrorText {
+    font-size: 13px;
+    font-weight: 400;
+    color: #ff3b30;
+    line-height: 1.5;
+  }

