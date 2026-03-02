@@ -220,7 +220,7 @@ function TrackingPage() {
                                 <div className="destination-info"><label>Expected</label><p>{formatExpectedDate(data.expectedDate)}</p></div>
                             </div>
                         </div>
-                        <ProgressBar status={data.status} labels={data.progressLabels} allEvents={data.allEvents} />
+                        <ProgressBar status={data.status} labels={data.progressLabels} allEvents={data.allEvents} requiresPayment={data.requiresPayment} />
                         <RecentEvent event={latestEvent} />
                         {data.requiresPayment && !isPaymentProcessing && (
                             <div className="payment-section">

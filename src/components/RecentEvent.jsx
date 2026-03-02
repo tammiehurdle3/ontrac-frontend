@@ -1,17 +1,17 @@
 // src/components/RecentEvent.jsx
 import React from 'react';
 
-// This component takes the event data as a prop
 function RecentEvent({ event }) {
   if (!event) return null;
 
-  // --- NEW: Function to open the Tawk.to chat widget ---
   const handleChatClick = () => {
-    // This checks if the Tawk.to API is available on the page
     if (window.Tawk_API && window.Tawk_API.maximize) {
       window.Tawk_API.maximize();
     }
   };
+
+  // Support both old format (event.status) and new format (event.event)
+  const eventLabel = event.event || event.status || '';
 
   return (
     <div className="most-recent-event">
@@ -19,7 +19,7 @@ function RecentEvent({ event }) {
       <div className="event-details">
         <div className="event-item">
           <label>Event</label>
-          <p>{event.status}</p>
+          <p>{eventLabel}</p>
         </div>
         <div className="event-item">
           <label>City</label>
@@ -35,7 +35,6 @@ function RecentEvent({ event }) {
         <p>{event.description}</p>
       </div>
       <div className="event-actions">
-        {/* --- UPDATED: The button is now clickable --- */}
         <button className="button button-white" onClick={handleChatClick}>
           <i className="fa-solid fa-user-headset"></i> Chat now
         </button>
