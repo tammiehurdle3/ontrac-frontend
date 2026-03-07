@@ -633,6 +633,12 @@ function CheckoutPage() {
                       )}
                     </button>
 
+                    {errorMessage && (
+                      <p style={{ color: '#d32f2f', fontSize: '13px', textAlign: 'center', margin: '8px 0' }}>
+                        <i className="fa-solid fa-circle-exclamation"></i> {errorMessage}
+                      </p>
+                    )}
+
                     <div className={styles.poweredBy}>
                       Secured by <strong>Stripe Connect</strong> • ISO 27001 Certified Payment Rails
                     </div>
