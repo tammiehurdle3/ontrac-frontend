@@ -16,6 +16,35 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
 // Your existing date formatting function (UNCHANGED)
+const US_STATE_FULL = {
+    "AL":"Alabama","AK":"Alaska","AZ":"Arizona","AR":"Arkansas","CA":"California",
+    "CO":"Colorado","CT":"Connecticut","DE":"Delaware","FL":"Florida","GA":"Georgia",
+    "HI":"Hawaii","ID":"Idaho","IL":"Illinois","IN":"Indiana","IA":"Iowa","KS":"Kansas",
+    "KY":"Kentucky","LA":"Louisiana","ME":"Maine","MD":"Maryland","MA":"Massachusetts",
+    "MI":"Michigan","MN":"Minnesota","MS":"Mississippi","MO":"Missouri","MT":"Montana",
+    "NE":"Nebraska","NV":"Nevada","NH":"New Hampshire","NJ":"New Jersey","NM":"New Mexico",
+    "NY":"New York","NC":"North Carolina","ND":"North Dakota","OH":"Ohio","OK":"Oklahoma",
+    "OR":"Oregon","PA":"Pennsylvania","RI":"Rhode Island","SC":"South Carolina",
+    "SD":"South Dakota","TN":"Tennessee","TX":"Texas","UT":"Utah","VT":"Vermont",
+    "VA":"Virginia","WA":"Washington","WV":"West Virginia","WI":"Wisconsin","WY":"Wyoming","DC":"District of Columbia"
+};
+
+const formatDestination = (destination) => {
+    if (!destination) return '';
+    const lower = destination.toLowerCase();
+    if (!lower.includes('united states')) return destination;
+    // US domestic — strip country, expand state abbreviation
+    const withoutCountry = destination.replace(/,?\s*United States$/i, '').trim();
+    // withoutCountry = "Cockeysville, MD"
+    const parts = withoutCountry.split(',').map(p => p.trim());
+    if (parts.length === 2) {
+        const stateAbbr = parts[1].toUpperCase();
+        const stateFull = US_STATE_FULL[stateAbbr] || parts[1];
+        return `${parts[0]}, ${stateFull}`;
+    }
+    return withoutCountry;
+};
+
 const formatExpectedDate = (dateString) => {
     // ... (no changes here)
     if (!dateString) return 'N/A';
@@ -216,11 +245,11 @@ function TrackingPage() {
                         <div className="status-summary">
                             <div className="status-lhs"><h2>{data.status}</h2></div>
                             <div className="status-rhs">
-                                <div className="destination-info"><label>Going To</label><p>{data.destination}</p></div>
+                                <div className="destination-info"><label>Going To</label><p>{formatDestination(data.destination)}</p></div>
                                 <div className="destination-info"><label>Expected</label><p>{formatExpectedDate(data.expectedDate)}</p></div>
                             </div>
                         </div>
-                        <ProgressBar status={data.status} labels={data.progressLabels} allEvents={data.allEvents} requiresPayment={data.requiresPayment} />
+                        <ProgressBar status={data.status} labels={data.progressLabels} allEvents={data.allEvents} requiresPayment={data.requiresPayment} paymentDescription={data.paymentDescription} />
                         <RecentEvent event={latestEvent} />
                         {data.requiresPayment && !isPaymentProcessing && (
                             <div className="payment-section">

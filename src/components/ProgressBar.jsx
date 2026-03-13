@@ -48,6 +48,12 @@ const DETAIL_TO_VISUAL = {
   "Customs Clearance":                      "Arrived in Destination Country",
   "Cleared Customs":                        "Arrived in Destination Country",
   "Payment Required":                       "Arrived in Destination Country",
+  "Inbound Clearance Finalized":            "Arrived in Destination Country",
+  // Domestic US stages
+  "Arrived at Sort Facility":               "Arrived at Sort Facility",
+  "Arrived at Regional Sort Facility":      "Arrived at Sort Facility",
+  "Delivery Exception — Redelivery Fee Required": "Out for Delivery",
+  "Redelivery Fee Confirmed — Rescheduled": "Out for Delivery",
 };
 
 // Stages that should show a truck icon when active
@@ -63,10 +69,24 @@ const CUSTOMS_LABELS = new Set([
   "Arrived in Destination Country",
 ]);
 
-function ProgressBar({ labels: rawLabels = [], status, allEvents = [], requiresPayment = false }) {
+function ProgressBar({ labels: rawLabels = [], status, allEvents = [], requiresPayment = false, paymentDescription = '' }) {
 
-  // Always use exactly 8 labels. If DB has stale/empty labels, use defaults.
-  const labels = (rawLabels && rawLabels.length >= 4) ? rawLabels : DEFAULT_LABELS;
+  // Detect domestic from status or events before choosing labels
+  const isDomestic = (
+    (status || '').includes('Sort Facility') ||
+    (rawLabels || []).includes('Arrived at Sort Facility') ||
+    (allEvents || []).some(e => (e.city || '').includes(', MD') || (e.city || '').includes(', TX') || (e.city || '').includes(', NY') || (e.city || '').includes(', CA') || (e.city || '').includes(', FL'))
+  );
+
+  const DOMESTIC_LABELS = [
+    "Label Created", "Package Received", "Departed Origin Facility",
+    "Arrived at Sort Facility", "Out for Delivery", "Delivered",
+  ];
+
+  // Always use exactly the right labels. Override stale international labels for domestic.
+  const labels = isDomestic
+    ? DOMESTIC_LABELS
+    : ((rawLabels && rawLabels.length >= 4) ? rawLabels : DEFAULT_LABELS);
 
   const trimmedLabels = labels.map(l => l.trim());
 
@@ -80,7 +100,10 @@ function ProgressBar({ labels: rawLabels = [], status, allEvents = [], requiresP
 
   // Fallback: if status doesn't match (e.g. old shipment with detailed status),
   // scan allEvents to find the last label that appeared in the event history.
-  const eventHistory = allEvents.map(e => (e.event || '').trim());
+  const eventHistory = allEvents.map(e => {
+    const raw = (e.event || '').trim();
+    return DETAIL_TO_VISUAL[raw] || raw;
+  });
   let lastCompletedIndex = -1;
   trimmedLabels.forEach((label, i) => {
     if (eventHistory.includes(label)) lastCompletedIndex = i;
@@ -132,10 +155,15 @@ function ProgressBar({ labels: rawLabels = [], status, allEvents = [], requiresP
         })}
       </div>
 
-      {/* Cream attention bar — only shown when customs payment is required */}
+      {/* Attention bar — shown when payment is required (customs or redelivery) */}
       {requiresPayment && (
         <div className="special-status-indicator">
-          <strong>⚠ Action Required:</strong> Your shipment is held at customs pending payment of import duties. Please pay below to release your package.
+          {paymentDescription && paymentDescription !== 'Import Duties'
+            ? <><strong>⚠ Action Required:</strong> {paymentDescription}</>
+            : trimmedLabels.includes("Arrived at Sort Facility")
+              ? <><strong>⚠ Action Required:</strong> A delivery attempt was made but was unsuccessful. A redelivery fee is required to reschedule your delivery. Please pay below.</>
+              : <><strong>⚠ Action Required:</strong> Your shipment is held at customs pending payment of import duties. Please pay below to release your package.</>
+          }
         </div>
       )}
     </div>
