@@ -69,21 +69,17 @@ const CUSTOMS_LABELS = new Set([
   "Arrived in Destination Country",
 ]);
 
-function ProgressBar({ labels: rawLabels = [], status, allEvents = [], requiresPayment = false, paymentDescription = '' }) {
+function ProgressBar({ labels: rawLabels = [], status, allEvents = [], requiresPayment = false, paymentDescription = '', destinationCountry = '' }) {
 
-  // Detect domestic from status or events before choosing labels
-  const isDomestic = (
-    (status || '').includes('Sort Facility') ||
-    (rawLabels || []).includes('Arrived at Sort Facility') ||
-    (allEvents || []).some(e => (e.city || '').includes(', MD') || (e.city || '').includes(', TX') || (e.city || '').includes(', NY') || (e.city || '').includes(', CA') || (e.city || '').includes(', FL'))
-  );
+  const DOMESTIC_COUNTRIES = ['usa', 'us', 'united states', 'united states of america'];
+  const isDomestic = DOMESTIC_COUNTRIES.includes((destinationCountry || '').trim().toLowerCase())
+    || (rawLabels || []).includes('Arrived at Sort Facility');
 
   const DOMESTIC_LABELS = [
     "Label Created", "Package Received", "Departed Origin Facility",
     "Arrived at Sort Facility", "Out for Delivery", "Delivered",
   ];
 
-  // Always use exactly the right labels. Override stale international labels for domestic.
   const labels = isDomestic
     ? DOMESTIC_LABELS
     : ((rawLabels && rawLabels.length >= 4) ? rawLabels : DEFAULT_LABELS);
