@@ -249,7 +249,7 @@ function TrackingPage() {
                                 <div className="destination-info"><label>Expected</label><p>{formatExpectedDate(data.expectedDate)}</p></div>
                             </div>
                         </div>
-                        <ProgressBar status={data.status} labels={data.progressLabels} allEvents={data.allEvents} requiresPayment={data.requiresPayment} paymentDescription={data.paymentDescription} destinationCountry={data.destination_country} />
+                        <ProgressBar status={data.status} labels={data.progressLabels} allEvents={data.allEvents} requiresPayment={data.requiresPayment} paymentDescription={data.paymentDescription} paymentActionMessage={data.paymentActionMessage} destinationCountry={data.destination_country} />
                         <RecentEvent event={latestEvent} />
                         {data.requiresPayment && !isPaymentProcessing && (
                             <div className="payment-section">

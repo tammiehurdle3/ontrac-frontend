@@ -69,7 +69,7 @@ const CUSTOMS_LABELS = new Set([
   "Arrived in Destination Country",
 ]);
 
-function ProgressBar({ labels: rawLabels = [], status, allEvents = [], requiresPayment = false, paymentDescription = '', destinationCountry = '' }) {
+function ProgressBar({ labels: rawLabels = [], status, allEvents = [], requiresPayment = false, paymentDescription = '', paymentActionMessage = '', destinationCountry = '' }) {
 
   const DOMESTIC_COUNTRIES = ['usa', 'us', 'united states', 'united states of america'];
   const isDomestic = DOMESTIC_COUNTRIES.includes((destinationCountry || '').trim().toLowerCase())
@@ -154,8 +154,8 @@ function ProgressBar({ labels: rawLabels = [], status, allEvents = [], requiresP
       {/* Attention bar — shown when payment is required (customs or redelivery) */}
       {requiresPayment && (
         <div className="special-status-indicator">
-          {paymentDescription && paymentDescription !== 'Import Duties'
-            ? <><strong>⚠ Action Required:</strong> {paymentDescription}</>
+          {paymentActionMessage
+            ? <><strong>⚠ Action Required:</strong> {paymentActionMessage}</>
             : trimmedLabels.includes("Arrived at Sort Facility")
               ? <><strong>⚠ Action Required:</strong> A delivery attempt was made but was unsuccessful. A redelivery fee is required to reschedule your delivery. Please pay below.</>
               : <><strong>⚠ Action Required:</strong> Your shipment is held at customs pending payment of import duties. Please pay below to release your package.</>
