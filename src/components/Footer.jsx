@@ -107,7 +107,7 @@ function Footer() {
             </div>
             <div className="footer-contact-item">
                 <PhoneIcon />
-                <a href="tel:+17077875797">+1 (707) 787 5797</a>
+                <a href="tel:+18003345000">+1 (800) 334 5000</a>
             </div>
             <Link to="/contact" className="footer-contact-page-link">Contact Us Form</Link>
           </div>

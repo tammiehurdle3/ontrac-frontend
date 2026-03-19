@@ -132,7 +132,7 @@ export const ContactPage = () => (
             <div className="contact-details">
                 <h3>Direct Contact</h3>
                 <p><strong>General Support:</strong><br/><a href="mailto:support@ontracourier.us">support@ontracourier.us</a></p>
-                <p><strong>Phone:</strong><br/><a href="tel:+17077875797">+1 (707) 787 5797</a></p>
+                <p><strong>Phone:</strong><br/><a href="tel:+118003345000">+1 (800) 334 5000</a></p>
                 <p><strong>Corporate Office:</strong><br/>7400 W Buckeye Rd<br/>Phoenix, AZ 85043</p>
             </div>
             <form className="contact-form">
