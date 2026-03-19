@@ -35,7 +35,6 @@ function PrivacyPolicyPage() {
       <p>If you have any questions about this Privacy Policy, please contact us at either of our support emails:</p>
       <ul style={{ listStyle: 'none', paddingLeft: 0 }}>
         <li><strong>support@ontracourier.us</strong></li>
-        <li><strong>support@ontracourier.co</strong></li>
       </ul>
     </div>
   );

@@ -101,10 +101,7 @@ function Footer() {
                 <MailIcon />
                 <a href="mailto:support@ontracourier.us">support@ontracourier.us</a>
             </div>
-             <div className="footer-contact-item">
-                <MailIcon />
-                <a href="mailto:support@ontracourier.co">support@ontracourier.co</a>
-            </div>
+             
             <div className="footer-contact-item">
                 <PhoneIcon />
                 <a href="tel:+18003345000">+1 (800) 334 5000</a>

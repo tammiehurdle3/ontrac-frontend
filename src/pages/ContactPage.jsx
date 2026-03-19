@@ -19,13 +19,10 @@ function ContactPage() {
                 <i className="fa-solid fa-envelope"></i>
                 <a href="mailto:support@ontracourier.us">support@ontracourier.us</a>
               </li>
-              <li>
-                <i className="fa-solid fa-envelope"></i>
-                <a href="mailto:support@ontracourier.co">support@ontracourier.co</a>
-              </li>
+              
               <li>
                 <i className="fa-solid fa-phone"></i>
-                <a href="tel:+17077875797">+1 (707) 787 5797</a>
+                <a href="tel:+18003345000">+1 (800) 334 5000</a>
               </li>
             </ul>
           </div>
