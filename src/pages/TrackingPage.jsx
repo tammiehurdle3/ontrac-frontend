@@ -57,6 +57,37 @@ const formatExpectedDate = (dateString) => {
     return dateString;
 };
 
+function DeliveryPhotoSection({ imageUrl }) {
+    const [revealed, setRevealed] = useState(false);
+    return (
+        <div className="delivery-photo-container">
+            {!revealed ? (
+                <button
+                    onClick={() => setRevealed(true)}
+                    className="proof-of-payment-link ont-receipt-link"
+                    style={{width: '100%', justifyContent: 'center', padding: '14px'}}
+                    type="button"
+                >
+                    <i className="fa-solid fa-box-open" style={{marginRight: '8px'}}></i>
+                    View Proof of Delivery
+                </button>
+            ) : (
+                <>
+                    <div className="delivery-photo-header">
+                        <i className="fa-solid fa-box-open"></i>
+                        <span>Proof of Delivery</span>
+                    </div>
+                    <img src={imageUrl} alt="Proof of delivery" className="delivery-photo-img" />
+                    <a href={imageUrl} download target="_blank" rel="noopener noreferrer" className="proof-of-payment-link ont-receipt-link" style={{marginTop: '12px', display: 'inline-flex'}}>
+                        <FontAwesomeIcon icon={faDownload} className="link-icon" />
+                        Download Photo
+                    </a>
+                </>
+            )}
+        </div>
+    );
+}
+
 function TrackingPage() {
     const navigate = useNavigate();
     // Your existing state variables
@@ -295,6 +326,9 @@ function TrackingPage() {
                                     Print proof of payment
                                 </button>
                             </div>
+                        )}
+                        {data.delivery_image_url && (
+                            <DeliveryPhotoSection imageUrl={data.delivery_image_url} />
                         )}
                         <div className="collapsible-sections">
                             <CollapsibleSection title="All OnTrac Events" icon="fa-list">
