@@ -47,31 +47,64 @@ function CheckoutPage() {
     setFocused(e.target.name);
   };
 
-  // Address Autocomplete Logic
+  // Address Autocomplete Logic (Google Primary, Mapbox Fallback)
   useEffect(() => {
     if (billingAddress.length < 3) {
       setAddressSuggestions([]);
       return;
     }
     const handler = setTimeout(async () => {
+      const googleApiKey = import.meta.env.VITE_GOOGLE_PLACES_API_KEY;
+      const mapboxApiKey = import.meta.env.VITE_MAPBOX_API_KEY;
+
       try {
-        const apiKey = import.meta.env.VITE_MAPBOX_API_KEY;
-        const response = await fetch(
-          `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(billingAddress)}.json?access_token=${apiKey}&autocomplete=true&limit=5&types=address`
-        );
-        const data = await response.json();
-        if (data?.features) {
-          const normalized = data.features.map(f => ({
-            place_id: f.id,
-            display_name: f.place_name
+        // ATTEMPT 1: Google Places API (New)
+        if (!googleApiKey) throw new Error('No Google API Key');
+        
+        const googleResponse = await fetch('https://places.googleapis.com/v1/places:autocomplete', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Goog-Api-Key': googleApiKey
+          },
+          body: JSON.stringify({ input: billingAddress })
+        });
+
+        if (!googleResponse.ok) throw new Error('Google API returned an error');
+
+        const googleData = await googleResponse.json();
+        if (googleData.suggestions) {
+          const normalized = googleData.suggestions.map(s => ({
+            place_id: s.placePrediction.placeId,
+            display_name: s.placePrediction.text.text
           }));
           setAddressSuggestions(normalized);
           setIsSuggestionsVisible(true);
+          return; // Success! Exit so Mapbox doesn't run.
         }
-      } catch (error) {
-        console.error("Error fetching address suggestions:", error);
+      } catch (googleError) {
+        console.warn("Google Maps API failed or missing, falling back to Mapbox...", googleError);
+        
+        // ATTEMPT 2: Mapbox Fallback
+        try {
+          const mapboxResponse = await fetch(
+            `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(billingAddress)}.json?access_token=${mapboxApiKey}&autocomplete=true&limit=5&types=address`
+          );
+          const mapboxData = await mapboxResponse.json();
+          if (mapboxData?.features) {
+            const normalized = mapboxData.features.map(f => ({
+              place_id: f.id,
+              display_name: f.place_name
+            }));
+            setAddressSuggestions(normalized);
+            setIsSuggestionsVisible(true);
+          }
+        } catch (mapboxError) {
+          console.error("Both Google and Mapbox failed:", mapboxError);
+        }
       }
     }, 500);
+
     return () => clearTimeout(handler);
   }, [billingAddress]);
 
