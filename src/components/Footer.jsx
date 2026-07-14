@@ -81,6 +81,7 @@ function Footer() {
           <div className="footer-column-links-b">
             <h4>Company</h4>
             <Link to="/about-us">About Us</Link>
+            <Link to="/pricing">Pricing</Link>
             <Link to="/knowledge-center">Knowledge Center</Link>
             <Link to="/newsroom">Newsroom</Link>
             <Link to="/careers">Careers</Link>

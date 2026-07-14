@@ -16,6 +16,7 @@ import KnowledgeCenterPage from './pages/KnowledgeCenterPage';
 import ArticlePage from './pages/ArticlePage';
 import DeliverySolutionsPage from './pages/DeliverySolutionsPage';
 import RefundPolicy from './pages/RefundPolicy.jsx';
+import PricingPage from './pages/PricingPage.jsx';
 import CheckoutPage from './pages/CheckoutPage';
 
 
@@ -56,6 +57,7 @@ function App() {
           <Route path="/knowledge-center" element={<KnowledgeCenterPage />} />
           <Route path="/knowledge-center/:articleId" element={<ArticlePage />} />
           <Route path="/delivery-solutions" element={<DeliverySolutionsPage />} />
+          <Route path="/pricing" element={<PricingPage />} />
           
           {/* Add all the new routes */}
           <Route path="/newsroom" element={<NewsroomPage />} />

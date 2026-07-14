@@ -41,6 +41,7 @@ function Header() {
 
   const navLinks = [
     { to: '/delivery-solutions', label: 'Delivery Solutions' },
+    { to: '/pricing',            label: 'Pricing'            },
     { to: '/about-us',           label: 'About Us'           },
     { to: '/knowledge-center',   label: 'Knowledge Center'   },
     { to: '/contact',            label: 'Contact'            },
