@@ -53,9 +53,9 @@ const tiers = [
 
 const faqs = [
   {
-    question: 'Does Ontracourier handle the physical delivery of packages?',
+    question: 'Does OnTrac handle the physical delivery of packages?',
     answer:
-      'No, Ontracourier is strictly a software platform. We provide the dispatching, routing, and tracking infrastructure that independent courier businesses use to manage their own physical fleets.',
+      'No, OnTrac is strictly a software platform. We provide the dispatching, routing, and tracking infrastructure that independent courier businesses use to manage their own physical fleets.',
   },
   {
     question: 'Can I integrate this with my existing e-commerce checkout?',
