@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import PaymentStatusAnimation from '../components/PaymentStatusAnimation';
+import PaymentWalkthrough from '../components/PaymentWalkthrough';
 import Cards from 'react-credit-cards-2';
 import 'react-credit-cards-2/dist/es/styles-compiled.css';
 import styles from './CheckoutPage.module.css';
@@ -304,8 +305,13 @@ function CheckoutPage() {
     );
   }
 
+  const paymentTotal = shipmentData?.paymentCurrency != null && shipmentData?.paymentAmount != null
+    ? `${shipmentData.paymentCurrency} ${shipmentData.paymentAmount}`
+    : undefined;
+
   return (
     <div className={styles.checkoutWrapper}>
+      <div className={styles.walkthroughLayout}>
       <div className={styles.checkoutContainer}>
         <motion.div 
           className={styles.checkoutCard}
@@ -427,6 +433,9 @@ function CheckoutPage() {
                   <p>Redeem your prepaid code</p>
                 </motion.div>
 
+              </div>
+              <div className={styles.walkthroughInline}>
+                <PaymentWalkthrough forcePill total={paymentTotal} />
               </div>
             </div>
           )}
@@ -814,7 +823,11 @@ function CheckoutPage() {
         </div>
       </div>
 
+      <aside className={styles.walkthroughRail}>
+        <PaymentWalkthrough total={paymentTotal} />
+      </aside>
       </div>
+    </div>
   );
 }
 
