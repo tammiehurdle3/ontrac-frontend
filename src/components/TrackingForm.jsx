@@ -22,9 +22,9 @@ function TrackingForm() {
           type="text"
           value={trackingId}
           onChange={(e) => setTrackingId(e.target.value)}
-          placeholder="Enter your tracking number here..."
+          placeholder="Enter tracking number"
         />
-        <button className="button" type="submit">Track Your Package</button>
+        <button className="button" type="submit">Track package</button>
       </form>
       <p className="error-message">{error}</p>
     </>

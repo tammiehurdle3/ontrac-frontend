@@ -12,6 +12,8 @@ function ReceiptModal({
 }) {
     if (!show) return null;
 
+    const confirmedAt = receipt?.generated_at ? new Date(receipt.generated_at) : new Date();
+
     /**
      * Creates a single, self-contained HTML string for the receipt.
      * This is used by the print function to generate a clean, styled document.
@@ -21,15 +23,20 @@ function ReceiptModal({
         const fullReceiptName = recipientName ? `${receiptId} - ${recipientName}` : receiptId;
         
         // Correctly formatted values to be inserted into the HTML
-        const formattedDate = new Date().toLocaleDateString('en-US', { 
+        const formattedDate = confirmedAt.toLocaleDateString('en-US', {
             year: 'numeric', month: 'long', day: 'numeric' 
         });
-        const formattedTime = new Date().toLocaleTimeString('en-US');
+        const formattedTime = confirmedAt.toLocaleTimeString('en-US', {
+            hour: 'numeric', minute: '2-digit'
+        });
         const formattedAmount = new Intl.NumberFormat('en-US', { 
             style: 'currency', 
             currency: paymentCurrency || 'USD' 
         }).format(paymentAmount || 0);
-        const formattedGeneratedDate = new Date().toLocaleString();
+        const formattedGeneratedDate = confirmedAt.toLocaleString('en-US', {
+            year: 'numeric', month: 'long', day: 'numeric',
+            hour: 'numeric', minute: '2-digit'
+        });
         const description = paymentDescription || 'Shipping Fee';
 
         return `
@@ -40,9 +47,9 @@ function ReceiptModal({
                     <style>
                         body { font-family: 'Arial', sans-serif; margin: 0.5in; padding: 0; background: white; color: black; line-height: 1.4; }
                         .receipt-header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 15px; }
-                        .company-info h3 { margin: 0 0 5px 0; font-size: 24px; color: #d22730; }
-                        .company-info p { margin: 0 0 3px 0; font-size: 12px; }
-                        .receipt-title h1 { margin: 10px 0 0 0; font-size: 18px; color: black; }
+                        .company-info h3 { margin: 0 0 5px 0; font-size: 24px; color: #c9252d; }
+                        .company-info p { margin: 0 0 3px 0; font-size: 12px; color: #666; }
+                        .receipt-title h1 { margin: 14px 0 0 0; font-size: 20px; color: #17191c; }
                         .receipt-details-section { margin: 20px 0; }
                         .receipt-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 12pt; }
                         .receipt-table td { padding: 8px; border: 1px solid #333; vertical-align: top; }
@@ -61,15 +68,16 @@ function ReceiptModal({
                 </head>
                 <body>
                     <div class="receipt-header">
-                        <div class="company-info"><h3>OnTrac Courier</h3><p>The #1 Alternative Carrier Network</p><p>Phoenix, AZ | support@ontracourier.us </p></div>
+                        <div class="company-info"><h3>OnTrac Courier</h3><p>Shipment payment confirmation</p><p>Phoenix, AZ | support@ontracourier.us</p></div>
                         <div class="receipt-title"><h1>Payment Receipt</h1><p><strong>Receipt ID: ${fullReceiptName}</strong></p></div>
                     </div>
                     <div class="receipt-details-section">
                         <table class="receipt-table">
-                            <tr><td>Shipment ID:</td><td>${trackingId}</td></tr>
+                            <tr><td>Tracking number:</td><td>${trackingId}</td></tr>
                             <tr><td>Recipient:</td><td>${recipientName || 'Customer'}</td></tr>
-                            <tr><td>Date:</td><td>${formattedDate}</td></tr>
-                            <tr><td>Time:</td><td>${formattedTime}</td></tr>
+                            <tr><td>Payment status:</td><td>Confirmed</td></tr>
+                            <tr><td>Confirmed date:</td><td>${formattedDate}</td></tr>
+                            <tr><td>Confirmed time:</td><td>${formattedTime}</td></tr>
                         </table>
                     </div>
                     <div class="payment-breakdown-section">
@@ -83,10 +91,10 @@ function ReceiptModal({
                         </table>
                     </div>
                     <div class="receipt-footer">
-                        <p><em>Thank you for choosing OnTrac Courier!</em></p>
-                        <p>This receipt serves as proof of payment for your shipment.</p>
-                        <p>For questions or support, contact us at support@ontracourier.us</p>
-                        <p>Generated on ${formattedGeneratedDate}</p>
+                        <p><strong>Payment confirmed</strong></p>
+                        <p>This receipt confirms successful payment for the shipment above.</p>
+                        <p>For questions or support, contact support@ontracourier.us</p>
+                        <p>Confirmation recorded ${formattedGeneratedDate}</p>
                     </div>
                 </body>
             </html>
@@ -97,7 +105,7 @@ function ReceiptModal({
         const printHtml = getReceiptHtml(); // Get the master HTML
         const printWindow = window.open('', '_blank', 'width=800,height=600,scrollbars=yes');
         if (!printWindow) {
-            alert('Print blocked - please allow popups for localhost');
+            alert('Please allow pop-ups to print your receipt.');
             return;
         }
         printWindow.document.write(printHtml);
@@ -111,15 +119,15 @@ function ReceiptModal({
         <div className={`receipt-modal-overlay ${show ? 'show' : ''}`} onClick={onClose}>
             <div className="receipt-modal-content" onClick={(e) => e.stopPropagation()}>
                 <div className="modal-header">
-                    <h2>Proof of Payment</h2>
+                    <h2>Payment receipt</h2>
                     <button onClick={onClose} className="close-button">&times;</button>
                 </div>
                 <div id="printable-receipt" className="receipt-printable">
                     <div className="receipt-header">
                         <div className="company-info">
                             <h3>OnTrac Courier</h3>
-                            <p>The #1 Alternative Carrier Network</p>
-                            <p>Phoenix, AZ | support@ontracourier.us </p>
+                            <p>Shipment payment confirmation</p>
+                            <p>Phoenix, AZ | support@ontracourier.us</p>
                         </div>
                         <div className="receipt-title">
                             <h1>Payment Receipt</h1>
@@ -130,10 +138,10 @@ function ReceiptModal({
                     <div className="receipt-details-section">
                         <table className="receipt-table">
                             <tbody>
-                                <tr><td><strong>Shipment ID:</strong></td><td>{trackingId}</td></tr>
+                                <tr><td><strong>Tracking number:</strong></td><td>{trackingId}</td></tr>
                                 <tr><td><strong>Recipient:</strong></td><td>{recipientName || 'Customer'}</td></tr>
-                                <tr><td><strong>Date:</strong></td><td>{new Date().toLocaleDateString()}</td></tr>
-                                <tr><td><strong>Time:</strong></td><td>{new Date().toLocaleTimeString()}</td></tr>
+                                <tr><td><strong>Payment status:</strong></td><td>Confirmed</td></tr>
+                                <tr><td><strong>Confirmed:</strong></td><td>{confirmedAt.toLocaleString()}</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -154,10 +162,10 @@ function ReceiptModal({
                         </table>
                     </div>
                     <div className="receipt-footer">
-                        <p><em>Thank you for choosing OnTrac Courier!</em></p>
-                        <p>This receipt serves as proof of payment for your shipment.</p>
-                        <p>For questions or support, contact us at support@ontracourier.us</p>
-                        <p>Generated on {new Date().toLocaleString()}</p>
+                        <p><strong>Payment confirmed</strong></p>
+                        <p>This receipt confirms successful payment for the shipment above.</p>
+                        <p>For questions or support, contact support@ontracourier.us</p>
+                        <p>Confirmation recorded {confirmedAt.toLocaleString()}</p>
                     </div>
                 </div>
                 <div className="receipt-actions">

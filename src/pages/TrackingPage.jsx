@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useLocation } from 'react-router-dom';
 import Pusher from 'pusher-js';
 
 // Your existing component imports
 import ProgressBar from '../components/ProgressBar';
 import RecentEvent from '../components/RecentEvent';
+import TrackingForm from '../components/TrackingForm';
 import CollapsibleSection from '../components/CollapsibleSection';
 import ReceiptModal from '../components/ReceiptModal';
 import { useNavigate } from 'react-router-dom';
@@ -44,6 +45,10 @@ const formatDestination = (destination) => {
     }
     return withoutCountry;
 };
+
+const customerText = (value) => (
+    typeof value === 'string' ? value.replace(/—/g, '-') : value
+);
 
 const formatExpectedDate = (dateString) => {
     // ... (no changes here)
@@ -90,6 +95,7 @@ function DeliveryPhotoSection({ imageUrl }) {
 
 function TrackingPage() {
     const navigate = useNavigate();
+    const location = useLocation();
     // Your existing state variables
     const [searchParams] = useSearchParams();
     const trackingId = searchParams.get('id');
@@ -162,15 +168,19 @@ function TrackingPage() {
             return;
         }
         const artificialDelay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-        const loadDataWithDelay = async () => {
+        const skipInitialDelay = location.state?.skipTrackingDelay === true;
+
+        const loadTrackingData = async () => {
             setIsLoading(true);
             setError(null);
             setData(null);
             try {
-                const [responseData] = await Promise.all([
-                    fetchTrackingData(),
-                    artificialDelay(1500)
-                ]);
+                const responseData = skipInitialDelay
+                    ? await fetchTrackingData()
+                    : (await Promise.all([
+                        fetchTrackingData(),
+                        artificialDelay(1500)
+                    ]))[0];
                 setData(responseData);
             } catch (err) {
                 setError(err.message);
@@ -178,8 +188,8 @@ function TrackingPage() {
                 setIsLoading(false);
             }
         };
-        loadDataWithDelay();
-    }, [trackingId]);
+        loadTrackingData();
+    }, [trackingId, location.state]);
 
     useEffect(() => {
         if (!trackingId) return;
@@ -241,8 +251,38 @@ function TrackingPage() {
             </div>
         );
     }
-    if (error) { return <div className="tracking-page-container"><p>{error}</p></div>; }
-    if (!data) { return <div className="tracking-page-container"><p>Searching for your shipment...</p></div>; }
+    if (!trackingId) {
+        return (
+            <main className="tracking-state-page">
+                <section className="tracking-state-card">
+                    <span className="tracking-state-kicker">Shipment tracking</span>
+                    <h1>Enter a tracking number</h1>
+                    <p>Use the tracking number from your shipment notification.</p>
+                    <TrackingForm />
+                </section>
+            </main>
+        );
+    }
+
+    if (error) {
+        return (
+            <main className="tracking-state-page">
+                <section className="tracking-state-card">
+                    <div className="tracking-state-icon" aria-hidden="true">
+                        <i className="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                    <span className="tracking-state-kicker">Tracking unavailable</span>
+                    <h1>We couldn't find that shipment</h1>
+                    <p>{customerText(error)}</p>
+                    <button type="button" className="button tracking-state-action" onClick={() => navigate('/')}>
+                        Track another package
+                    </button>
+                </section>
+            </main>
+        );
+    }
+
+    if (!data) { return null; }
 
     const latestEvent = data.recentEvent || null;
 
@@ -268,13 +308,13 @@ function TrackingPage() {
                         <div className="header-lhs">
                              <div className="tracking-overview">
                                 <h2>{trackingId}</h2>
-                                <p>{data.status}</p>
+                                <p>{customerText(data.status)}</p>
                             </div>
                         </div>
                     </div>
                     <div className="track-block-main">
                         <div className="status-summary">
-                            <div className="status-lhs"><h2>{data.status}</h2></div>
+                            <div className="status-lhs"><h2>{customerText(data.status)}</h2></div>
                             <div className="status-rhs">
                                 <div className="destination-info"><label>Going To</label><p>{formatDestination(data.destination)}</p></div>
                                 <div className="destination-info"><label>Expected</label><p>{formatExpectedDate(data.expectedDate)}</p></div>
@@ -285,7 +325,7 @@ function TrackingPage() {
                         {data.requiresPayment && !isPaymentProcessing && (
                             <div className="payment-section">
                                 <div className="payment-summary">
-                                    <span className="payment-label">Payment Required:</span>
+                                    <span className="payment-label">Payment required</span>
                                     <h3 className="primary-amount">
                                         {new Intl.NumberFormat('en-US', { style: 'currency', currency: data.paymentCurrency || 'USD' }).format(data.paymentAmount)}
                                     </h3>
@@ -341,8 +381,8 @@ function TrackingPage() {
                                     {data.allEvents.map((event, index) => (
                                         <tr key={index}>
                                             <td data-label="Date & Time">{event.date}</td>
-                                            <td data-label="Event">{event.event}</td>
-                                            <td data-label="City">{event.city}</td>
+                                            <td data-label="Event">{customerText(event.event)}</td>
+                                            <td data-label="City">{customerText(event.city)}</td>
                                             </tr>
                                      ))}
                                 </tbody>
@@ -353,11 +393,11 @@ function TrackingPage() {
                             </CollapsibleSection>
                             <CollapsibleSection title="Shipment Details" icon="fa-circle-info">
                                 <ul className="details-list">
-                                    <li><label>Service</label><p>{data.shipmentDetails?.service}</p></li>
-                                    <li><label>Weight</label><p>{data.shipmentDetails?.weight}</p></li>
-                                    <li><label>Dimensions</label><p>{data.shipmentDetails?.dimensions}</p></li>
-                                    <li><label>Origin</label><p>{data.shipmentDetails?.originZip}</p></li>
-                                    <li><label>Destination</label><p>{data.shipmentDetails?.destinationZip}</p></li>
+                                    <li><label>Service</label><p>{customerText(data.shipmentDetails?.service)}</p></li>
+                                    <li><label>Weight</label><p>{customerText(data.shipmentDetails?.weight)}</p></li>
+                                    <li><label>Dimensions</label><p>{customerText(data.shipmentDetails?.dimensions)}</p></li>
+                                    <li><label>Origin</label><p>{customerText(data.shipmentDetails?.originZip)}</p></li>
+                                    <li><label>Destination</label><p>{customerText(data.shipmentDetails?.destinationZip)}</p></li>
                                 </ul>
                             </CollapsibleSection>
                         </div>

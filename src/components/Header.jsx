@@ -97,10 +97,10 @@ function Header() {
         {isMobileMenuOpen && (
           <motion.div
             className="ph-menu"
-            initial={{ clipPath: 'circle(0% at calc(100% - 44px) 36px)' }}
-            animate={{ clipPath: 'circle(170% at calc(100% - 44px) 36px)' }}
-            exit={{   clipPath: 'circle(0% at calc(100% - 44px) 36px)' }}
-            transition={{ duration: 0.65, ease: [0.76, 0, 0.24, 1] }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.22, ease: 'easeOut' }}
           >
             {/* Decorative accent blob */}
             <div className="ph-menu-blob" />
@@ -111,13 +111,13 @@ function Header() {
                 <motion.div
                   key={to}
                   className="ph-menu-row"
-                  initial={{ opacity: 0, x: -32 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{   opacity: 0, x: -16 }}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 4 }}
                   transition={{
-                    delay: 0.18 + i * 0.07,
-                    duration: 0.55,
-                    ease: [0.25, 0.1, 0.25, 1],
+                    delay: 0.03 + i * 0.035,
+                    duration: 0.22,
+                    ease: 'easeOut',
                   }}
                 >
                   <span className="ph-menu-idx">0{i + 1}</span>
@@ -139,14 +139,14 @@ function Header() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{   opacity: 0, y: 10 }}
-              transition={{ delay: 0.48, duration: 0.45 }}
+              transition={{ delay: 0.12, duration: 0.2, ease: 'easeOut' }}
             >
               <Link
                 to="/"
                 className="ph-menu-cta"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                <span>Track Your Package</span>
+                <span>Track your package</span>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
               </Link>
               <p className="ph-menu-tagline">On Time. On Point. OnTrac.</p>

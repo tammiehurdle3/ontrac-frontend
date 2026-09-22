@@ -178,6 +178,11 @@
 @media (max-width: 640px) {
   .methodGrid {
     grid-template-columns: 1fr;
+    justify-items: center;
+  }
+  .methodCard {
+    width: 100%;
+    max-width: 460px;
   }
 }
 
@@ -844,6 +849,267 @@
 }
 
 /* ============================================================================
+   BACHS RETURN / PAYMENT CONFIRMATION STATES
+   ============================================================================ */
+
+.bachsReturnPage {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f7;
+  padding: clamp(20px, 5vw, 48px);
+}
+
+.bachsReturnCard {
+  width: min(100%, 620px);
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: clamp(22px, 4vw, 30px);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.03),
+    0 14px 48px rgba(0, 0, 0, 0.08);
+  padding: clamp(28px, 6vw, 48px);
+  text-align: center;
+}
+
+.bachsReturnBrand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  color: #6e6e73;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  margin-bottom: 28px;
+}
+
+.bachsReturnBrand img {
+  width: 27px;
+  height: 27px;
+  object-fit: contain;
+}
+
+.bachsReturnIcon {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 22px;
+  font-size: 28px;
+}
+
+.returnIconConfirming {
+  color: #0071e3;
+  background: rgba(0, 113, 227, 0.09);
+}
+
+.returnIconConfirmed {
+  color: #1b7f3b;
+  background: rgba(52, 199, 89, 0.12);
+}
+
+.returnIconCancelled {
+  color: #c93232;
+  background: rgba(210, 39, 48, 0.09);
+}
+
+.returnIconDelayed {
+  color: #986b00;
+  background: rgba(191, 135, 0, 0.11);
+}
+
+.returnSpinner {
+  width: 27px;
+  height: 27px;
+  border: 3px solid rgba(0, 113, 227, 0.18);
+  border-top-color: #0071e3;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.bachsReturnTitle {
+  margin: 0;
+  color: #1d1d1f;
+  font-size: clamp(27px, 5vw, 36px);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  font-weight: 700;
+}
+
+.bachsReturnText {
+  max-width: 500px;
+  margin: 14px auto 28px;
+  color: #6e6e73;
+  font-size: clamp(14px, 2.5vw, 16px);
+  line-height: 1.55;
+}
+
+.bachsReturnSummary {
+  width: 100%;
+  background: #f9f9fb;
+  border: 1px solid #e1e1e5;
+  border-radius: 18px;
+  padding: 4px 18px;
+  text-align: left;
+}
+
+.bachsReturnRow {
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  font-size: 14px;
+}
+
+.bachsReturnRow:last-child {
+  border-bottom: 0;
+}
+
+.bachsReturnRow > span:first-child {
+  color: #86868b;
+  flex-shrink: 0;
+}
+
+.bachsReturnRow strong {
+  color: #1d1d1f;
+  font-weight: 600;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.returnStatus {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.returnStatusConfirming {
+  color: #0067ce !important;
+  background: rgba(0, 113, 227, 0.09);
+}
+
+.returnStatusConfirmed {
+  color: #146c2e !important;
+  background: rgba(52, 199, 89, 0.12);
+}
+
+.returnStatusCancelled {
+  color: #b3262d !important;
+  background: rgba(210, 39, 48, 0.09);
+}
+
+.returnStatusDelayed {
+  color: #805a00 !important;
+  background: rgba(191, 135, 0, 0.11);
+}
+
+.bachsReturnActions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.bachsReturnPrimary,
+.bachsReturnSecondary {
+  width: 100%;
+  min-height: 52px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 650;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.bachsReturnPrimary {
+  margin-top: 24px;
+  border: 0;
+  background: #1d1d1f;
+  color: #ffffff;
+}
+
+.bachsReturnActions .bachsReturnPrimary {
+  margin-top: 0;
+}
+
+.bachsReturnPrimary:hover {
+  background: #2d2d2f;
+}
+
+.bachsReturnSecondary {
+  border: 1px solid #d2d2d7;
+  background: #ffffff;
+  color: #1d1d1f;
+}
+
+.bachsReturnSecondary:hover {
+  border-color: #a8a8ad;
+  background: #fafafa;
+}
+
+.bachsReturnPrimary:active,
+.bachsReturnSecondary:active {
+  transform: scale(0.99);
+}
+
+.bachsReturnHint {
+  margin: 16px auto 0;
+  color: #86868b;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.bachsReturnFooter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.07);
+  color: #86868b;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.bachsReturnFooter i {
+  color: #5e5e63;
+}
+
+@media (max-width: 520px) {
+  .bachsReturnPage {
+    align-items: flex-start;
+    padding: 16px;
+  }
+
+  .bachsReturnCard {
+    margin-top: 16px;
+    padding: 28px 20px;
+    border-radius: 22px;
+  }
+
+  .bachsReturnRow {
+    align-items: flex-start;
+    padding: 13px 0;
+    min-height: 0;
+  }
+
+  .bachsReturnRow strong {
+    max-width: 60%;
+  }
+}
+
+/* ============================================================================
    SECURITY BADGES - Centered (Fixes left alignment issue)
    ============================================================================ */
 
@@ -1236,4 +1502,437 @@
   }
   .walkthroughRail { display: block; position: sticky; top: 24px; }
   .walkthroughInline { display: none; }
+}
+/* ============================================================================
+   PRODUCT SYSTEM PASS - restrained, brand-led, provider-neutral
+   ============================================================================ */
+.walkthroughLayoutSolo {
+  display: block;
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+}
+.checkoutWrapper {
+  background: #f7f6f4;
+  color: #191b1e;
+  font-family: "Albert Sans", "Inter", Arial, sans-serif;
+}
+.checkoutContainer {
+  max-width: 900px;
+  padding: clamp(28px, 5vw, 64px) clamp(14px, 3vw, 24px);
+}
+.checkoutCard {
+  border: 1px solid #e7e4e1;
+  border-radius: 20px;
+  box-shadow: 0 14px 36px rgba(24, 26, 29, 0.06);
+  padding: clamp(28px, 5vw, 52px) clamp(20px, 5vw, 58px);
+  transition: none;
+}
+.checkoutHeader { margin-bottom: clamp(28px, 5vw, 40px); }
+.brandLogo { width: 46px; height: 46px; }
+.checkoutTitle,
+.sectionTitle,
+.formTitle,
+.bachsReturnTitle {
+  font-family: "Manrope", "Inter", sans-serif;
+  color: #191b1e;
+}
+.checkoutTitle {
+  font-size: clamp(26px, 5vw, 36px);
+  letter-spacing: -0.035em;
+}
+.checkoutSubtitle { color: #747478; font-size: clamp(14px, 2.4vw, 16px); }
+
+.orderSummary {
+  background: #faf9f7;
+  border: 1px solid #ebe8e5;
+  border-radius: 14px;
+  margin-bottom: clamp(28px, 5vw, 40px);
+}
+.summaryRow {
+  padding: 17px 0;
+  border-bottom: 1px solid #ece9e6;
+}
+.amount { color: #191b1e; font-size: clamp(19px, 3vw, 22px); }
+.sectionTitle { font-size: clamp(19px, 3vw, 22px); margin-bottom: 22px; }
+.methodGrid { gap: 12px; margin-bottom: 30px; }
+.methodCard {
+  height: auto;
+  min-height: 176px;
+  padding: 24px 20px 22px;
+  justify-content: center;
+  border: 1px solid #e2dfdc;
+  border-radius: 15px;
+  background: #ffffff;
+  box-shadow: 0 1px 0 rgba(24, 26, 29, 0.02);
+  transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+.methodCard:hover {
+  transform: none;
+  border-color: #aaa49f;
+  background: #fdfcfb;
+  box-shadow: 0 8px 22px rgba(24, 26, 29, 0.045);
+}
+.methodCard:active { transform: scale(0.99); }
+.methodCard.featured {
+  background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+  border-color: #79afe7;
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 113, 227, 0.08),
+    0 8px 22px rgba(0, 113, 227, 0.055);
+}
+.methodCard.featured:hover {
+  background: linear-gradient(180deg, #f4f9ff 0%, #ffffff 100%);
+  border-color: #0071e3;
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 113, 227, 0.13),
+    0 10px 26px rgba(0, 113, 227, 0.09);
+}
+.methodIcon {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 16px;
+  border: 1px solid #e7e4e1;
+  border-radius: 13px;
+  background: #f7f6f4;
+  color: #303236;
+  font-size: 22px;
+}
+.methodCard:hover .methodIcon {
+  color: #24262a;
+  background: #f1efed;
+  border-color: #dcd8d4;
+}
+.methodCard.featured .methodIcon {
+  color: #0071e3;
+  background: #eef6ff;
+  border-color: #c9e1fa;
+}
+.cardMethodSvg {
+  width: 28px;
+  height: 28px;
+  display: block;
+}
+.methodBadge {
+  position: absolute;
+  top: 13px;
+  right: 13px;
+  margin-top: 0;
+  color: #0066cc;
+  background: #eaf4ff;
+  border: 1px solid #c9e1fa;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  font-size: 10.5px;
+  font-weight: 650;
+  line-height: 1;
+  padding: 5px 8px;
+  border-radius: 999px;
+}
+.paymentLogoWall {
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 14px;
+}
+.paymentLogoWall i { opacity: 0.66; }
+.methodCard:hover .paymentLogoWall i {
+  color: #666a70;
+  opacity: 0.9;
+}
+.methodCard.featured:hover .paymentLogoWall i { opacity: 1; }
+.methodCard.featured:hover .paymentLogoWall i.fa-apple-pay { color: #111111; }
+.methodCard.featured:hover .paymentLogoWall i.fa-google-pay { color: #4285f4; }
+.methodCard.featured:hover .paymentLogoWall i.fa-stripe { color: #635bff; }
+.methodCard.featured:hover .paymentLogoWall i.fa-cc-visa { color: #1a1f71; }
+.methodCard.featured:hover .paymentLogoWall i.fa-cc-mastercard { color: #eb001b; }
+
+.bachsPaymentMarks {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(24, 26, 29, 0.07);
+}
+.bachsCardMark,
+.bachsCurrencyMark {
+  min-height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #d9dce0;
+  border-radius: 7px;
+  background: #f8f9fa;
+  color: #4f5359;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.025em;
+  line-height: 1;
+}
+.bachsCardMark {
+  gap: 6px;
+  padding: 4px 8px;
+}
+.bachsCardMark svg {
+  width: 20px;
+  height: 14px;
+}
+.bachsCurrencyMark {
+  padding: 4px 9px;
+  color: #3f5367;
+  background: #f4f7fa;
+  border-color: #d4dde5;
+}
+
+.methodCard:focus-visible {
+  outline: none;
+  border-color: #52677b;
+  box-shadow: 0 0 0 3px rgba(82, 103, 123, 0.17);
+}
+
+.recoveryContext {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: -4px 0 18px;
+  padding: 14px 16px;
+  border: 1px solid #ead9b7;
+  border-radius: 13px;
+  background: #fffaf1;
+  color: #4b4030;
+}
+.recoveryContext > i {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  color: #9a6819;
+  font-size: 16px;
+}
+.recoveryContext > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.recoveryContext strong {
+  color: #49391f;
+  font-size: 13px;
+  font-weight: 700;
+}
+.recoveryContext span {
+  color: #746a5c;
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+.cardRecoveryPanel {
+  width: 100%;
+  max-width: 620px;
+  margin: 6px auto 0;
+  padding: clamp(26px, 5vw, 40px);
+  border: 1px solid #e7d7b9;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #fffaf2 0%, #ffffff 72%);
+  box-shadow: 0 12px 32px rgba(78, 63, 40, 0.07);
+  text-align: left;
+}
+.cardRecoveryPanel:focus { outline: none; }
+.cardRecoveryIcon {
+  position: relative;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 18px;
+  border: 1px solid #ead4a8;
+  border-radius: 14px;
+  background: #fff3d9;
+  color: #6f5527;
+  font-size: 20px;
+}
+.cardRecoveryIconMark {
+  position: absolute;
+  right: -5px;
+  bottom: -5px;
+  width: 19px;
+  height: 19px;
+  display: grid;
+  place-items: center;
+  border: 2px solid #fffaf2;
+  border-radius: 999px;
+  background: #a66d13;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+}
+.cardRecoveryEyebrow {
+  display: block;
+  margin-bottom: 7px;
+  color: #79694d;
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.cardRecoveryPanel h2 {
+  margin: 0 0 10px;
+  color: #191b1e;
+  font-family: "Manrope", "Inter", sans-serif;
+  font-size: clamp(22px, 4vw, 29px);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+}
+.cardRecoveryPanel > p {
+  margin: 0;
+  color: #666a70;
+  font-size: 14px;
+  line-height: 1.65;
+}
+.cardRecoveryActions {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 24px;
+}
+.cardRecoveryPrimaryGroup {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.cardRecoverySupport {
+  padding-left: 2px;
+  color: #7b7f84;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+.cardRecoveryPrimary,
+.cardRecoverySecondary {
+  min-height: 48px;
+  border-radius: 11px;
+  padding: 0 17px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease, transform 120ms ease;
+}
+.cardRecoveryPrimary {
+  flex: 1 1 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border: 1px solid #006acb;
+  background: #0071e3;
+  color: #ffffff;
+}
+.cardRecoveryPrimary:hover { background: #0066cc; }
+.cardRecoverySecondary {
+  flex: 0 0 auto;
+  border: 1px solid #d8dce0;
+  background: #ffffff;
+  color: #363a3f;
+}
+.cardRecoverySecondary:hover {
+  border-color: #bcc3c9;
+  background: #fafafa;
+}
+.cardRecoveryPrimary:active,
+.cardRecoverySecondary:active { transform: scale(0.99); }
+.cardRecoveryPrimary:focus-visible,
+.cardRecoverySecondary:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(82, 103, 123, 0.17);
+}
+
+@media (max-width: 560px) {
+  .recoveryContext { padding: 13px 14px; }
+  .cardRecoveryActions { flex-direction: column; }
+  .cardRecoveryPrimaryGroup,
+  .cardRecoveryPrimary,
+  .cardRecoverySecondary { width: 100%; }
+  .cardRecoverySupport { text-align: center; padding-left: 0; }
+}
+
+.inputWithIcon input,
+.formGroup input {
+  border-color: #d9d5d1;
+  border-radius: 10px;
+  background: #ffffff;
+}
+.inputWithIcon input:focus,
+.formGroup input:focus {
+  border-color: var(--focus-stroke, #52677b);
+  box-shadow: 0 0 0 3px var(--focus-ring, rgba(82, 103, 123, 0.16));
+}
+.inputWithIcon:focus-within i { color: var(--focus-stroke, #52677b); }
+.submitButton {
+  background: #c9252d;
+  border-radius: 11px;
+  min-height: 52px;
+  font-size: 15px;
+  box-shadow: none;
+  transition: background 160ms ease, transform 120ms ease;
+}
+.submitButton:hover:not(:disabled) {
+  background: #a91f27;
+  transform: none;
+}
+.submitButton:active:not(:disabled) { transform: scale(0.99); }
+.shieldclimbButton { background: #202225; }
+.shieldclimbButton:hover:not(:disabled) { background: #101214; }
+.shieldclimbFeatures {
+  border-color: #e5e2df;
+  background: #faf9f7;
+  border-radius: 14px;
+}
+.feature i { color: #5f7182; }
+.backNavBar { border-bottom-color: #ece9e6; }
+.trustIndicators {
+  color: #777478;
+  gap: 18px;
+}
+
+.bachsReturnPage { background: #f7f6f4; }
+.bachsReturnCard {
+  border-color: #e7e4e1;
+  border-radius: 20px;
+  box-shadow: 0 14px 36px rgba(24, 26, 29, 0.06);
+}
+.returnIconConfirming {
+  color: #4f6c88;
+  background: rgba(79, 108, 136, 0.10);
+}
+.returnSpinner {
+  border-color: rgba(79, 108, 136, 0.18);
+  border-top-color: #4f6c88;
+}
+.bachsReturnSummary {
+  background: #faf9f7;
+  border-color: #e7e4e1;
+  border-radius: 14px;
+}
+.bachsReturnPrimary { background: #c9252d; border-radius: 11px; }
+.bachsReturnPrimary:hover { background: #a91f27; }
+.bachsReturnSecondary { border-color: #d8d4d0; border-radius: 11px; }
+.bachsReturnFooter { border-top-color: #ece9e6; }
+@media (min-width: 1100px) {
+  .walkthroughLayoutSolo {
+    display: block;
+    max-width: 980px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .checkoutWrapper *,
+  .checkoutWrapper *::before,
+  .checkoutWrapper *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

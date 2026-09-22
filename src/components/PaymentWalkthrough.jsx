@@ -146,12 +146,12 @@ export default function PaymentWalkthrough({
   const usdcText = usdc || "your amount";
   const steps = [
     { cap: <>1 · Pick <b>MoonPay</b> and tap <b>Pay Now</b></>, dur: 3000 },
-    { cap: <>2 · Sign in with your email — or one tap with <b>Apple / Google</b></>, dur: 3200 },
+    { cap: <>2 · Sign in with your email, or use <b>Apple / Google</b></>, dur: 3200 },
     { cap: <>3 · Enter the quick code sent to your email</>, dur: 2800 },
-    { cap: <>4 · Name, nationality &amp; date of birth — as on your ID. Standard for regulated payments, like PayPal</>, dur: 3800 },
-    { cap: <>5 · Pay how you always do — <b>Apple&nbsp;Pay, Google&nbsp;Pay or card</b></>, dur: 3200 },
-    { cap: <>6 · You&apos;ll see <b>&quot;Buy USDC&quot;</b> — that&apos;s just your payment processing. Total: <b>{totalText}, fees included</b></>, dur: 4600 },
-    { cap: <>✓ Done — the whole thing takes about <b>3 minutes</b></>, dur: 4200 },
+    { cap: <>4 · Enter your name, nationality and date of birth as they appear on your ID</>, dur: 3800 },
+    { cap: <>5 · Choose <b>Apple&nbsp;Pay, Google&nbsp;Pay or card</b></>, dur: 3200 },
+    { cap: <>6 · You&apos;ll see <b>&quot;Buy USDC&quot;</b>. That is the payment processing step. Total: <b>{totalText}, fees included</b></>, dur: 4600 },
+    { cap: <>✓ Done. The whole process takes about <b>3 minutes</b></>, dur: 4200 },
   ];
 
   const prefersReduced =
@@ -206,7 +206,7 @@ export default function PaymentWalkthrough({
     <>
       <style>{CSS}</style>
       <div className="pwk-card">
-        <p className="pwk-eyebrow">Watch first — 35 seconds</p>
+        <p className="pwk-eyebrow">Optional guide · 35 seconds</p>
         <p className="pwk-title">See how easy payment is</p>
 
         <div className="pwk-phone" aria-hidden="true">
@@ -224,7 +224,7 @@ export default function PaymentWalkthrough({
           {/* 1 · your checkout */}
           <div className={`pwk-screen ${i === 0 ? "pwk-on" : ""}`}>
             <p className="pwk-h">Complete Your Purchase</p>
-            <p className="pwk-s">🔒 Secure &amp; encrypted — select a payment provider</p>
+            <p className="pwk-s">Secure and encrypted. Select a payment provider.</p>
             <div className="pwk-prov">
               <b>MoonPay</b>
               <div className="pwk-cards"><span>VISA</span><span>MC</span><span>PayPal</span><span>APay</span><span>GPay</span></div>
@@ -243,7 +243,7 @@ export default function PaymentWalkthrough({
             <p className="pwk-mps" style={{ textAlign: "center" }}>Quick and secure</p>
             <div className="pwk-mpf">✉&nbsp; you@email.com</div>
             <div className="pwk-mpbtn" style={{ marginTop: 6 }}>Continue</div>
-            <p className="pwk-or">— &nbsp;Or sign in with&nbsp; —</p>
+            <p className="pwk-or">Or sign in with</p>
             <div className="pwk-pills">
               <div className="pwk-pill"><AppleLogo fill="#fff" /> Apple</div>
               <div className="pwk-pill"><GoogleLogo /> Google</div>
@@ -284,7 +284,7 @@ export default function PaymentWalkthrough({
               <div className="pwk-paybtn"><AppleLogo /> Pay</div>
               <div className="pwk-paybtn"><GoogleLogo /> Pay</div>
             </div>
-            <p className="pwk-or">— &nbsp;or pay with card&nbsp; —</p>
+            <p className="pwk-or">or pay with card</p>
             <div className="pwk-mpf"><MCLogo /> •••• •••• •••• 9483</div>
             <div className="pwk-mpbtn">Continue</div>
             <p className="pwk-foot">Powered by ● MoonPay Rails</p>
@@ -350,8 +350,8 @@ export default function PaymentWalkthrough({
         </div>
 
         <p className="pwk-note">
-          <b>Heads up:</b> on the confirm screen you&apos;ll see <b>&quot;Buy USDC&quot;</b> — USDC
-          is simply the digital dollar that processes your payment. You pay <b>{totalText} total,
+          <b>Heads up:</b> on the confirm screen you&apos;ll see <b>&quot;Buy USDC&quot;</b>. USDC
+          is the digital dollar used to process this payment. You pay <b>{totalText} total,
           fees included</b>, and nothing else. The crypto-risk warning is shown by law, but
           your price is fixed at checkout.
         </p>
