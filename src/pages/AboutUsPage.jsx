@@ -11,19 +11,19 @@ const stats = [
 
 const values = [
   {
-    icon: '⚡',
+    icon: 'fa-gauge-high',
     title: 'Speed Without Compromise',
-    body: 'The final mile is the most critical. We\'ve built our entire network around getting packages there faster — 1.9 days ahead of national carriers on average.'
+    body: 'The final mile is the most critical. We\'ve built our entire network around getting packages there faster, 1.9 days ahead of national carriers on average.'
   },
   {
-    icon: '🔒',
+    icon: 'fa-shield-halved',
     title: 'Trust at Every Step',
-    body: 'Every shipment gets real-time tracking, secure handling, and direct communication. Peace of mind isn\'t a feature — it\'s our standard.'
+    body: 'Every shipment gets real-time tracking, secure handling, and direct communication. Peace of mind isn\'t a feature. It\'s our standard.'
   },
   {
-    icon: '🤝',
+    icon: 'fa-handshake',
     title: 'Human-Centric Logistics',
-    body: 'In a world of automation, we stay human. Our team treats every package — whether for a global brand or an emerging creator — with the same level of care.'
+    body: 'In a world of automation, we stay human. Our team treats every package, whether for a global brand or an emerging creator, with the same level of care.'
   },
 ];
 
@@ -66,7 +66,7 @@ function AboutUsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.18 }}
           >
-            We were built on a single conviction — that the final step of a delivery is where trust is earned or lost. OnTrac exists to make that moment exceptional, every single time.
+            We were built on a single conviction: the final step of a delivery is where trust is earned or lost. OnTrac exists to make that moment exceptional, every single time.
           </motion.p>
         </div>
 
@@ -103,7 +103,7 @@ function AboutUsPage() {
             <p className="au-eyebrow">Our Mission</p>
             <h2 className="au-section-title">Connecting brands to their customers. Faster.</h2>
             <p className="au-body">
-              OnTrac bridges the gap between brands and their partners by turning every package into a trusted connection. We handle the complexity of shipping so creators can focus on their craft — and brands can be confident their products arrive on time, every time.
+              OnTrac bridges the gap between brands and their partners by turning every package into a trusted connection. We handle the complexity of shipping so creators can focus on their craft, while brands can be confident their products arrive on time, every time.
             </p>
             <p className="au-body">
               Our platform provides up-to-the-minute tracking and direct communication because we understand that for your customer, waiting is the worst part. We eliminate the wait.
@@ -142,7 +142,7 @@ function AboutUsPage() {
                 viewport={{ once: true }}
                 variants={fadeUp}
               >
-                <div className="au-value-icon">{v.icon}</div>
+                <div className="au-value-icon" aria-hidden="true"><i className={`fa-solid ${v.icon}`}></i></div>
                 <h3 className="au-value-title">{v.title}</h3>
                 <p className="au-value-body">{v.body}</p>
               </motion.div>

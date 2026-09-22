@@ -69,6 +69,10 @@ const CUSTOMS_LABELS = new Set([
   "Arrived in Destination Country",
 ]);
 
+const displayText = (value) => (
+  typeof value === 'string' ? value.replace(/—/g, '-') : value
+);
+
 function ProgressBar({ labels: rawLabels = [], status, allEvents = [], requiresPayment = false, paymentDescription = '', paymentActionMessage = '', destinationCountry = '' }) {
 
   const DOMESTIC_COUNTRIES = ['usa', 'us', 'united states', 'united states of america'];
@@ -144,7 +148,7 @@ function ProgressBar({ labels: rawLabels = [], status, allEvents = [], requiresP
           return (
             <div key={index} className={`milestone ${statusClass}`}>
               <div className="milestone-icon">{icon}</div>
-              <div className="milestone-label">{label}</div>
+              <div className="milestone-label">{displayText(label)}</div>
               {index < labels.length - 1 && <div className="milestone-line"></div>}
             </div>
           );
@@ -155,10 +159,10 @@ function ProgressBar({ labels: rawLabels = [], status, allEvents = [], requiresP
       {requiresPayment && (
         <div className="special-status-indicator">
           {paymentActionMessage
-            ? <><strong>⚠ Action Required:</strong> {paymentActionMessage}</>
+            ? <><strong>Action required:</strong> {displayText(paymentActionMessage)}</>
             : trimmedLabels.includes("Arrived at Sort Facility")
-              ? <><strong>⚠ Action Required:</strong> A delivery attempt was made but was unsuccessful. A redelivery fee is required to reschedule your delivery. Please pay below.</>
-              : <><strong>⚠ Action Required:</strong> Your shipment is held at customs pending payment of import duties. Please pay below to release your package.</>
+              ? <><strong>Action required:</strong> A delivery attempt was unsuccessful. A redelivery fee is required to schedule another attempt.</>
+              : <><strong>Action required:</strong> Your shipment is awaiting an import-duty payment before it can continue.</>
           }
         </div>
       )}

@@ -16,8 +16,6 @@ const BRANDS = [
   { name: 'MILANI',           size: '1.2rem', weight: 800, spacing: '0.1em',   style: 'normal' },
 ];
 
-const DOUBLED = [...BRANDS, ...BRANDS];
-
 function HomePage() {
   return (
     <main>
@@ -52,7 +50,7 @@ function HomePage() {
             <span style={{ color: 'var(--primary-red)' }}>your customers remember.</span>
           </h2>
           <p>35 states. 70% of the US population. 1.9 days faster than national carriers. We handle the last mile so your brand can own the moment.</p>
-          <a href="#" className="button">SEE HOW IT WORKS</a>
+          <a href="/delivery-solutions" className="button">Explore delivery solutions</a>
           <ul className="stats-list">
             <li><h3>1.9 Days</h3><p>Faster than national carriers</p></li>
             <li><h3>10-35%</h3><p>Cost savings</p></li>
@@ -107,51 +105,77 @@ function HomePage() {
         borderBottom: '1px solid rgba(0,0,0,0.06)',
       }}>
         <style>{`
-          @keyframes ont-marquee {
-            from { transform: translateX(0); }
-            to   { transform: translateX(-50%); }
+          .ont-marquee {
+            width: 100%;
+            overflow: hidden;
+            -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+            mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+          }
+          .ont-marquee-track {
+            display: flex;
+            width: max-content;
+            will-change: transform;
+            animation: ontAmbientRail 52s linear infinite;
+          }
+          .ont-marquee:hover .ont-marquee-track {
+            animation-play-state: paused;
           }
           .ont-rail {
+            flex: 0 0 auto;
+            width: max-content;
             display: flex;
             align-items: center;
-            width: max-content;
-            animation: ont-marquee 40s linear infinite;
+            flex-wrap: nowrap;
           }
-          .ont-rail:hover { animation-play-state: paused; }
           .ont-brand {
+            position: relative;
             display: inline-flex;
             align-items: center;
-            padding: 0 44px;
-            flex-shrink: 0;
-            color: #c8c8cc;
-            transition: color 0.3s ease, transform 0.3s ease;
+            min-height: 40px;
+            padding: 0 clamp(28px, 3.6vw, 54px);
+            color: #717278;
+            opacity: 0.92;
+            white-space: nowrap;
+            transition: color 160ms ease, opacity 160ms ease;
             cursor: default;
             user-select: none;
           }
-          .ont-brand:hover {
-            color: #1d1d1f;
-            transform: scale(1.05);
-          }
-          .ont-sep {
+          .ont-brand::after {
+            content: '';
+            position: absolute;
+            right: 0;
             width: 1px;
-            height: 32px;
-            background: #ebebf0;
-            flex-shrink: 0;
+            height: 28px;
+            background: #dedde1;
+          }
+          .ont-brand:hover {
+            color: #24262a;
+            opacity: 1;
+          }
+          @keyframes ontAmbientRail {
+            to { transform: translate3d(-50%, 0, 0); }
+          }
+          @media (max-width: 640px) {
+            .ont-marquee {
+              -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+              mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+            }
+            .ont-brand {
+              padding: 0 28px;
+            }
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .ont-marquee {
+              -webkit-mask-image: none;
+              mask-image: none;
+              overflow-x: auto;
+              scrollbar-width: none;
+            }
+            .ont-marquee::-webkit-scrollbar { display: none; }
+            .ont-marquee-track { animation: none; }
+            .ont-rail[aria-hidden='true'] { display: none; }
           }
         `}</style>
-
-        {/* Left fade */}
-        <div style={{
-          position: 'absolute', top: 0, left: 0, bottom: 0, width: 180,
-          background: 'linear-gradient(to right, #fff 20%, transparent)',
-          zIndex: 2, pointerEvents: 'none',
-        }} />
-        {/* Right fade */}
-        <div style={{
-          position: 'absolute', top: 0, right: 0, bottom: 0, width: 180,
-          background: 'linear-gradient(to left, #fff 20%, transparent)',
-          zIndex: 2, pointerEvents: 'none',
-        }} />
 
         <p style={{
           fontFamily: 'Manrope, Inter, sans-serif',
@@ -159,33 +183,35 @@ function HomePage() {
           fontWeight: 700,
           letterSpacing: '0.18em',
           textTransform: 'uppercase',
-          color: '#c0c0c5',
+          color: '#7d7e84',
           textAlign: 'center',
-          margin: '0 0 52px',
+          margin: '0 0 44px',
           position: 'relative',
           zIndex: 3,
         }}>
           Trusted by leading retailers &amp; DTC brands
         </p>
 
-        <div style={{ overflow: 'hidden', position: 'relative', zIndex: 1 }}>
-          <div className="ont-rail">
-            {DOUBLED.map((brand, i) => (
-              <React.Fragment key={i}>
-                <span
-                  className="ont-brand"
-                  style={{
-                    fontFamily: 'Manrope, Inter, sans-serif',
-                    fontSize: brand.size,
-                    fontWeight: brand.weight,
-                    letterSpacing: brand.spacing,
-                    fontStyle: brand.style,
-                  }}
-                >
-                  {brand.name}
-                </span>
-                <span className="ont-sep" aria-hidden="true" />
-              </React.Fragment>
+        <div className="ont-marquee" style={{ position: 'relative', zIndex: 1 }}>
+          <div className="ont-marquee-track">
+            {[0, 1].map((loop) => (
+              <div className="ont-rail" key={loop} aria-hidden={loop === 1 ? 'true' : undefined}>
+                {BRANDS.map((brand, i) => (
+                  <span
+                    className="ont-brand"
+                    key={`${loop}-${i}`}
+                    style={{
+                      fontFamily: 'Manrope, Inter, sans-serif',
+                      fontSize: brand.size,
+                      fontWeight: brand.weight,
+                      letterSpacing: brand.spacing,
+                      fontStyle: brand.style,
+                    }}
+                  >
+                    {brand.name}
+                  </span>
+                ))}
+              </div>
             ))}
           </div>
         </div>
@@ -198,7 +224,7 @@ function HomePage() {
             <div className="detail-text">
               <h2 className="section-title">Calling all delivery professionals</h2>
               <p>If you're a delivery professional who is passionate about customer experience, has a positive attitude, and a strong attention-to-detail, then we have exciting delivery opportunities for you.</p>
-              <a href="#" className="button">LEARN MORE</a>
+              <a href="/careers" className="button">Explore opportunities</a>
             </div>
             <div className="detail-image">
               <img src="https://www.ontrac.com/wp-content/uploads/2023/03/Home-OT-Driver-Blank.jpg" alt="OnTrac delivery driver career opportunity" />
@@ -207,8 +233,8 @@ function HomePage() {
           <div className="detail-block reversed">
             <div className="detail-text">
               <h2 className="section-title">Care to our communities</h2>
-              <p>We use our geographical footprint and infrastructure to show up in times of need — aiding in disaster recovery, hunger relief, community health improvement, and more.</p>
-              <a href="#" className="button">LEARN MORE</a>
+              <p>We use our geographical footprint and infrastructure to show up in times of need, supporting disaster recovery, hunger relief, community health, and more.</p>
+              <a href="/sustainability" className="button">Our community work</a>
             </div>
             <div className="detail-image">
               <img src="https://www.ontrac.com/wp-content/uploads/2023/03/Home-TimeOfNeed.jpg" alt="OnTrac community outreach and disaster relief" />
@@ -222,7 +248,7 @@ function HomePage() {
         <div className="container">
           <div className="latest-news-header">
             <h2 className="section-title">Raise The Bar On Your Parcel Strategy</h2>
-            <a href="#" className="button button-white">VIEW ALL RESOURCES</a>
+            <a href="/knowledge-center" className="button button-white">View all resources</a>
           </div>
           <div className="articles-grid">
             <div className="article-block">

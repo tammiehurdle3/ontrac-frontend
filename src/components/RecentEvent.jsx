@@ -4,6 +4,10 @@ import React from 'react';
 function RecentEvent({ event }) {
   if (!event) return null;
 
+  const displayText = (value) => (
+    typeof value === 'string' ? value.replace(/—/g, '-') : value
+  );
+
   const handleChatClick = () => {
     if (window.Tawk_API && window.Tawk_API.maximize) {
       window.Tawk_API.maximize();
@@ -15,15 +19,15 @@ function RecentEvent({ event }) {
 
   return (
     <div className="most-recent-event">
-      <h3>Most Recent Tracking Event</h3>
+      <h3>Latest tracking update</h3>
       <div className="event-details">
         <div className="event-item">
           <label>Event</label>
-          <p>{eventLabel}</p>
+          <p>{displayText(eventLabel)}</p>
         </div>
         <div className="event-item">
           <label>City</label>
-          <p>{event.location}</p>
+          <p>{displayText(event.location)}</p>
         </div>
         <div className="event-item">
           <label>Date & Time</label>
@@ -31,8 +35,8 @@ function RecentEvent({ event }) {
         </div>
       </div>
       <div className="event-description">
-        <label>ABOUT THIS TRACKING EVENT</label>
-        <p>{event.description}</p>
+        <label>Details</label>
+        <p>{displayText(event.description)}</p>
       </div>
       <div className="event-actions">
         <button className="button button-white" onClick={handleChatClick}>
