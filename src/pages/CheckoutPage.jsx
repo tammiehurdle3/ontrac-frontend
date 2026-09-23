@@ -1,5 +1,5 @@
 // src/pages/CheckoutPage.jsx
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import PaymentStatusAnimation from '../components/PaymentStatusAnimation';
@@ -183,13 +183,7 @@ function CheckoutPage() {
     return () => clearTimeout(handler);
   }, [billingAddress]);
 
-  // Load shipment data & Scroll to Top
-  useEffect(() => {
-    window.scrollTo(0, 0); // Fix: Force page to start at the top
-    fetchShipmentData();
-  }, [trackingId]);
-
-  const fetchShipmentData = async () => {
+  const fetchShipmentData = useCallback(async () => {
     try {
       const response = await fetch(`${baseUrl}/api/shipments/${trackingId}/`);
       if (!response.ok) throw new Error('Shipment not found');
@@ -207,12 +201,18 @@ function CheckoutPage() {
       } else if (bachsReturn === 'cancelled') {
         setBachsReturnState('cancelled');
       }
-    } catch (error) {
+    } catch {
       setErrorMessage('Unable to load shipment details. Please try again.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [baseUrl, trackingId, isBachsReturn, bachsReturn]);
+
+  // Load shipment data & Scroll to Top
+  useEffect(() => {
+    window.scrollTo(0, 0); // Fix: Force page to start at the top
+    fetchShipmentData();
+  }, [fetchShipmentData]);
 
   // Bachs return verification: the webhook updates the shipment; the browser only watches our API.
   useEffect(() => {
@@ -299,7 +299,7 @@ function CheckoutPage() {
         setErrorMessage(data.error || 'Failed to initialize payment. Please try another method.');
         setProcessingPayment(false);
       }
-    } catch (error) {
+    } catch {
       setErrorMessage('Network error. Please check your connection and try again.');
       setProcessingPayment(false);
     }
@@ -354,7 +354,7 @@ function CheckoutPage() {
       } else {
         setErrorMessage(data.error || 'Payment failed. Please check your card details.');
       }
-    } catch (error) {
+    } catch {
       await new Promise(resolve => setTimeout(resolve, 4000));
       setErrorMessage('Payment processing failed. Please try again.');
     } finally {
@@ -417,7 +417,7 @@ function CheckoutPage() {
         setVoucherStatus('error');
         setErrorMessage(data.error || 'This voucher code is invalid or has already been used.');
       }
-    } catch (error) {
+    } catch {
       setVoucherStatus('error');
       setErrorMessage('Verification server is temporarily unreachable. Please try again.');
     }
