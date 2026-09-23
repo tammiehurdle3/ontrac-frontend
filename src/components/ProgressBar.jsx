@@ -73,7 +73,7 @@ const displayText = (value) => (
   typeof value === 'string' ? value.replace(/—/g, '-') : value
 );
 
-function ProgressBar({ labels: rawLabels = [], status, allEvents = [], requiresPayment = false, paymentDescription = '', paymentActionMessage = '', destinationCountry = '' }) {
+function ProgressBar({ labels: rawLabels = [], status, allEvents = [], requiresPayment = false, paymentActionMessage = '', destinationCountry = '' }) {
 
   const DOMESTIC_COUNTRIES = ['usa', 'us', 'united states', 'united states of america'];
   const isDomestic = DOMESTIC_COUNTRIES.includes((destinationCountry || '').trim().toLowerCase())

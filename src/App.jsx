@@ -1,39 +1,31 @@
-import React from 'react';
+import { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import FeedbackPage from './pages/FeedbackPage.jsx'; // <-- ADD THIS IMPORT
-import MaintenancePage from './pages/MaintenancePage'; 
-
-// Your existing components and pages
-// FIX: Removed the .jsx file extensions from the component and page imports, as the build tool is configured to resolve these automatically.
+import MaintenancePage from './pages/MaintenancePage';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import HomePage from './pages/HomePage';
-import TrackingPage from './pages/TrackingPage';
-import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
-import TermsPage from './pages/TermsPage';
-import AboutUsPage from './pages/AboutUsPage';
-import KnowledgeCenterPage from './pages/KnowledgeCenterPage';
-import ArticlePage from './pages/ArticlePage';
-import DeliverySolutionsPage from './pages/DeliverySolutionsPage';
-import RefundPolicy from './pages/RefundPolicy.jsx';
-import PricingPage from './pages/PricingPage.jsx';
-import CheckoutPage from './pages/CheckoutPage';
-
-
-// Import the newly created page components
-import { 
-    NewsroomPage, 
-    CareersPage, 
-    SustainabilityPage, 
-    InternationalShippingPage,
-    BusinessEnterprisePage,
-    D2CDeliveryPage,
-    CustomsInfoPage,
-    ContactPage
-} from './pages/NewInfoPages';
-
-// Corrected the import path to point directly to the CSS file in the src directory.
 import './InfoPages.css';
+
+const HomePage = lazy(() => import('./pages/HomePage'));
+const TrackingPage = lazy(() => import('./pages/TrackingPage'));
+const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'));
+const TermsPage = lazy(() => import('./pages/TermsPage'));
+const AboutUsPage = lazy(() => import('./pages/AboutUsPage'));
+const KnowledgeCenterPage = lazy(() => import('./pages/KnowledgeCenterPage'));
+const ArticlePage = lazy(() => import('./pages/ArticlePage'));
+const DeliverySolutionsPage = lazy(() => import('./pages/DeliverySolutionsPage'));
+const RefundPolicy = lazy(() => import('./pages/RefundPolicy.jsx'));
+const PricingPage = lazy(() => import('./pages/PricingPage.jsx'));
+const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
+const FeedbackPage = lazy(() => import('./pages/FeedbackPage.jsx'));
+
+const NewsroomPage = lazy(() => import('./pages/NewInfoPages').then((module) => ({ default: module.NewsroomPage })));
+const CareersPage = lazy(() => import('./pages/NewInfoPages').then((module) => ({ default: module.CareersPage })));
+const SustainabilityPage = lazy(() => import('./pages/NewInfoPages').then((module) => ({ default: module.SustainabilityPage })));
+const InternationalShippingPage = lazy(() => import('./pages/NewInfoPages').then((module) => ({ default: module.InternationalShippingPage })));
+const BusinessEnterprisePage = lazy(() => import('./pages/NewInfoPages').then((module) => ({ default: module.BusinessEnterprisePage })));
+const D2CDeliveryPage = lazy(() => import('./pages/NewInfoPages').then((module) => ({ default: module.D2CDeliveryPage })));
+const CustomsInfoPage = lazy(() => import('./pages/NewInfoPages').then((module) => ({ default: module.CustomsInfoPage })));
+const ContactPage = lazy(() => import('./pages/NewInfoPages').then((module) => ({ default: module.ContactPage })));
 
 
 function App() {
@@ -47,6 +39,16 @@ function App() {
     <Router>
       <Header />
       <main>
+        <Suspense fallback={
+          <div className="premium-loading-overlay" role="status" aria-live="polite" aria-label="Loading page">
+            <div className="premium-loader-wrapper">
+              <img src="/ontrac_favicon.png" alt="" className="loader-logo-img" />
+              <svg className="loader-ring-svg" viewBox="25 25 50 50" aria-hidden="true">
+                <circle className="loader-ring-circle" cx="50" cy="50" r="20"></circle>
+              </svg>
+            </div>
+          </div>
+        }>
         <Routes>
           {/* Your existing routes */}
           <Route path="/" element={<HomePage />} />
@@ -74,6 +76,7 @@ function App() {
 
 
         </Routes>
+        </Suspense>
       </main>
       <Footer />
     </Router>

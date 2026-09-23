@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faWallet, faCreditCard, faMoneyCheckDollar, faEnvelope, faCircleCheck } from '@fortawesome/free-solid-svg-icons';
+import { faWallet, faCreditCard, faEnvelope, faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 import { faPaypal } from '@fortawesome/free-brands-svg-icons';
 
 const API_URL = `${import.meta.env.VITE_API_URL}/api`;
