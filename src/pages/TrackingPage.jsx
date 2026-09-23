@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useLocation } from 'react-router-dom';
 import Pusher from 'pusher-js';
 
@@ -101,10 +101,8 @@ function TrackingPage() {
     const trackingId = searchParams.get('id');
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [isPaymentProcessing, setIsPaymentProcessing] = useState(false);
-    const [processingDots, setProcessingDots] = useState(1);
     const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
 
     // --- NEW: Add state for the refund feature ---
@@ -112,18 +110,8 @@ function TrackingPage() {
     const [isRefundModalOpen, setIsRefundModalOpen] = useState(false);
 
 
-    useEffect(() => {
-        let interval;
-        if (isPaymentProcessing) {
-            interval = setInterval(() => {
-                setProcessingDots(dots => (dots % 3) + 1);
-            }, 500);
-        }
-        return () => clearInterval(interval);
-    }, [isPaymentProcessing]);
-    
     // This is the core data fetching function. It now also checks for balance.
-    const fetchTrackingData = async (isUpdate = false) => {
+    const fetchTrackingData = useCallback(async (isUpdate = false) => {
         const baseUrl = import.meta.env.VITE_API_URL;
         const response = await fetch(`${baseUrl}/api/shipments/${trackingId}/`);
         if (!response.ok) {
@@ -160,7 +148,7 @@ function TrackingPage() {
             };
         }
         throw new Error('Tracking data is empty.');
-    };
+    }, [trackingId]);
 
     useEffect(() => {
         if (!trackingId) {
@@ -189,7 +177,7 @@ function TrackingPage() {
             }
         };
         loadTrackingData();
-    }, [trackingId, location.state]);
+    }, [trackingId, location.state, fetchTrackingData]);
 
     useEffect(() => {
         if (!trackingId) return;
@@ -211,14 +199,10 @@ function TrackingPage() {
             pusher.unsubscribe(`shipment-${trackingId}`);
             pusher.disconnect();
         };
-    }, [trackingId]);
+    }, [trackingId, fetchTrackingData]);
 
     const handlePaymentClick = () => {
         navigate(`/checkout/${trackingId}`);
-    };
-
-    const handleVoucherSuccess = () => {
-        setIsPaymentProcessing(true);
     };
 
     const openReceiptModal = () => {
