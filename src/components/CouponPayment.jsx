@@ -30,7 +30,7 @@ function CouponPayment({ shipmentId, onSuccess }) {
         setValidationStatus('error');
         setMessage(data.error || 'Invalid code. Try again.');
       }
-    } catch (error) {
+    } catch {
       setValidationStatus('error');
       setMessage('Network error. Please try again.');
     }
