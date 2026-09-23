@@ -200,7 +200,6 @@ function PaymentModal({ show, onClose, amount, currency, shipmentId, onVoucherSu
         });
         
         if (!voucherResponse.ok) {
-          const errorData = await voucherResponse.json();
           setSubmitStatus('failed');
           setTimeout(() => window.location.reload(), 2500);
           return; // Stop processing if voucher submission fails
