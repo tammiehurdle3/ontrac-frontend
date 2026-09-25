@@ -26,6 +26,13 @@
   max-width:unset;
   filter:grayscale(var(--nh-accent-gray,1));
 }
+/* Real responsive canvas above an invisible, measured SVG geometry source. */
+.nh-ribbon-canvas {
+  position:absolute;inset:0;z-index:1;pointer-events:none;
+  display:block;opacity:1;
+}
+.nh-stage[data-motion="finished"] .nh-ribbon-canvas{display:none;}
+.nh-measure-only{visibility:hidden!important;opacity:0!important;}
 .nh-network {
   position:absolute;inset:0;width:100%;height:100%;z-index:1;overflow:visible;
   pointer-events:none;opacity:var(--nh-route-opacity,0);transition:none;
