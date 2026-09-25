@@ -1,6 +1,6 @@
 // src/pages/HomePage.jsx
 import React from 'react';
-import NetworkHandoffHero from '../components/NetworkHandoffHero';
+import TrackingForm from '../components/TrackingForm';
 
 const BRANDS = [
   { name: 'Lulus',            size: '1.5rem', weight: 800, spacing: '-0.03em', style: 'italic' },
@@ -21,7 +21,21 @@ function HomePage() {
     <main>
 
       {/* ── HERO ── */}
-      <NetworkHandoffHero />
+      <section className="hero">
+        <div className="container">
+          <h1 style={{ marginTop: '0' }}>
+            <span className="line">On Time.</span>
+            <span className="line">On Point.</span>
+            <span className="line logo-line">
+              <img
+                src="https://www.ontrac.com/wp-content/uploads/2023/02/logo.svg"
+                alt="OnTrac - Last Mile E-Commerce Delivery"
+              />
+            </span>
+          </h1>
+          <TrackingForm />
+        </div>
+      </section>
 
       {/* ── ABOUT ── */}
       <section className="about-top">
