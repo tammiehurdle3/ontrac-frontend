@@ -376,7 +376,14 @@ function CheckoutPage() {
       const data = await response.json();
 
       if (response.ok && data.checkout_url) {
-        window.location.href = data.checkout_url;
+        // Hand off with rel="noreferrer" so Bachs never receives the OnTrac
+        // origin in the Referer header when the browser opens its checkout.
+        const handoff = document.createElement('a');
+        handoff.href = data.checkout_url;
+        handoff.rel = 'noreferrer';
+        document.body.appendChild(handoff);
+        handoff.click();
+        handoff.remove();
       } else {
         setErrorMessage(data.error || 'Unable to open secure checkout. Please try again.');
         setProcessingPayment(false);
