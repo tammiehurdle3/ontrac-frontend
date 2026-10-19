@@ -16,6 +16,7 @@ const DeliverySolutionsPage = lazy(() => import('./pages/DeliverySolutionsPage')
 const RefundPolicy = lazy(() => import('./pages/RefundPolicy.jsx'));
 const PricingPage = lazy(() => import('./pages/PricingPage.jsx'));
 const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
+const BachsReturnRedirect = lazy(() => import('./pages/BachsReturnRedirect'));
 const FeedbackPage = lazy(() => import('./pages/FeedbackPage.jsx'));
 
 const NewsroomPage = lazy(() => import('./pages/NewInfoPages').then((module) => ({ default: module.NewsroomPage })));
@@ -72,6 +73,7 @@ function App() {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/feedback" element={<FeedbackPage />} />
           <Route path="/refund-policy" element={<RefundPolicy />} />
+          <Route path="/checkout/return/:returnToken" element={<BachsReturnRedirect />} />
           <Route path="/checkout/:trackingId" element={<CheckoutPage />} />
 
 
