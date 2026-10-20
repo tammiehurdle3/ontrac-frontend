@@ -1098,7 +1098,7 @@ function CheckoutPage() {
                       {processingPayment ? (
                         <>
                           <div className={styles.buttonSpinner}></div>
-                          Opening secure checkout...
+                          Redirecting to secure payment…
                         </>
                       ) : (
                         <>
